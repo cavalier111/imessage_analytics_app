@@ -42,82 +42,58 @@ def texts_upload(request):
 	return render(request, 'success.html', context)
 
 def index(request):
-	request.session['page'] = 'index.html'
 	return render(request, 'index.html')
 
 def success(request):
-	request.session['page'] = 'success.html'
 	return render(request, 'success.html')
 
-
 def wordcloud(request):
-	request.session['page'] = 'wordcloud.html'
 	return render(request, 'wordcloud.html')
+
 def emojicloud(request):
-	request.session['page'] = 'emojicloud.html'
 	return render(request, 'emojicloud.html')
 
 def tapbacks(request):
-	request.session['page'] = 'tapbacks.html'
-
 	return render(request, 'tapbacks.html')
 
-
 def compare(request):
-	request.session['page'] = 'compare.html'
-
 	return render(request, 'compare.html')
 
 
 def calmap(request):
-	request.session['page'] = 'calmap.html'
-
 	return render(request, 'calmap.html')
 
-
 def monthly(request):
-	request.session['page'] = 'monthly.html'
 	return render(request, 'monthly.html')
 
 def weekly(request):
-	request.session['page'] = 'weekly.html'
 	return render(request, 'weekly.html')
 
 def daily(request):
-	request.session['page'] = 'daily.html'
-
 	return render(request, 'daily.html')
 
 def weekday(request):
-	request.session['page'] = 'weekday.html'
-
 	return render(request, 'weekday.html')
 
 
 def hourly(request):
-	request.session['page'] = 'hourly.html'
-
 	return render(request, 'hourly.html')
 
 def polWeekDay(request):
-	request.session['page'] = 'polWeekDay.html'
-
 	return render(request, 'polWeekDay.html')
+
 def polWeek(request):
-	request.session['page'] = 'polWeek.html'
-
 	return render(request, 'polWeek.html')
-def emotions(request):
-	request.session['page'] = 'emotions.html'
 
+def emotions(request):
 	return render(request, 'emotions.html')
+
 def emotionsMonth(request):
-	request.session['page'] = 'emotionsMonth.html'
 	return render(request, 'emotionsMonth.html')
+
 def sarcasm(request):
-	request.session['page'] = 'sarcasm.html'
 	return render(request, 'sarcasm.html')
+
 def thanks(request):
-	request.session['page'] = 'thanks.html'
 	return render(request, 'thanks.html')
 
