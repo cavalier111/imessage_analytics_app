@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<!-- <script src="{% static 'admin/js/weekly.js' %}"></script> -->
+</head>
+
+<body scroll="no" style="overflow: hidden; background-color: black;" >
+<!-- <div style = "background-color: black; height: 650px"> -->
+
+
+{% include "navBar.html" %}
+
+<div id="data">
+	<h1 style = "text-align: center; color: grey;">A look at each day </h1>
+
+	<h1 style = "text-align: center; color: grey; font-size: 12px;">placeholder days</h1>
+	<h1 style = "text-align: center; color: grey; font-size: 12px; padding-bottom: 35px;">Average: placeholder/day</h1>
+
+	<div>
+	<h1 class = "mostactiveweek" style = "text-align: center; color: grey;">Our most active days </h1>
+	<div style= "display: flex;padding-bottom: 35px; justify-content: space-between;padding: 10px;">
+	<span class = "mostactiveweek" style = "color: grey;font-size: 20px;"> placeholder
+</span>
+	<span class = "mostactiveweek" style = "color: grey;font-size: 20px;"> placeholder
+</span>
+	<span class = "mostactiveweek" style = "color: grey;font-size: 20px;"> placeholder
+</span>
+	<span class = "mostactiveweek" style = "color: grey;font-size: 20px;"> placeholder </span>
+	<span class = "mostactiveweek" style = "color: grey;font-size: 20px;"> placeholder </span>
+	</div>
+	</div>
+
+<div style = "display: flex; align-items: center; flex-direction: column;">
+	<video id = "vid" muted style="width:85%">
+  <source src="{% static 'admin/img/dayGraph.mp4' %}" type="video/mp4">
+</video>
+	<img id = "weeklyGraph" style= "width: 87%;" src="{% static 'admin/img/day_graph.png' %}">
+	</div>
+</div>
+
+</body>
+<div class = 'nav' id = "nav"  style="background: #f2f2f2;">
+	 <a href="/weekly">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	<a href="/weekday">
+		<button class="btn btn-primary big-button next">Next</button>
+	</a>
+	</div>
+
+
+</html>

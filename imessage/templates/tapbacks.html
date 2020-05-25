@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<script src="{% static 'admin/js/tapback.js' %}"></script>
+</head>
+<body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
+
+{% include "navBar.html" %}
+
+<div id = "header">
+	<h1 style = "text-align: center; color: grey;"> Our most used responses </h1>
+	<h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
+	 <span class = "taptitle" style = "text-align: left;">Ours</span>
+<span class = "taptitle" style = "text-align: center;">Mine</span> 
+
+	  <span class = "taptitle" style = "text-align: right;">Hers</span>
+
+
+</div>
+
+<div id = "data" class = "tapdata">
+ <div class = "typetapcontainer">
+  
+	<div id = "heart"> <img style = "width:150px; " class = "tapback",, src= "{% static 'admin/img/2000.png' %}"> <span id = "metric" class = "tapmetric">512 (35%)</span></div>
+	<div id = "like"> <img style = "width:calc(.703125 * 150px);" class = "tapback", src= "{% static 'admin/img/2001.png' %}"> <span id = "metric" class = "tapmetric">360 (25%)</span></div>
+	<div id = "exclaim"> <img style = "width:calc(.609375 * 150px);" class = "tapback", src= "{% static 'admin/img/2004.png' %}"> <span id = "metric" class = "tapmetric">312 (21%)</span></div>
+	<div id = "haha"> <img style = "width:calc(.3125 * 150px);" class = "tapback",  src= "{% static 'admin/img/2003.png' %}"> <span id = "metric" class = "tapmetric">160 (11%)</span></div>
+	<div id = "dislike"> <img style = "width:calc(.130859375 * 150px);" class = "tapback", src= "{% static 'admin/img/2002.png' %}"> <span id = "metric" class = "tapmetric">67 (5%)</span></div>
+	<div id = "question"> <img style = "width:calc(.09375 * 150px);" class = "tapback", src= "{% static 'admin/img/2005.png' %}"> <span id = "metric" class = "tapmetric">48 (3%)</span></div>
+</div>
+ <div class = "typetapcontainer">
+  
+
+	<div id = "myheart"> <img style = "width:150px; " class = "tapback", src= "{% static 'admin/img/2000.png' %}"> <span id = "metric" class = "tapmetric">246 (33.69%)</span></div>
+	<div id = "mylike"> <img style = "width: 150px;" class = "tapback", src= "{% static 'admin/img/2001.png' %}"> <span id = "metric" class = "tapmetric">246 (33.69%)</span></div>
+	<div id = "myexclaim"> <img style = "width:calc(.59756 * 150px);" class = "tapback",  src= "{% static 'admin/img/2004.png' %}"> <span id = "metric" class = "tapmetric">147 (20%)</span></div>
+	<div id = "myhaha"> <img style = "width:calc(.1991 * 150px);" class = "tapback",  src= "{% static 'admin/img/2003.png' %}"> <span id = "metric" class = "tapmetric">49 (7%)</span></div>
+	<div id = "myquestion"> <img style = "width:calc(.1422 * 150px);" class = "tapback",  src= "{% static 'admin/img/2005.png' %}"> <span id = "metric" class = "tapmetric">35 (5%)</span></div>
+	<div id = "mydislike"> <img style = "width:calc(.028455 * 150px);" class = "tapback", src= "{% static 'admin/img/2002.png' %}"> <span id = "metric" class = "tapmetric">7 (1%)</span></div>
+
+</div>
+ 
+ <div class = "typetapcontainer">
+
+	<div id = "herheart"> <img style = "width:150px; " class = "tapback", src= "{% static 'admin/img/2000.png' %}"> <span id = "metric" class = "tapmetric">266 (36%)</span></div>
+	<div id = "herexclaim"> <img style = "width:calc(.62030 * 150px);" class = "tapback",  src= "{% static 'admin/img/2004.png' %}"> <span id = "metric" class = "tapmetric">165 (22%)</span></div>
+	<div id = "herlike"> <img style = "width:calc(.42857 * 150px);" class = "tapback", src= "{% static 'admin/img/2001.png' %}"> <span id = "metric" class = "tapmetric">114 (16%)</span></div>
+	<div id = "herhaha"> <img style = "width:calc(.417293 * 150px);" class = "tapback",  src= "{% static 'admin/img/2003.png' %}"> <span id = "metric" class = "tapmetric">111 (15%)</span></div>
+	<div id = "herdislike"> <img style = "width:calc(.2255 * 150px);" class = "tapback", src= "{% static 'admin/img/2002.png' %}"> <span id = "metric" class = "tapmetric">60 (8%)</span></div>
+	<div id = "herquestion"> <img style = "width:calc(.0488 * 150px);" class = "tapback",  src= "{% static 'admin/img/2005.png' %}"> <span id = "metric" class = "tapmetric">13 (2%)</span></div>
+</div>
+<div>
+
+<video style = "position: absolute; width: 400px; height: 400px; right: 30px; clip-path: url(#myPath);" id = "vid" autoplay muted>
+  <source src="{% static 'admin/img/heartbeat.mp4' %}" type="video/mp4">
+</video>
+<img id = "resp" style = "position: absolute;
+    width: 35%;
+    right: 55px;
+    top: 175px;" src= "{% static 'admin/img/appleLogo.png' %}"></div>
+</div>
+<div class = 'nav' id = "nav">
+	 <a href="/emojicloud">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	<a href="/compare">
+		<button class="btn btn-primary big-button next">Next</button>
+	</a>
+	</div>
+
+</div>
+<svg>
+  <clipPath id="myPath" clipPathUnits="objectBoundingBox">
+    <path d="M0.5,1
+      C 0.5,1,0,0.7,0,0.3
+      A 0.25,0.25,1,1,1,0.5,0.3
+      A 0.25,0.25,1,1,1,1,0.3
+      C 1,0.7,0.5,1,0.5,1 Z" />
+  </clipPath>
+</svg>

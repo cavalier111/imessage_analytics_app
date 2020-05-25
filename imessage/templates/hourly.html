@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<!-- <script src="{% static 'admin/js/weekday_hour.js' %}"></script> -->
+</head>
+
+<body scroll="no" style="overflow: hidden; background-color: black;" >
+<!-- <div style = "background-color: black; height: 650px"> -->
+
+
+{% include "navBar.html" %}
+
+<div id="data">
+	<h1 style = "text-align: center; color: grey;">Which hours of the day do we text most frequently? </h1>
+
+
+
+	<div style = "display: flex; align-items: center; justify-content: center;">
+			<video id = "vid" muted style="width:85%">
+	  			<source src="{% static 'admin/img/hourly_graph.mp4' %}" type="video/mp4">
+			</video>
+	</div>
+</div>
+
+</body>
+<div class = 'nav' id = "nav"  style="background: #f2f2f2;">
+	 <a href="/daily">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	<a href="/polWeekDay">
+		<button class="btn btn-primary big-button next">Next</button>
+	</a>
+	</div>
+
+
+</html>

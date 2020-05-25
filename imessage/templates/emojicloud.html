@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+</head>
+<body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
+
+{% include "navBar.html" %}
+
+<div id = "header">
+	<h1 style = "text-align: center; color: grey;"> How we illustrate </h1>
+	<h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
+</div>
+<div id = "data">
+<div class="graphsWord"  id = "stopSection">
+	<div class="graph">
+		<img class="emojicloudsloth"  id ="wordcloud" src= "{% static 'admin/img/emojiCloud.png' %}">
+	</div>
+	<div class="graph">
+		<img class="emojiBar" id ="wordbar" src= "{% static 'admin/img/emojiBar.png' %}">
+	</div>
+</div>
+</div>
+<div class = 'nav' id = "nav">
+	 <a href="/wordcloud">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	<a href="/tapbacks">
+		<button class="btn btn-primary big-button next">Next</button>
+	</a>
+	</div>
+</body>
+</html>

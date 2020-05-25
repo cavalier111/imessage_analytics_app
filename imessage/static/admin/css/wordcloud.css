@@ -1,0 +1,176 @@
+.center {
+  display: block;
+  margin-left: 0;
+  margin-right: auto;
+  width: 10%;
+}
+
+.wordcloudsloth {
+  width: 80%;}
+
+.emojicloudsloth {
+  width: 75%;}
+
+.big-button {
+	width: 250px;
+	position: absolute; 
+	bottom: 10px;
+}
+.next {
+	right: 10px;
+}
+
+.back {
+	left: 10px;
+
+}
+.wordBar {
+	width:70%;
+}
+.emojiBar {
+	width:80%;
+}
+
+.nav{ 
+display: flex; }
+
+.graphsWord {
+  display: flex;
+
+}
+
+/* Create three equal columns that sits next to each other */
+.graph {
+  flex: 100%;
+  padding: 5px;
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.tapcontainer {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.tap::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.tapback {
+	margin-bottom: 10px; margin-left: 1300px;
+}
+.tapmetric {
+  font-family: 'AppleGothic';
+  font-size: 10px;
+}
+.tapdata {
+  display: flex;
+    /*justify-content: space-evenly;*/
+}
+
+.taptitle {
+  font-family: 'AppleGothic';
+    font-size: 20px;
+  color: grey;
+  padding-right:270px;
+}
+.typetapcontainer {
+  display: grid;
+}
+
+.piecompare {
+  width: 80%;
+}
+.piecompareB {
+  width: 80%;
+}
+.piecontainer {
+  display: grid;
+  justify-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.piecontainerB {
+  display: grid;
+  justify-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+#grow {
+  
+  animation-name: stretch;
+  animation-duration: 1.5s; 
+  animation-timing-function: ease-out; 
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-fill-mode: none;
+  animation-play-state: running;
+}
+
+@keyframes stretch {
+  0% {
+    transform: scale(.1);
+    border-radius: 100%;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.dropdown-menu-center {
+    right: auto;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
+
+.btn-xl {
+    padding: 10px 20px;
+    font-size: 40px;
+    border-radius: 10px;
+    width:60%;    
+    height:30%; 
+}
+
+
+.button {
+    position: absolute;
+    top: 40%;
+}
+
+
+.buttonB {
+    padding: 10px 20px;
+    font-size: 40px;
+    border-radius: 10px;
+    width:40%;    
+    height:20%; 
+    position: absolute;
+    top: 10%;
+    right: 10%;
+}
+
+.linkEnter, .linkEnter:link, .linkEnter:visited {
+  color: white;
+      text-decoration: none;
+
+   padding: 10px 20px;
+    font-size: 40px;
+    border-radius: 10px;
+    height:20%; 
+    position: absolute;
+    top: 10%;
+    right: 10%;
+}
+
+

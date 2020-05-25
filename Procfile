@@ -1,0 +1,1 @@
+web: gunicorn imessage_analytics_app.wsgi

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<script src="{% static 'admin/js/compare.js' %}"></script>
+</head>
+<body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
+
+{% include "navBar.html" %}
+
+<div id = "header">
+	<h1 style = "text-align: center; color: grey;"> Let's Compare </h1>
+</div>
+<div id = "all">
+<div style = "display: flex;" id = "pieA">
+	<img class = "piecompare" id="Messages" style = "width: 20%;
+    height: 20%;
+    flex-shrink: 0;
+    margin-top: 150px;" src="{% static 'admin/img/Messages copy.png' %}">
+	<div class = "piecontainer">
+		<img class = "piecompare" id="Texts" style = "grid-column-start: 1;" src="{% static 'admin/img/Texts copy.png' %}">
+		<img class = "piecompare" id="Words" src="{% static 'admin/img/Words copy.png' %}">
+
+		<img class = "piecompare" id="Emojis" src="{% static 'admin/img/Emojis copy.png' %}">
+
+		<img class = "piecompare" id="Tapbacks" src="{% static 'admin/img/Tapbacks copy.png' %}">
+		<img class = "piecompare" id = "Images" src="{% static 'admin/img/Images copy.png' %}">
+		<img class = "piecompare" id="Links" src="{% static 'admin/img/Links and ImessageApps copy.png' %}">
+	</div>
+
+</div>
+
+<div style = "display: flex;" id = "pieB">
+	<img class = "piecompareB" id="Messages" style = "width: 20%;
+    height: 20%;
+    flex-shrink: 0;
+    margin-top: 150px;" src="{% static 'admin/img/Messages.png' %}">
+	<div class = "piecontainer" >
+		
+		<img class = "piecompareB" id="Texts" style = "grid-column-start: 1;" src="{% static 'admin/img/Texts.png' %}">
+		
+		<img class = "piecompareB" id="Words" src="{% static 'admin/img/Words.png' %}">
+
+		<img class = "piecompareB" id="Emojis" src="{% static 'admin/img/Emojis.png' %}">
+
+		<img class = "piecompareB" id="Tapbacks" src="{% static 'admin/img/Tapbacks.png' %}">
+		<img class = "piecompareB" id = "Images" src="{% static 'admin/img/Images.png' %}">
+		<img class = "piecompareB" id="Links" src="{% static 'admin/img/Links and ImessageApps.png' %}">
+	</div>
+</div>
+
+</div>
+
+<div class = 'nav' id = "nav">
+	 <a href="/tapbacks">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	<a href="/calmap">
+		<button class="btn btn-primary big-button next">Next</button>
+	</a>
+	</div>
+
+</div>

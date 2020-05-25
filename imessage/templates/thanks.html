@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	{% include "base.html" %}
+	<!-- <script src="{% static 'admin/js/weekday_hour.js' %}"></script> -->
+
+</head>
+<script> $("#thnks").fadeIn(slow) </script>
+
+<body scroll="no" style="overflow: hidden; background-color: white;" >
+
+
+{% include "navBar.html" %}
+
+<div id="data">
+
+
+
+	<div style = "display: flex; align-items: center; flex-direction: column;">
+		<h2 id = "thnks" style = "font-size: 30px; padding-top:20%"> Thanks for visiting </h2>
+	</div>
+</div>
+
+</body>
+<div class = 'nav' id = "nav"  style="background: #f2f2f2;">
+	 <a href="/polWeek">
+		<button class="btn btn-primary big-button back">Back</button>
+	</a>
+	</div>
+
+
+</html>
