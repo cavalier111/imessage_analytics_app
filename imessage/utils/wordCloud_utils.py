@@ -13,6 +13,9 @@ def getTextFrequencyDictForText(texts):
     wordsList = []
     for text in texts:
         wordsList += [alphaNumeric(word).lower() for word in text['text'].split()]
+    # for word in genExample():
+    #     wordsList.append(alphaNumeric(word).lower())
+    wordsList.remove('')
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
@@ -42,3 +45,8 @@ def getStopWords():
                        "gonna", "going", "ok"}
     stop_words |= extra_stop_words
     return stop_words
+
+
+
+
+
