@@ -7,7 +7,7 @@ import csv, io
 from django.contrib import messages
 from .models import Texts
 from .utils.wordCloud_utils import getTextFrequencyDictForText
-
+import json
 # Create your views here.
 # one parameter named request
 def texts_upload(request):
@@ -49,8 +49,8 @@ def success(request):
 	return render(request, 'success.html')
 
 def wordcloud(request):
-	print(getTextFrequencyDictForText('hello I like cheese'))
-	return render(request, 'wordcloud.html')
+	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'))
+	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list })
 
 def emojicloud(request):
 	return render(request, 'emojicloud.html')

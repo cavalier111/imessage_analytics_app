@@ -1,43 +1,21 @@
+
 $(document).ready(function(){
-	$('#subjectiveSection').hide();
-		$('#polaritySection').hide();
-	  	$( "#unfilteredSection" ).hide();
-	$("#header").hide();
-	 $("#data").hide();
-	 $("#nav").hide();
-	 $("#header").fadeIn(3000);
-	 $("#data").delay(4000).fadeIn(3000);
-	 $("#nav").delay(6000).fadeIn(3000);
-
-	$( "#stop" ).click(function() {
-		$( "#stopSection" ).show();
-		$('#subjectiveSection').hide();
-		$('#polaritySection').hide();
-	  	$( "#unfilteredSection" ).hide();
-	  	$("#filter").html("Filter: Stop Words");
-	});
-	$( "#unfiltered" ).click(function() {
-		$( "#stopSection" ).hide();
-		$('#subjectiveSection').hide();
-		$('#polaritySection').hide();
-	  	$( "#unfilteredSection" ).show();
-	  	$("#filter").html("Filter: None");
-
-	});
-	$( "#polarity" ).click(function() {
-		$( "#stopSection" ).hide();
-		$('#subjectiveSection').hide();
-		$('#polaritySection').show();
-	  	$( "#unfilteredSection" ).hide();
-	  	$("#filter").html("Filter: High Polarity");
-
-	});
-	$( "#subjectivity" ).click(function() {
-		$( "#stopSection" ).hide();
-		$('#subjectiveSection').show();
-		$('#polaritySection').hide();
-	  	$( "#unfilteredSection" ).hide();
-	  	$("#filter").html("Filter: High Subjectivity");
-
-	});
+	WordCloud(
+		document.getElementById('canvas'),
+		{
+			list: JSON.parse(document.getElementById('frequency-list').textContent),
+		  	gridSize: Math.round(16 * $('#canvas').width() / 1024),
+			weightFactor: function (size) {
+				return Math.pow(size, 5) * $('#canvas').width() / 1024;
+			},
+			fontFamily: 'Times, serif',
+			  color: function (word, weight) {
+			    return (weight === 500) ? '#f02222' : '#c09292';
+			  },
+			  rotateRatio: 0.5,
+			  rotationSteps: 2,
+			  backgroundColor: '#f2f2f2'
+		}
+		);
+	console.log(document.getElementById('frequency-list').textContent);
 });

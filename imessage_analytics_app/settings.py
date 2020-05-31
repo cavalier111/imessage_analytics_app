@@ -41,6 +41,13 @@ INSTALLED_APPS = [
     'imessage.apps.ImessageConfig',
 ]
 
+INSTALLED_APPS += (
+    'compressor',
+    'compressor_toolkit',
+)
+
+# COMPRESS_ENABLED = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -121,6 +128,25 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 SESSION_COOKIE_AGE = 20*60
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 APPEND_SLASH = True
-
+# STATICFILES_FINDERS = (
+#     'compressor.finders.CompressorFinder',
+# )
+print(    os.path.join(BASE_DIR, 'static'))
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'node_modules'),
+)
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
+    'compressor.filters.template.TemplateFilter'
+]
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.jsmin.JSMinFilter',
+]
+COMPRESS_PRECOMPILERS = (
+    ('module', 'compressor_toolkit.precompilers.ES6Compiler'),
+    ('css', 'compressor_toolkit.precompilers.SCSSCompiler'),
+)

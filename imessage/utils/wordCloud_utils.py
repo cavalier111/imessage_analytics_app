@@ -7,25 +7,37 @@ import os
 import re
 
 
-def getTextFrequencyDictForText(sentence):
-    stop_words = getStopWords();
-    fullTermsDict = Counter(sentence.lower().split())
-    returnDict = {}
+def getTextFrequencyDictForText(texts):
+    stop_words = getStopWords()
+    alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
+    wordsList = []
+    for text in texts:
+        wordsList += [alphaNumeric(word).lower() for word in text['text'].split()]
+    fullTermsDict = Counter(wordsList)
+    frequencyList = []
     for key, value in fullTermsDict.items():
         if key in stop_words:
             continue
         else:
-            returnDict[key] = value
-    return returnDict
+            frequencyList.append([key,value])
+    print(texts, frequencyList)
+    return frequencyList
 
 def getStopWords():
-    alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
+    #get list stop words txt file
     module_dir = os.path.dirname(__file__)   #get current directory
-    file_path = os.path.join(module_dir, 'terrier-stop.txt') 
-    stop_words_punctuation=set(stopwords.words("english")) | set(open(file_path, "r").read().split())
+    stop_words_file_path = os.path.join(module_dir, 'terrier-stop.txt') 
+
+    #combine nltk stop wirds with extra stop words from text file
+    stop_words_punctuation=set(stopwords.words("english")) | set(open(stop_words_file_path, "r").read().split())
+
+    #replace stop words with alphanumeric version
+    alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
     stop_words = set()
     for word in stop_words_punctuation:
         stop_words.add(alphaNumeric(word))
+
+    #join stop words with some more
     extra_stop_words = {"a","the","an","the","to","in","for","of","or","by","with","is","on","that","be","was","this","it","said","from","have","get","yea",
                        "gonna", "going", "ok"}
     stop_words |= extra_stop_words
