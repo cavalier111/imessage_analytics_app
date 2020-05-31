@@ -6,6 +6,7 @@ from django.conf import settings
 import csv, io
 from django.contrib import messages
 from .models import Texts
+from .utils.wordCloud_utils import getTextFrequencyDictForText
 
 # Create your views here.
 # one parameter named request
@@ -48,6 +49,7 @@ def success(request):
 	return render(request, 'success.html')
 
 def wordcloud(request):
+	print(getTextFrequencyDictForText('hello I like cheese'))
 	return render(request, 'wordcloud.html')
 
 def emojicloud(request):
