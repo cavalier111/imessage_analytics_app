@@ -4,9 +4,15 @@
 	{% load static %}
 	{% include "base.html" %}
 	{{ freqeuncy_list |json_script:"frequency-list" }}
+	<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Load d3-cloud -->
+<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
 	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
 	<script src="{% static 'wordcloud/src/wordcloud2.js' %}"></script>
+
 </head>
 <body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
 
@@ -17,7 +23,6 @@
 <h1 style = "text-align: center; color: grey;"> Our favorite words {{ gen }} </h1>
 <h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
 <p style = "text-align: center; color: grey;" id = "filter"> Filter: stop words</p>
-<p style = "text-align: center; color: grey;" id = "count-box"></p>
 <!-- <div class = "dropdown-menu dropdown-menu-center">
 	<div class="dropdown btn-group">
 	  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -34,36 +39,10 @@
 </div>
 
 <div id = "data">
-<div class="graphsWord"  id = "stopSection">
-	<div class="graph">
-		<canvas id="canvas" class="canvas" width="2340" height="800" style="width: 1170px; height: 400px;"></canvas>
-	</div>
+	<a href="#" data-toggle="tooltip" class = "count-box"></a>
+	<canvas id="canvas" class="canvas" width="1500" height="800" style="width: 750px; height: 400px;"></canvas>
 </div>
-<!-- <div class="graphsWord" id = "unfilteredSection">
-	<div class="graph">
-		<img class="wordcloudsloth"  id ="wordcloud" src=  '../static/admin/img/unfilteredWordCloud.png'>
-	</div>
-	<div class="graph">
-		<img class="wordBar" id ="wordbar" src= '../static/admin/img/unfilteredWordBar.png'>
-	</div>
-</div>
-<div class="graphsWord" id = "polaritySection">
-	<div class="graph">
-		<img class="wordcloudsloth"  id ="wordcloud" src=  '../static/admin/img/polarityWordCloud.png'>
-	</div>
-	<div class="graph">
-		<img class="wordBar" id ="wordbar" src= '../static/admin/img/polarityWordBar.png'>
-	</div>
-</div>
-<div class="graphsWord" id = "subjectiveSection">
-	<div class="graph">
-		<img class="wordcloudsloth"  id ="wordcloud" src=  '../static/admin/img/subjectivityWordCloud.png'>
-	</div>
-	<div class="graph">
-		<img class="wordBar" id ="wordbar" src= '../static/admin/img/subjectiveWordBar.png'>
-	</div>
-</div> -->
-</div>
+
 <div class = 'nav' id = "nav">
 	 <a href="/">
 		<button class="btn btn-primary big-button back">Back</button>
