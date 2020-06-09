@@ -24,9 +24,9 @@ def texts_upload(request):
 		return render(request, template, prompt)
 	csv_file = request.FILES['file']
 	# let's check if it is a csv file
-	if not csv_file.name.endswith('.csv'):
-		messages.error(request, 'File must be csv, please try again with a csv file')
-		return render(request, template, prompt)
+	# if not csv_file.name.endswith('.csv'):
+	# 	messages.error(request, 'File must be csv, please try again with a csv file')
+	# 	return render(request, template, prompt)
 	data_set = csv_file.read().decode('UTF-8')
 	# setup a stream which is when we loop through each line we are able to handle a data in a stream
 	io_string = io.StringIO(data_set)
