@@ -3,31 +3,48 @@
 <head>
 	{% load static %}
 	{% include "base.html" %}
+	{{ freqeuncy_list |json_script:"frequency-list" }}
+	<script src="https://d3js.org/d3.v4.js"></script>
+	<!-- Load d3-cloud -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
+
 </head>
 <body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
 
 {% include "navBar.html" %}
 
 <div id = "header">
-	<h1 style = "text-align: center; color: grey;"> How we illustrate </h1>
-	<h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
+
+<h1 style = "text-align: center; color: grey;"> Our favorite words {{ gen }} </h1>
+<h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
+<p style = "text-align: center; color: grey;" id = "filter"> Filter: stop words</p>
+<!-- <div class = "dropdown-menu dropdown-menu-center">
+	<div class="dropdown btn-group">
+	  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	    Filter Type
+	  </button>
+	  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	    <button id = "stop" class="dropdown-item" >Stop Words</button>
+	    <button id = "unfiltered" class="dropdown-item" >Unfiltered</button>
+	    <button id = "polarity" class="dropdown-item" >High Polarity</button>
+	    <button id = "subjectivity" class="dropdown-item" >High Subjectivity</button>
+	  </div>
+	</div>
+</div> -->
 </div>
+
 <div id = "data">
-<div class="graphsWord"  id = "stopSection">
-	<div class="graph">
-		<img class="emojicloudsloth"  id ="wordcloud" src= "{% static 'admin/img/emojiCloud.png' %}">
-	</div>
-	<div class="graph">
-		<img class="emojiBar" id ="wordbar" src= "{% static 'admin/img/emojiBar.png' %}">
-	</div>
+	<div id="my_dataviz"></div>
+	<a href="#" data-toggle="tooltip" class = "count-box"></a>
 </div>
-</div>
+
 <div class = 'nav' id = "nav">
-	 <a href="/wordcloud">
+	 <a href="/">
 		<button class="btn btn-primary big-button back">Back</button>
 	</a>
-	<a href="/tapbacks">
+	<a href="/emojicloud">
 		<button class="btn btn-primary big-button next">Next</button>
 	</a>
 	</div>

@@ -50,10 +50,11 @@ def success(request):
 
 def wordcloud(request):
 	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'))
-	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list })
+	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": False  })
 
 def emojicloud(request):
-	return render(request, 'emojicloud.html')
+	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'), True)
+	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": True })
 
 def tapbacks(request):
 	return render(request, 'tapbacks.html')

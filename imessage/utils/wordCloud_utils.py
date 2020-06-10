@@ -5,17 +5,22 @@ import nltk
 from nltk.corpus import stopwords
 import os
 import re
+import emoji
 
 
-def getTextFrequencyDictForText(texts):
+def getTextFrequencyDictForText(texts, isEmoji = False):
     stop_words = getStopWords()
     alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
     wordsList = []
-    for text in texts:
-        wordsList += [alphaNumeric(word).lower() for word in text['text'].split()]
+    if not isEmoji:
+        for text in texts:
+            wordsList += [removeEmoji(alphaNumeric(word).lower()) for word in text['text'].split()]
+    else:
+        for text in texts:
+            wordsList += [char for char in text['text'] if char in emoji.UNICODE_EMOJI]
     for word in genExample():
         wordsList.append(alphaNumeric(word).lower())
-    wordsList.remove('')
+    if '' in wordsList: wordsList.remove('')
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
@@ -45,6 +50,17 @@ def getStopWords():
                        "gonna", "going", "ok"}
     stop_words |= extra_stop_words
     return stop_words
+
+def removeEmoji(string):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', string)
 
 def genExample():
     x = "In some ways, podcasts are among the most quarantine-proof forms of entertainment right now. Maybe some bigger hosts have been forced to move their microphones and wall padding to a home office, or they're now hiding in closets for better sound quality (but not as an anxious reaction to terrifying and confusing news headlines). But that doesn't mean all podcasts currently in production are a perfect fit for a nerd's listening diet, whether because they're too flippant or too doom-and-gloom. In my case, at least, I seek a mix of emotional support, comfort, and normalcy in my regular podcast library. Hence, I'm recommending the five podcasts below as my favorites if you're looking for that much-needed connection to the outside world. (These are in addition to other podcasts I've previously recommended at Ars.)" 

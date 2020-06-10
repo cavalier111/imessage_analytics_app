@@ -4,12 +4,15 @@
 	{% load static %}
 	{% include "base.html" %}
 	{{ freqeuncy_list |json_script:"frequency-list" }}
+	{{ emoji | json_script:"emoji" }}
 	<script src="https://d3js.org/d3.v4.js"></script>
 	<!-- Load d3-cloud -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
 	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
-
+<style>
+  text:hover { opacity: .7 !important; }
+</style>
 </head>
 <body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
 
