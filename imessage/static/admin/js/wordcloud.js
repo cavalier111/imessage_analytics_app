@@ -1,17 +1,24 @@
 
 $(document).ready(function(){
-	var frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
-	// frequencyList.push({"text": String.fromCodePoint(0x1F618), "value": 10})
+	// var frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
 
 	 //generating test data randomly
-	// for (var i = 0; i <500; i++) { 
-	// 	 // frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
+	// for (var i = 0; i <1000; i++) { 
+	// 	// frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
+	// }
+
+	//generating emoji test data randomly
+	// var emojRange = [
+	//   [128513, 128591], [9986, 10160], [128640, 128704]
+	// ];
+	// for (var i = 0; i < emojRange.length; i++) {
+	//   var range = emojRange[i];
+	//   for (var x = range[0]; x < range[1]; x++) {
+	//   	frequencyList.push({"text":String.fromCodePoint("0x" + x.toString(16)), value: Math.floor(Math.random() * 50)});
+	//   }
 	// }
 	//generating test data manually
  	// frequencyList.push({"text":"abcd", value: 50});
- 
-
-
  	//set margins
 	var margin = {top: 20, right: 20, bottom: 40, left: 20},
     width = 1200 - margin.left - margin.right,
@@ -21,14 +28,16 @@ $(document).ready(function(){
 	var svg = d3.select("#my_dataviz").append("svg")
   		.attr("width", width + margin.left + margin.right)
 	 	.attr("height", height + margin.top + margin.bottom)
+	 	.call(d3.zoom().on("zoom", function () {
+       		svg.attr("transform", d3.event.transform)
+    	}))
 		.append("g")
 	 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 	//set up wordcloud
   	var wordcloud = svg.append("g")
       .attr('class','wordcloud')
       .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
-	
+
 	//function for text color 
 	var fill = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -72,25 +81,33 @@ $(document).ready(function(){
 			       	return findMaxLayout(max_font_size + 5);
 	      		}
 	      		//otherwise, max size has been found, return out
-	       		else { return undefined; }
+	       		else { 		
+	       			return undefined;
+	       		}
       		})
       		.start()
 	}
 
 	function draw(words) {
-	    wordcloud.selectAll("text")
+		$("#loader").hide();
+	    let data = wordcloud.selectAll("text")
 	        .data(words)
 	      	.enter().append("text")
+	      	.transition().duration(2000).attr("transform", function(t) {
+        		return "translate(" + [t.x, t.y] + ")rotate(" + t.rotate + ")"
+   			}).on('end', function() {
+     			 d3.selectAll("text")
+     			 .on("mouseover", function(d){tooltip.text(d.text + " was used " + d.value + " times"); return tooltip.style("visibility", "visible");})
+		      	.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-40)+"px").style("left",(d3.event.pageX)+"px");})
+		      	.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+		     })
 	        .attr('class','word')
 	        .style("font-size", function(d) { return d.size + "px"; })
 			.style('font-family', 'monospace')
 	       	.style("fill", (d, i) => fill(i))
 	        .attr("text-anchor", "middle")
 	        .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
-	        .text(function(d) { return d.text; })
-	        .on("mouseover", function(d){tooltip.text(d.text + " was used " + d.value + " times"); return tooltip.style("visibility", "visible");})
-	      	.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-40)+"px").style("left",(d3.event.pageX)+"px");})
-	      	.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+	        .text(function(d) { return d.text; });
 	  };
 
 	findMaxLayout(5);
@@ -98,5 +115,6 @@ $(document).ready(function(){
 	maxLayout
 		.on("end", draw)
 		.start();
+
 
 });

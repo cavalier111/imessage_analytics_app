@@ -8,7 +8,9 @@
 	<script src="https://d3js.org/d3.v4.js"></script>
 	<!-- Load d3-cloud -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transition/1.1.1/d3-transition.min.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<link rel="stylesheet" href="{% static 'admin/css/loader.css' %}">
 	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
 <style>
   text:hover { opacity: .7 !important; }
@@ -37,6 +39,7 @@
 	</div>
 </div> -->
 </div>
+<div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
 
 <div id = "data">
 	<div id="my_dataviz"></div>
