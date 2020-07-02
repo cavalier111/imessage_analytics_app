@@ -9,6 +9,7 @@
 	<!-- Load d3-cloud -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transition/1.1.1/d3-transition.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/loader.css' %}">
 	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
@@ -20,11 +21,15 @@
 
 {% include "navBar.html" %}
 
-<div id = "header">
+<div id = "header"  style = "display: flex;  align-items: center; flex-direction: column;">
 
 <h1 style = "text-align: center; color: grey;"> Our favorite words {{ gen }} </h1>
 <h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
 <p style = "text-align: center; color: grey;" id = "filter"> Filter: stop words</p>
+<div id="buttons" style = "display: flex; visibility: hidden">
+	<button type="button" class="btn btn-outline-primary btn-sm" id="download" style = "text-align: center;margin-right: 50px">Save Wordcloud</button>
+	<button type="button" class="btn btn-outline-primary btn-sm" id="reset" style = "text-align: center;">Reset Zoom</button>
+</div>
 <!-- <div class = "dropdown-menu dropdown-menu-center">
 	<div class="dropdown btn-group">
 	  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
