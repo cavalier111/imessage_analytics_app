@@ -2,9 +2,9 @@
 $(document).ready(function(){
 	var frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
 
-	 //generating test data randomly
+	 // generating test data randomly
 	// for (var i = 0; i <1000; i++) { 
-	// 	// frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
+	// 	frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
 	// }
 
 	//generating emoji test data randomly
@@ -34,10 +34,10 @@ $(document).ready(function(){
 	var svg = d3.select("#my_dataviz").append("svg")
   		.attr("width", width + margin.left + margin.right)
 	 	.attr("height", height + margin.top + margin.bottom)
+	 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	 	.attr("id", "svg")
 	 	.call(zoom)
-		.append("g")
-	 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		.append("g");
 
 	//set up wordcloud
   	var wordcloud = svg.append("g")
@@ -48,17 +48,20 @@ $(document).ready(function(){
 	var fill = d3.scaleOrdinal(d3.schemeCategory20);
 
 	//tooltip to show word count on hover
+
 	var tooltip = d3.select("body")
 	    .append("div")
+	    .attr("id", "tooltip")
 	    .style("position", "absolute")
 	    .style("z-index", "10")
 	    .style("visibility", "hidden")
-	    .style("background-color", "black")
+	    .style("background-color", "#007bff")
 	    // .style("width", "120px")
 	    .style("color", "#fff")
 	    .style("text-align", "center")
 	    .style("border-radius", "6px")
-	    .style("padding", "5px 0")
+	    .style("padding", "5px")
+	   	.style("opacity", "1")
 
 	var maxLayout;
 
@@ -104,8 +107,16 @@ $(document).ready(function(){
         		return "translate(" + [t.x, t.y] + ")rotate(" + t.rotate + ")"
    			}).on('end', function() {
      			 d3.selectAll("text")
-	     			.on("mouseover", function(d){tooltip.text(d.text + " was used " + d.value + " times"); return tooltip.style("visibility", "visible");})
-			      	.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-40)+"px").style("left",(d3.event.pageX)+"px");})
+	     			.on("mouseover", function(d){
+	     				const toolTipText = d.text + " was used " + d.value + " times";
+	     				tooltip.text(toolTipText); 
+	     				document.getElementById("tooltip").className = "tooltip";
+	     				return tooltip.style("visibility", "visible");}
+	     			)
+			      	.on("mousemove", function(d){
+						const tooltipWidth = document.getElementById('tooltip').offsetWidth;
+			      		return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX- tooltipWidth/2)+"px");
+			      	})
 			      	.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 		     })
 	        .attr('class','word')
@@ -126,9 +137,7 @@ $(document).ready(function(){
 
 	// reset the zoom and use html2canvas to download
 	document.getElementById("download").onclick = () => {
-		svg.transition()
-		    .duration(500)
-		    .call(zoom.transform, d3.zoomIdentity);
+		zoom.transform(d3.select("#my_dataviz").select('svg'), d3.zoomIdentity.scale(1));
 		html2canvas(
 			document.querySelector("#my_dataviz"),
 			{ width: width, height: height, scale: "5", backgroundColor: "#f2f2f2"}
@@ -149,13 +158,11 @@ $(document).ready(function(){
 
 	    } else {
 	        window.open(uri);
-    }
-}
+    	}
+	}
 
 	document.getElementById("reset").onclick = () => {
-		svg.transition()
-		    .duration(500)
-		    .call(zoom.transform, d3.zoomIdentity);
+		zoom.transform(d3.select("#my_dataviz").select('svg'), d3.zoomIdentity.scale(1));
 	}
 
 

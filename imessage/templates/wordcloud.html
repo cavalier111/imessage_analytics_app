@@ -11,8 +11,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transition/1.1.1/d3-transition.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
+	<link rel="stylesheet" href="{% static 'admin/css/barChart.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/loader.css' %}">
-	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
+	<!-- <script src="{% static 'admin/js/wordcloud.js' %}"></script> -->
+	<script src="{% static 'admin/js/barChart.js' %}"></script>
 <style>
   text:hover { opacity: .7 !important; }
 </style>
@@ -44,11 +46,17 @@
 	</div>
 </div> -->
 </div>
-<div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
+<!-- <div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
+ -->
+<div id = "data"  style="display: flex; justify-content: space-around;">
+	<!-- <div id="my_dataviz" style="display: flex; justify-content: center"></div> -->
+	 <div id="barChart"></div>
 
-<div id = "data">
-	<div id="my_dataviz"></div>
-	<a href="#" data-toggle="tooltip" class = "count-box"></a>
+	<!-- <div id='layout'>
+	    <div id='container'>
+	      <svg viewBox='0 0 750 500'/>
+	    </div>
+  	</div> -->
 </div>
 
 <div class = 'nav' id = "nav">
