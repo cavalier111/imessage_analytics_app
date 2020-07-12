@@ -1,7 +1,17 @@
 
+var zoom,
+	wordcloud,
+	maxLayout,
+	fill,
+	margin = {top: 20, right: 20, bottom: 40, left: 20},
+	width = 1200 - margin.left - margin.right,
+	height = 450 - margin.top - margin.bottom;
+
 $(document).ready(function(){
 	var frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
-
+	window.onload = function() {
+		document.getElementById("totalWords").textContent = frequencyList.length;
+	}
 	 // generating test data randomly
 	// for (var i = 0; i <1000; i++) { 
 	// 	frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
@@ -20,15 +30,13 @@ $(document).ready(function(){
 	//generating test data manually
  	// frequencyList.push({"text":"abcd", value: 50});
  	//set margins
-	var margin = {top: 20, right: 20, bottom: 40, left: 20},
-    width = 1200 - margin.left - margin.right,
-    height = 450 - margin.top - margin.bottom;
 
 
+
+	zoom = d3.zoom().on("zoom", zoomed);
 	function zoomed() {
 	  svg.attr("transform", d3.event.transform)
 	}
-	var zoom = d3.zoom().on("zoom", zoomed);
 
     //set up svg
 	var svg = d3.select("#my_dataviz").append("svg")
@@ -40,12 +48,12 @@ $(document).ready(function(){
 		.append("g");
 
 	//set up wordcloud
-  	var wordcloud = svg.append("g")
+  	wordcloud = svg.append("g")
       .attr('class','wordcloud')
       .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
 
 	//function for text color 
-	var fill = d3.scaleOrdinal(d3.schemeCategory20);
+	fill = d3.scaleOrdinal(d3.schemeCategory20);
 
 	//tooltip to show word count on hover
 
@@ -54,7 +62,7 @@ $(document).ready(function(){
 	    .attr("id", "tooltip")
 	    .style("position", "absolute")
 	    .style("z-index", "10")
-	    .style("visibility", "hidden")
+    	.style("display", "none")
 	    .style("background-color", "#007bff")
 	    // .style("width", "120px")
 	    .style("color", "#fff")
@@ -62,8 +70,6 @@ $(document).ready(function(){
 	    .style("border-radius", "6px")
 	    .style("padding", "5px")
 	   	.style("opacity", "1")
-
-	var maxLayout;
 
 	//recursive function to find maximum layout of cloud that fits all words
 	function findMaxLayout(max_font_size) {
@@ -97,37 +103,6 @@ $(document).ready(function(){
       		.start()
 	}
 
-	function draw(words) {
-		$("#loader").hide();
-		$("#buttons").css("visibility","visible");
-	    let data = wordcloud.selectAll("text")
-	        .data(words)
-	      	.enter().append("text")
-	      	.transition().duration(2000).attr("transform", function(t) {
-        		return "translate(" + [t.x, t.y] + ")rotate(" + t.rotate + ")"
-   			}).on('end', function() {
-     			 d3.selectAll("text")
-	     			.on("mouseover", function(d){
-	     				const toolTipText = d.text + " was used " + d.value + " times";
-	     				tooltip.text(toolTipText); 
-	     				document.getElementById("tooltip").className = "tooltip";
-	     				return tooltip.style("visibility", "visible");}
-	     			)
-			      	.on("mousemove", function(d){
-						const tooltipWidth = document.getElementById('tooltip').offsetWidth;
-			      		return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX- tooltipWidth/2)+"px");
-			      	})
-			      	.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
-		     })
-	        .attr('class','word')
-	        .style("font-size", function(d) { return d.size + "px"; })
-			.style('font-family', 'monospace')
-	       	.style("fill", (d, i) => fill(i))
-	        .attr("text-anchor", "middle")
-	        .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
-	        .text(function(d) { return d.text; });
-	  };
-
 	findMaxLayout(5);
 
 	maxLayout
@@ -135,35 +110,37 @@ $(document).ready(function(){
 		.start();
 
 
-	// reset the zoom and use html2canvas to download
-	document.getElementById("download").onclick = () => {
-		zoom.transform(d3.select("#my_dataviz").select('svg'), d3.zoomIdentity.scale(1));
-		html2canvas(
-			document.querySelector("#my_dataviz"),
-			{ width: width, height: height, scale: "5", backgroundColor: "#f2f2f2"}
-		).then(function(canvas) {
-        	saveAs(canvas.toDataURL(), 'MessagesWordCloud.png');
-		});
-	}
-
-
-	function saveAs(uri, filename) {
-	    var link = document.createElement('a');
-	    if (typeof link.download === 'string') {
-	        link.href = uri;
-	        link.download = filename;
-	        document.body.appendChild(link)
-	        link.click();
-	        document.body.removeChild(link);
-
-	    } else {
-	        window.open(uri);
-    	}
-	}
-
-	document.getElementById("reset").onclick = () => {
-		zoom.transform(d3.select("#my_dataviz").select('svg'), d3.zoomIdentity.scale(1));
-	}
-
-
 });
+
+
+function draw(words) {
+	$("#loader").hide();
+	$("#buttons").css("visibility","visible");
+	const tooltip = d3.select("#tooltip");
+    let data = wordcloud.selectAll("text")
+        .data(words)
+      	.enter().append("text")
+      	.transition().duration(2000).attr("transform", function(t) {
+    		return "translate(" + [t.x, t.y] + ")rotate(" + t.rotate + ")"
+			}).on('end', function() {
+ 			 d3.selectAll("text")
+     			.on("mouseover", function(d){
+     				const toolTipText = d.text + " was used " + d.value + " times";
+     				tooltip.text(toolTipText); 
+     				document.getElementById("tooltip").className = "tooltip";
+     				return tooltip.style("display", "inline-block");
+     			})
+		      	.on("mousemove", function(d){
+					const tooltipWidth = document.getElementById('tooltip').offsetWidth;
+		      		return tooltip.style("top", (d3.event.pageY-45)+"px").style("left",(d3.event.pageX- tooltipWidth/2)+"px");
+		      	})
+		      	.on("mouseout", function(){return tooltip.style("display", "none");});
+	     })
+        .attr('class','word')
+        .style("font-size", function(d) { return d.size + "px"; })
+		.style('font-family', 'monospace')
+       	.style("fill", (d, i) => fill(i))
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+        .text(function(d) { return d.text; });
+  };

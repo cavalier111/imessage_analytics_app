@@ -5,6 +5,8 @@
 	{% include "base.html" %}
 	{{ freqeuncy_list |json_script:"frequency-list" }}
 	{{ emoji | json_script:"emoji" }}
+	{% load compress %}
+	{% compress js/css %}
 	<script src="https://d3js.org/d3.v4.js"></script>
 	<!-- Load d3-cloud -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
@@ -13,24 +15,44 @@
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/barChart.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/loader.css' %}">
-	<!-- <script src="{% static 'admin/js/wordcloud.js' %}"></script> -->
+	<script src="{% static 'admin/js/wordcloud.js' %}"></script>
 	<script src="{% static 'admin/js/barChart.js' %}"></script>
+	<script src="{% static 'admin/js/wordsPage.js' %}"></script>
+	{% endcompress %}
 <style>
   text:hover { opacity: .7 !important; }
 </style>
 </head>
-<body scroll="no" style="overflow: hidden; background-color: #f2f2f2;" >
+<body scroll="no" style=" background-color: #f2f2f2;" >
 
 {% include "navBar.html" %}
 
-<div id = "header"  style = "display: flex;  align-items: center; flex-direction: column;">
+<div id = "header">
 
-<h1 style = "text-align: center; color: grey;"> Our favorite words {{ gen }} </h1>
-<h1 style = "text-align: center; color: grey;"> Total: placeholder </h1>
-<p style = "text-align: center; color: grey;" id = "filter"> Filter: stop words</p>
-<div id="buttons" style = "display: flex; visibility: hidden">
-	<button type="button" class="btn btn-outline-primary btn-sm" id="download" style = "text-align: center;margin-right: 50px">Save Wordcloud</button>
+<h1 id = "hey" style = "text-align: center; color: grey;"> Total Unique Words: <span id="totalWords"> </span> </h1>
+<!-- <script>
+	document.getElementById("totalWords").textContent = JSON.parse(document.getElementById('frequency-list').textContent.length;
+</script> -->
+<p style = "text-align: center; color: grey;     margin-bottom: 0;" id = "filter"> Filter: stop words</p>
+<div id="buttons" style = "display: flex; justify-content: space-evenly; align-items: center; visibility: hidden">
+	<button type="button" class="btn btn-outline-primary btn-sm" id="download" style = "text-align: center;margin-right: 50px">Save</button>
 	<button type="button" class="btn btn-outline-primary btn-sm" id="reset" style = "text-align: center;">Reset Zoom</button>
+	<button type="button" class="btn btn-outline-primary btn-sm" id="topTen" style = "text-align: center; display: none">Zoom to top 10</button>
+	<div>
+	<span>Visualization type:</span>
+	<div class="form-check">
+	  <input class="form-check-input" type="radio" name="vizOption" id="exampleRadios1" value="wordcloud" checked>
+	  <label class="form-check-label" for="exampleRadios1">
+	    Wordcloud
+	  </label>
+	</div>
+	<div class="form-check">
+	  <input class="form-check-input" type="radio" name="vizOption" id="exampleRadios2" value="bargraph">
+	  <label class="form-check-label" for="exampleRadios2">
+	    Bar Graph
+	  </label>
+	</div>
+	</div>
 </div>
 <!-- <div class = "dropdown-menu dropdown-menu-center">
 	<div class="dropdown btn-group">
@@ -46,10 +68,10 @@
 	</div>
 </div> -->
 </div>
-<!-- <div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
- -->
+<div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
+
 <div id = "data"  style="display: flex; justify-content: space-around;">
-	<!-- <div id="my_dataviz" style="display: flex; justify-content: center"></div> -->
+	<div id="my_dataviz" style="display: flex; justify-content: center"></div>
 	 <div id="barChart"></div>
 
 	<!-- <div id='layout'>
