@@ -38,7 +38,7 @@ $(document).ready(function() {
 		  		setZoomButton("#my_dataviz", zoom);
 		  		setSaveButton("#my_dataviz", zoom, width, height);
 				maxLayout
-			.		on("end", draw)
+			.		on("end", (words) => draw(words,false))
 					.start();
 		    }
   	});

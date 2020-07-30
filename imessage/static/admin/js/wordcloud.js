@@ -3,14 +3,16 @@ var zoom,
 	wordcloud,
 	maxLayout,
 	fill,
+	linearGradient,
+	frequencyList,
 	margin = {top: 20, right: 20, bottom: 40, left: 20},
 	width = 1200 - margin.left - margin.right,
 	height = 450 - margin.top - margin.bottom;
 
 $(document).ready(function(){
-	var frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
+	frequencyList = JSON.parse(document.getElementById('frequency-list').textContent);
 	window.onload = function() {
-		document.getElementById("totalWords").textContent = frequencyList.length;
+		document.getElementById("totalWords").textContent = frequencyList.length;			
 	}
 	 // generating test data randomly
 	// for (var i = 0; i <1000; i++) { 
@@ -36,6 +38,7 @@ $(document).ready(function(){
 	zoom = d3.zoom().on("zoom", zoomed);
 	function zoomed() {
 	  svg.attr("transform", d3.event.transform)
+
 	}
 
     //set up svg
@@ -53,7 +56,72 @@ $(document).ready(function(){
       .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
 
 	//function for text color 
-	fill = d3.scaleOrdinal(d3.schemeCategory20);
+
+	// fill = d3.scaleOrdinal(d3.schemeCategory20);
+	fill = d3.scaleOrdinal(d3.schemeCategory10);
+	console.log(fill.range());
+	//Container for the gradient
+	var defs = svg.append("defs");
+	//Append a linear horizontal gradient
+	linearGradient = defs.append("linearGradient")
+	    .attr("id","animate-gradient") //unique id for reference
+	    .attr("x1","0%")
+	    .attr("y1","0%")
+	    .attr("x2","1000%")
+	    .attr("y2","1000%")
+	    //Make sure the areas before 0% and after 100% (along the x)
+	    //are a mirror image of the gradient and not filled with the
+	    //color at 0% and 100%
+	    .attr("spreadMethod", "reflect");
+
+	// var colours = [
+	// // '#FF6633', '#FFB399','#3366E6', '#999966', '#4DB380', '#FF4D4D',
+	// 	  "#ff0000", "#ffa500", "#ffff00","#008000" ,"#0000ff" ,"#4b0082", "#ee82ee"
+	// ];
+
+	var colours = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+	var randomColors = [];
+	for (var i = 0; i <7; i++) {
+		randomColors.push(colours[Math.floor(Math.random()*colours.length)]);
+	}
+
+	//Append the colors evenly along the gradient
+	linearGradient.selectAll(".stop")
+	    .data(fill.range())
+	    .enter().append("stop")
+	    .attr("offset", function(d,i) { return i/(randomColors.length-1); })
+	    .attr("stop-color", function(d) { return d; });
+	linearGradient.append("animate")
+	    .attr("attributeName","x1")
+	    .attr("values","0%;2000%")
+	    .attr("dur","5s")
+	    .attr("repeatCount","0");
+	linearGradient.append("animate")
+	    .attr("attributeName","x2")
+	    .attr("values","1000%;3000%")
+	    .attr("dur","5s")
+	    .attr("repeatCount","0");
+
+	linearGradient.append("animate")
+	    .attr("attributeName","y1")
+	    .attr("values","0%;2000%")
+	    .attr("dur","5s")
+	    .attr("repeatCount","0");
+	linearGradient.append("animate")
+	    .attr("attributeName","y2")
+	    .attr("values","1000%;3000%")
+	    .attr("dur","5s")
+	    .attr("repeatCount","0");
+
 
 	//tooltip to show word count on hover
 
@@ -106,14 +174,34 @@ $(document).ready(function(){
 	findMaxLayout(5);
 
 	maxLayout
-		.on("end", draw)
+		.on("end", (words) => draw(words,true))
 		.start();
-
-
 });
 
 
-function draw(words) {
+function searchWords() {
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("searchBar");
+    filter = input.value.toLowerCase();
+    const results = fuzzysort.go(filter, frequencyList , {key:'text'});
+    results.forEach(result => {
+    	// Create Lis for search results
+		// var linkNode = document.createElement("a");         
+		// var node = document.createElement("LI");   
+		// node.appendChild(linkNode);
+		// node.style.display = "none";
+		// var textnode = document.createTextNode("hey");         
+		// linkNode.appendChild(textnode);
+		// document.getElementById("myUL").appendChild(node);
+	});
+
+	// first result and on click will have glow effect:
+	// const desiredElement = document.getElementById("cloudhey");	  
+	// desiredElement.classList.add("glow_animation");
+}
+
+
+function draw(words, colorAnimated) {
 	$("#loader").hide();
 	$("#buttons").css("visibility","visible");
 	const tooltip = d3.select("#tooltip");
@@ -137,10 +225,15 @@ function draw(words) {
 		      	.on("mouseout", function(){return tooltip.style("display", "none");});
 	     })
         .attr('class','word')
+        .attr('id', (d) => "cloud" + d.text)
         .style("font-size", function(d) { return d.size + "px"; })
 		.style('font-family', 'monospace')
-       	.style("fill", (d, i) => fill(i))
+		.style("fill", (d,i) => colorAnimated ? "url(#animate-gradient)" : fill(i))
         .attr("text-anchor", "middle")
         .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
         .text(function(d) { return d.text; });
+
+    if (colorAnimated) {
+    	setTimeout(() => { wordcloud.selectAll(".word").style("fill", (d, i) => fill(i))} ,5000);
+  	}
   };

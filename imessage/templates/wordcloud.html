@@ -12,6 +12,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transition/1.1.1/d3-transition.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+	<script src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"></script>
 	<link rel="stylesheet" href="{% static 'admin/css/wordcloud.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/barChart.css' %}">
 	<link rel="stylesheet" href="{% static 'admin/css/loader.css' %}">
@@ -23,18 +24,19 @@
   text:hover { opacity: .7 !important; }
 </style>
 </head>
-<body scroll="no" style=" background-color: #f2f2f2;" >
+<body scroll="no" style=" background-color: #f2f2f2; overflow: hidden" >
 
 {% include "navBar.html" %}
 
 <div id = "header">
 
-<h1 id = "hey" style = "text-align: center; color: grey;"> Total Unique Words: <span id="totalWords"> </span> </h1>
+<h1 style = "text-align: center; color: grey;"> Total Unique Words: <span id="totalWords"> </span> </h1>
 <!-- <script>
 	document.getElementById("totalWords").textContent = JSON.parse(document.getElementById('frequency-list').textContent.length;
 </script> -->
+
 <p style = "text-align: center; color: grey;     margin-bottom: 0;" id = "filter"> Filter: stop words</p>
-<div id="buttons" style = "display: flex; justify-content: space-evenly; align-items: center; visibility: hidden">
+<div id="buttons" style = "display: flex; justify-content: space-evenly; align-items: center; visibility: hidden; ">
 	<button type="button" class="btn btn-outline-primary btn-sm" id="download" style = "text-align: center;margin-right: 50px">Save</button>
 	<button type="button" class="btn btn-outline-primary btn-sm" id="reset" style = "text-align: center;">Reset Zoom</button>
 	<button type="button" class="btn btn-outline-primary btn-sm" id="topTen" style = "text-align: center; display: none">Zoom to top 10</button>
@@ -54,6 +56,16 @@
 	</div>
 	</div>
 </div>
+<div style = "text-align: center; width: 30%;
+  margin: 0 auto;position: relative; z-index: 1">
+	<input id="searchBar" class="form-control searchBox" type="text" placeholder="Search for a word" title="Search for a word" onkeyup="searchWords()" >
+	<div style="position: absolute;">
+
+		<ul class="list-group" id="myUL">
+		</ul>
+	</div>
+</div>
+
 <!-- <div class = "dropdown-menu dropdown-menu-center">
 	<div class="dropdown btn-group">
 	  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -70,7 +82,7 @@
 </div>
 <div id = "loader"><span class="spinme-left"><div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></span></div>
 
-<div id = "data"  style="display: flex; justify-content: space-around;">
+<div id = "data"  style="position: relative;">
 	<div id="my_dataviz" style="display: flex; justify-content: center"></div>
 	 <div id="barChart"></div>
 
