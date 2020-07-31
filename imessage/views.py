@@ -8,8 +8,14 @@ from django.contrib import messages
 from .models import Texts
 from .utils.wordCloud_utils import getTextFrequencyDictForText
 import json
-# Create your views here.
-# one parameter named request
+from .serializers import TextsSerializer
+from rest_framework import generics
+
+class TextsListCreate(generics.ListCreateAPIView):
+    queryset = Texts.objects.all()
+    serializer_class = TextsSerializer
+
+
 def texts_upload(request):
 	# declaring template
 	template = "index.html"

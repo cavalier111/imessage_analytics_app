@@ -9,7 +9,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^$', views.texts_upload, name = 'texts_upload'),
+    path('api/texts/', views.TextsListCreate.as_view() ),
+    url(r'^upload/$', views.texts_upload, name = 'texts_upload'),
     url(r'^home/$', views.texts_upload, name = 'texts_upload'),
     url(r'^success/$', views.success, name = 'success'),
     url(r'^wordcloud/$', views.wordcloud,name = 'wordcloud'),
