@@ -5,3 +5,6 @@ class TextsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Texts
         fields = ('ROWID', 'text', 'is_from_me')
+
+class UploadSerializer(serializers.Serializer):
+    data = serializers.CharField()

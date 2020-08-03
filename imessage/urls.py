@@ -10,6 +10,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/texts/', views.TextsListCreate.as_view() ),
+    path('api/texts/upload/', views.texts_upload ),
+
     url(r'^upload/$', views.texts_upload, name = 'texts_upload'),
     url(r'^home/$', views.texts_upload, name = 'texts_upload'),
     url(r'^success/$', views.success, name = 'success'),

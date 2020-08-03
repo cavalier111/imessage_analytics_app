@@ -8,45 +8,51 @@ from django.contrib import messages
 from .models import Texts
 from .utils.wordCloud_utils import getTextFrequencyDictForText
 import json
-from .serializers import TextsSerializer
-from rest_framework import generics
+from .serializers import TextsSerializer, UploadSerializer
+from rest_framework import generics,status
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
 
+
+#get endpint, not sure If ill use
 class TextsListCreate(generics.ListCreateAPIView):
     queryset = Texts.objects.all()
     serializer_class = TextsSerializer
 
-
+    
+@api_view(['POST'])
 def texts_upload(request):
-	# declaring template
-	template = "index.html"
-	data = Texts.objects.all()
-	# prompt is a context variable that can have different values  depending on their context
-	prompt = {
-		'order': 'Order of the CSV should be name, ROWID, text, is_from_me',
-		'texts': data
-			  }
-	# GET request returns the value of the data with the specified key.
-	if request.method == "GET":
-		return render(request, template, prompt)
-	csv_file = request.FILES['file']
+	# csv_file = request.FILES['file']
 	# let's check if it is a csv file
 	# if not csv_file.name.endswith('.csv'):
 	# 	messages.error(request, 'File must be csv, please try again with a csv file')
 	# 	return render(request, template, prompt)
-	data_set = csv_file.read().decode('UTF-8')
+
+	# data_set = csv_file.read().decode('UTF-8')
 	# setup a stream which is when we loop through each line we are able to handle a data in a stream
-	io_string = io.StringIO(data_set)
-	next(io_string)
-	for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-		print(column)
-		if len(column) == 3:
-			_, created = Texts.objects.update_or_create(
-				ROWID=column[0],
-				text=column[1],
-				is_from_me=column[2],
-			)
-	context = {}
-	return render(request, 'success.html', context)
+	# serializer = UploadSerializer(data=request.body)
+	# print(request.Keys())
+
+	stream = io.BytesIO(request.body)
+	data = JSONParser().parse(stream)['data']
+	if (data != None):
+		try:
+			io_string = io.StringIO(data)
+			next(io_string)
+			for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+				print(column)
+				if len(column) == 3:
+					_, created = Texts.objects.update_or_create(
+						ROWID=column[0],
+						text=column[1],
+						is_from_me=column[2],
+					)
+			return Response(None, status=status.HTTP_201_CREATED)
+		except:
+			return Response({'Could not parse CSV':message,'There was an error parsing the csv':explanation}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 def index(request):
 	return render(request, 'index.html')

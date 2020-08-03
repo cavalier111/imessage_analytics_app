@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+import Upload from './upload';
 
 class App extends Component {
   constructor(props) {
@@ -33,15 +34,16 @@ class App extends Component {
 
   render() {
     return (
-      <ul>
-        {this.state.data.map(text => {
-          return (
-            <li key={text.ROWID}>
-              test
-            </li>
-          );
-        })}
-      </ul>
+      <Upload />
+      // <ul>
+      //   {this.state.data.map(text => {
+      //     return (
+      //         <p> Hey </p>
+      //         // <Upload handleSubmit={this.handleSubmit} />
+
+      //     );
+      //   })}
+      // </ul>
     );
   }
 }
