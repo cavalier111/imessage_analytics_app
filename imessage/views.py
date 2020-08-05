@@ -33,24 +33,22 @@ def texts_upload(request):
 	# setup a stream which is when we loop through each line we are able to handle a data in a stream
 	# serializer = UploadSerializer(data=request.body)
 	# print(request.Keys())
-
-	stream = io.BytesIO(request.body)
-	data = JSONParser().parse(stream)['data']
-	if (data != None):
-		try:
-			io_string = io.StringIO(data)
-			next(io_string)
-			for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-				print(column)
-				if len(column) == 3:
-					_, created = Texts.objects.update_or_create(
-						ROWID=column[0],
-						text=column[1],
-						is_from_me=column[2],
-					)
-			return Response(None, status=status.HTTP_201_CREATED)
-		except:
-			return Response({'Could not parse CSV':message,'There was an error parsing the csv':explanation}, status=status.HTTP_400_BAD_REQUEST)
+	try:
+		stream = io.BytesIO(request.body)
+		decodedStream = stream.read().decode('UTF-8')
+		io_string = io.StringIO(decodedStream)
+		next(io_string)
+		for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+			print(column)
+			if len(column) == 3:
+				_, created = Texts.objects.update_or_create(
+					ROWID=column[0],
+					text=column[1],
+					is_from_me=column[2],
+				)
+		return Response(None, status=status.HTTP_201_CREATED)
+	except:
+		return Response({"message":'Could not parse CSV',"explanation": 'There was an error parsing the csv'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

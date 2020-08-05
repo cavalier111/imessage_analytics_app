@@ -22,7 +22,12 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "react-file-reader": "^1.1.4"
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
+    "css-loader": "^4.2.0",
+    "react-dropzone": "^11.0.2",
+    "style-loader": "^1.2.1"
   }
 }
