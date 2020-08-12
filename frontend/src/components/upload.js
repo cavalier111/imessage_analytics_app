@@ -8,8 +8,8 @@ class Upload extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        uploadText: "Drag your files here or click in this area.",
-        uploadStatus: '',
+        uploadText: "Drag your files here or click in this area",
+        uploadStatus: "",
         file: null,
         uploadEmpty: false,
       };
@@ -72,7 +72,7 @@ class Upload extends Component {
                     </section>
                 )}
               </Dropzone>
-              <button className = "inputButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>
+              <button className = "uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>
             </div>
         );
     }

@@ -11,6 +11,7 @@
 
 .dropContainer {
 	outline: dotted;
+	width: 500px;
 	margin: 20px;
     padding: 20px;
 }
@@ -24,11 +25,11 @@
   font-family: Arial;
 }
 
-.inputButton{
+.uploadButton{
   color: #fff;
   background: #007bff;
   border: none;
-  width: 508px;
+  width: 200px;
   height: 35px;
   margin-bottom: 25px;
   border-radius: 4px;
