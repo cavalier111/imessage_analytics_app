@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import Upload from './upload';
-import Wordheader from './wordheader'
+import Wordheader from './wordheader';
+import Wordcloud from './wordcloud';
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +37,10 @@ class App extends Component {
   render() {
     return (
       // <Upload />
-      <Wordheader />
+      <div>
+        <Wordheader />
+        <Wordcloud frequencyList={[{"text":"abcd", value: 50}]} />
+      </div>
     );
   }
 }
