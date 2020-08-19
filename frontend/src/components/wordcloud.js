@@ -7,11 +7,11 @@ class Wordcloud extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            maxLayout: cloud(),
         };
         this.margin = {top: 20, right: 20, bottom: 40, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
+        this.maxLayout = cloud();
     }
 
     componentDidMount() {
@@ -45,7 +45,7 @@ class Wordcloud extends Component {
 
         this.findMaxLayout(5);
 
-        this.state.maxLayout
+        this.maxLayout
             .on("end", (words) => this.draw(words,true))
             .start();
     }
@@ -106,9 +106,7 @@ class Wordcloud extends Component {
                 //if all the words are in the wordcliud output, the font is less than 100
                 if ((this.props.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
                     // set the maximum sized layout to the current
-                    this.setState({
-                        maxLayout: layout
-                    });
+                    this.maxLayout = layout;
                     // try drawing again with 5 bigger font size
                     return this.findMaxLayout(max_font_size + 5);
                 }
