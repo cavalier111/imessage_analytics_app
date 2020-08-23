@@ -1,0 +1,51 @@
+.bar {
+    fill: #007bff;
+}
+
+text {
+  font-weight: bold;
+  font-size: large;
+  font-family: sans-serif;
+}
+
+.axis {
+    font-size: 13px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    display: none;
+}
+
+.label {
+    font-size: 13px;
+    fill: lightgrey;
+}
+
+line#limit {
+  stroke: lightgrey;
+  stroke-width: 1;
+  stroke-dasharray: 3 6;
+}
+
+text.divergence {
+  font-size: 12px;
+  fill: #007bff;
+}
+
+.toolTip {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  display: none;
+  width: auto;
+  height: auto;
+  background: none repeat scroll 0 0 white;
+  border: 0 none;
+  border-radius: 8px 8px 8px 8px;
+  box-shadow: -3px 3px 15px #888888;
+  color: black;
+  font: 12px sans-serif;
+  padding: 5px;
+  text-align: center;
+}

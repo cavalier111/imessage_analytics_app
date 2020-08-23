@@ -3,6 +3,8 @@ import { render } from "react-dom";
 import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
+import Bargraph from './bargraph';
+
 
 class App extends Component {
   constructor(props) {
@@ -39,7 +41,7 @@ class App extends Component {
       // <Upload />
       <div>
         <Wordheader />
-        <Wordcloud frequencyList={[{"text":"abcd", value: 50}]} />
+        {/* <Wordcloud frequencyList={[{"text":"abcd", value: 50}]} /> */}
       </div>
     );
   }
