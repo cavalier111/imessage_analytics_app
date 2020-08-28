@@ -13,7 +13,6 @@ class Wordcloud extends Component {
     }
 
     componentDidMount() {
-        this.randomlyGenerate();
         this.drawWordCloud();
     }
 
@@ -184,14 +183,6 @@ class Wordcloud extends Component {
             })
             .start()
     }
-
-    randomlyGenerate = () => {
-        for (var i = 0; i <100; i++) { 
-            this.props.frequencyList.push({"text":Math.random().toString(36).substring(3), value: Math.floor(Math.random() * 6)});
-        }
-
-    }
-
 
     render() {
         return (

@@ -19,6 +19,7 @@ class Wordheader extends Component {
       this.setState({
         selectedViz: changeEvent.target.value
       });
+      this.props.switchViz(changeEvent.target.value);
     }
 
     render() {
