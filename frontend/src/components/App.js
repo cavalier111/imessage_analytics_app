@@ -59,7 +59,7 @@ class App extends Component {
   render() {
     let vizualization;
     if (this.state.selectedViz == 'wordcloud') {
-      vizualization = <Wordcloud frequencyList={[{"text":"abcd", value: 50}]} />;
+      vizualization = <Wordcloud frequencyList={this.frequencyList} />;
     } else {
       vizualization =  <Bargraph frequencyList={this.frequencyList} />;
     }

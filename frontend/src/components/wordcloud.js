@@ -3,6 +3,8 @@ import './wordcloud.css';
 import * as d3 from 'd3';
 import * as cloud from 'd3.layout.cloud'
 
+
+let maxLayout;
 class Wordcloud extends Component {
     constructor(props) {
         super(props);
@@ -43,11 +45,21 @@ class Wordcloud extends Component {
         this.fill = d3.scaleOrdinal(d3.schemeCategory10);
         this.setUpLinearColorGrandient();
 
-        this.findMaxLayout(5);
+        if (maxLayout){
+            this.maxLayout = maxLayout;
+        } else{
+            this.findMaxLayout(5);
+            if (this.maxLayout) {
+                maxLayout = this.maxLayout;
+            }
+        }
 
         this.maxLayout
             .on("end", (words) => this.draw(words,true))
             .start();
+            console.log(this.maxLayout);
+
+    
     }
 
     setUpLinearColorGrandient = () => {
