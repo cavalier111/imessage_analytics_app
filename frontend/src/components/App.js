@@ -12,7 +12,8 @@ class App extends Component {
     this.state = {
       data: [],
       loaded: false,
-      placeholder: "Loading"
+      placeholder: "Loading",
+      selectedViz: "wordcloud",
     };
     this.frequencyList = [];
     this.randomlyGenerate();
@@ -67,7 +68,7 @@ class App extends Component {
       // <Upload />
       <div>
         <Navbar />
-        <Wordheader switchViz={this.switchViz}/>
+        <Wordheader switchViz={this.switchViz} frequencyList={this.frequencyList}/>
         {vizualization}
       </div>
     );

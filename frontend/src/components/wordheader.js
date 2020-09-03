@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './wordheader.css';
 import Button from 'react-bootstrap/Button';
+import Searchbar from './searchbar';
 
 class Wordheader extends Component {
     constructor(props) {
@@ -31,6 +32,7 @@ class Wordheader extends Component {
               <Button variant="outline-primary" size="sm" id="download" style={{textAlign: "center", marginRight: "50px"}}>Save</Button> 
               <Button variant="outline-primary" size="sm" id="reset" style={{textAlign: "center"}}>Reset Zoom</Button>
               <Button variant="outline-primary" size="sm" id="topTen" style={{textAlign: "center", display: "none"}}>Zoom to top 10</Button>
+              <Searchbar frequencyList={this.props.frequencyList} />
               <div>
                 <span>Visualization type:</span>
                 <div className="form-check">
@@ -47,13 +49,6 @@ class Wordheader extends Component {
                 </div>
               </div>
             </div>
-            <div className="searchSection">
-              <input id="searchBar" className="form-control searchBox" type="text" placeholder="Search for a word" title="Search for a word" onKeyUp={this.searchWords()} />
-              <div style={{position: "absolute"}}>
-                <ul className="list-group" id="myUL">
-                </ul>
-              </div>
-            </div> 
           </div> 
         );
     }
