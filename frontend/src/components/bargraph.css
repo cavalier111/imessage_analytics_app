@@ -50,3 +50,15 @@ text.divergence {
   text-align: center;
 }
 
+
+.glowBar {
+     animation: .5s glowingBar infinite alternate;
+}
+
+@keyframes glowingBar {
+  to {
+        fill: grey;
+        opacity: .3;
+    }
+}
+

@@ -20,12 +20,26 @@ class Bargraph extends Component {
 
         this.zoomExtent = (this.frequencyList.length / 200) * 24;
         this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
-        console.log(this.frequencyList);
     }
 
     componentDidMount() {
         this.drawBarGraph();
         this.setUpTopTen();
+    }
+
+    componentDidUpdate() {
+        if (this.props.searchedWord != "") {
+            const searchedId = "bar" + this.props.searchedWord;
+            const desiredElement = document.getElementById(searchedId);
+            console.log(searchedId,desiredElement);  
+            if (desiredElement != null) {
+                if(this.props.selecting) {
+                    desiredElement.classList.add("glowBar");
+                } else {
+                    desiredElement.classList.remove("glowBar");
+                }
+            }
+        }
     }
 
     drawBarGraph = () =>  {
@@ -77,6 +91,7 @@ class Bargraph extends Component {
         
         this.bars.append("rect")
             .attr("class", "bar")
+            .attr("id", (d) =>  "bar" + d.text)
             .attr("opacity", (d) => this.opacity(d.value))
             .attr("y", (d) =>  this.y(d.text))
             .attr("height", this.y.bandwidth())

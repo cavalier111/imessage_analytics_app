@@ -1,0 +1,10 @@
+.glowWord {
+     animation: .5s glowing infinite alternate;
+}
+
+@keyframes glowing {
+  to {
+  		opacity: .7;
+        text-shadow: 0 0 10px black;
+    }
+}

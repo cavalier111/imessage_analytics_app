@@ -14,6 +14,7 @@ class App extends Component {
       loaded: false,
       placeholder: "Loading",
       selectedViz: "wordcloud",
+      searchedWord: "",
     };
     this.frequencyList = [];
     this.randomlyGenerate();
@@ -56,19 +57,23 @@ class App extends Component {
         this.frequencyList = [...new Set(randomParagraph.split(" "))].map((word, i) => ({"text":word, value: Math.floor(Math.random() * 6)}));
     }
 
+  handleSearchSelect = (searchedWord, selecting) => {
+    this.setState({searchedWord: searchedWord, selecting: selecting});
+  }
+
 
   render() {
     let vizualization;
     if (this.state.selectedViz == 'wordcloud') {
-      vizualization = <Wordcloud frequencyList={this.frequencyList} />;
+      vizualization = <Wordcloud frequencyList={this.frequencyList} searchedWord={this.state.searchedWord} selecting = {this.state.selecting}/>;
     } else {
-      vizualization =  <Bargraph frequencyList={this.frequencyList} />;
+      vizualization =  <Bargraph frequencyList={this.frequencyList} searchedWord={this.state.searchedWord} selecting = {this.state.selecting}/>;
     }
     return (
       // <Upload />
       <div>
         <Navbar />
-        <Wordheader switchViz={this.switchViz} frequencyList={this.frequencyList}/>
+        <Wordheader switchViz={this.switchViz} frequencyList={this.frequencyList} handleSearchSelect={this.handleSearchSelect}/>
         {vizualization}
       </div>
     );

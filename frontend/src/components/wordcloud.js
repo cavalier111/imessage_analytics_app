@@ -18,6 +18,21 @@ class Wordcloud extends Component {
         this.drawWordCloud();
     }
 
+    componentDidUpdate() {
+        if (this.props.searchedWord != "") {
+            const searchedId = "cloud" + this.props.searchedWord;
+            const desiredElement = document.getElementById(searchedId);
+            console.log(searchedId,desiredElement);  
+            if (desiredElement != null) {
+                if(this.props.selecting) {
+                    desiredElement.classList.add("glowWord");
+                } else {
+                    desiredElement.classList.remove("glowWord");
+                }
+            }
+        }
+    }
+
     zoomed = () => {
         this.svg.attr("transform", d3.event.transform)
     }
@@ -57,9 +72,6 @@ class Wordcloud extends Component {
         this.maxLayout
             .on("end", (words) => this.draw(words,true))
             .start();
-            console.log(this.maxLayout);
-
-    
     }
 
     setUpLinearColorGrandient = () => {

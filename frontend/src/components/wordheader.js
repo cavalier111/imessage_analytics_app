@@ -32,7 +32,7 @@ class Wordheader extends Component {
               <Button variant="outline-primary" size="sm" id="download" style={{textAlign: "center", marginRight: "50px"}}>Save</Button> 
               <Button variant="outline-primary" size="sm" id="reset" style={{textAlign: "center"}}>Reset Zoom</Button>
               <Button variant="outline-primary" size="sm" id="topTen" style={{textAlign: "center", display: "none"}}>Zoom to top 10</Button>
-              <Searchbar frequencyList={this.props.frequencyList} />
+              <Searchbar frequencyList={this.props.frequencyList} handleSearchSelect={this.props.handleSearchSelect}/>
               <div>
                 <span>Visualization type:</span>
                 <div className="form-check">

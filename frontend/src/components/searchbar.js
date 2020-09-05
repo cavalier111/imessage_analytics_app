@@ -10,6 +10,7 @@ const initialState = {
   value: '',
 }
 
+let previousSelection;
 
 function SearchReducer(state, action) {
   switch (action.type) {
@@ -28,7 +29,7 @@ function SearchReducer(state, action) {
 
 function Searchbar(props) {
   const [state, dispatch] = React.useReducer(SearchReducer, initialState)
-  const { loading, results, value } = state
+  const { loading, results, value, selection } = state
 
   const formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, value: wordObject.value}));
   const options = {
@@ -36,10 +37,15 @@ function Searchbar(props) {
       keys: ['title']
   };
   const fuse = new Fuse(formatedFrequencyList, options);
-
   const timeoutRef = React.useRef()
   const handleSearchChange = React.useCallback((e, data) => {
     clearTimeout(timeoutRef.current)
+    if (previousSelection != '') {
+      console.log(previousSelection)
+      props.handleSearchSelect(previousSelection, false);
+      dispatch({ type: 'UPDATE_SELECTION', selection: '' });
+    }
+
     dispatch({ type: 'START_SEARCH', query: data.value })
 
     timeoutRef.current = setTimeout(() => {
@@ -48,20 +54,22 @@ function Searchbar(props) {
         return
       }
 
-      // exact match option
+      // // exact match option
       // const re = new RegExp(_.escapeRegExp(data.value), 'i')
       // const isMatch = (result) => re.test(result.title)
 
+
       // dispatch({
       //   type: 'FINISH_SEARCH',
-      //   results: _.filter(props.frequencyList.map(wordObject => ({title: wordObject.text, value: wordObject.value})), isMatch),
+      //   results: _.filter(formatedFrequencyList, isMatch),
       // })
+      // mapValues(fuse.search(data.value), result => result.item),
 
       dispatch({
         type: 'FINISH_SEARCH',
         results: fuse.search(data.value).map(result => result.item),
       })
-    }, 600)
+    }, 300)
   }, [])
   React.useEffect(() => {
     return () => {
@@ -73,8 +81,11 @@ function Searchbar(props) {
     
         <Search
           loading={loading}
-          onResultSelect={(e, data) =>
-            dispatch({ type: 'UPDATE_SELECTION', selection: data.result.text })
+          onResultSelect={(e, data) => {
+             props.handleSearchSelect(data.result.title, true);
+             previousSelection = data.result.title;
+             return dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
+           }
           }
           onSearchChange={handleSearchChange}
           results={results}
