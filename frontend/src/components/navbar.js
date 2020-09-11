@@ -14,7 +14,7 @@ class Navbar extends Component {
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav">
               <li className="nav-item active">
-                <a className="nav-link" style={{fontSize: "20px"}} href="/">iStats<span className="sr-only">(current)</span></a>
+                <a className="nav-link" style={{fontSize: "20px"}} href="/">ChatStats<span className="sr-only">(current)</span></a>
               </li>
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

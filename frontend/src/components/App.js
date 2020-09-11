@@ -10,10 +10,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      frequencyList: [],
       loaded: false,
       placeholder: "Loading",
       selectedViz: "wordcloud",
+      selectedDataType: "words",
       searchedWord: "",
       previousSearchWord: "",
     };
@@ -26,6 +26,10 @@ class App extends Component {
     } else {
       this.setState({selectedViz: "bargraph"});
     }
+  }
+
+  switchDataType = (selectedDataType) => {
+    this.setState({selectedDataType: selectedDataType});
   }
 
   randomlyGenerate = () => {
@@ -44,9 +48,7 @@ class App extends Component {
 
   viewVizualizations = () => {
     fetch("api/texts/frequencyList")
-      .then(response => {
-        return response.json();
-      })
+      .then(response => response.json())
       .catch(error => {
         this.setState({
           error: error.message
@@ -56,7 +58,9 @@ class App extends Component {
         console.log(data);
         this.setState(() => {
           return {
+            currentList: data.frequencyList,
             frequencyList: data.frequencyList,
+            emojiList: data.emojiList,
             loaded: true
           };
         });
@@ -67,18 +71,20 @@ class App extends Component {
 
   render() {
     let vizualization;
+    const data = this.state.selectedDataType == 'words' ? this.state.frequencyList : this.state.emojiList;
+    console.log(this.state.selectedDataType);
     if(this.state.loaded) {
       if (this.state.selectedViz == 'wordcloud') {
-        vizualization = <Wordcloud frequencyList={this.state.frequencyList} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization = <Wordcloud frequencyList={data} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       } else {
-        vizualization =  <Bargraph frequencyList={this.state.frequencyList} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization =  <Bargraph frequencyList={data} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       }
     }
     return (
       <div>
         <Navbar />
         {this.state.loaded ? false : <Upload viewVizualizations={this.viewVizualizations} />}
-        {this.state.loaded ? <Wordheader switchViz={this.switchViz} frequencyList={this.state.frequencyList} handleSearchSelect={this.handleSearchSelect}/> : false}
+        {this.state.loaded ? <Wordheader switchViz={this.switchViz} switchDataType={this.switchDataType} frequencyList={data} handleSearchSelect={this.handleSearchSelect}/> : false}
         {vizualization}
         <span> {this.state.error} </span>
       </div>

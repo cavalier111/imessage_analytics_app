@@ -6,6 +6,8 @@ from nltk.corpus import stopwords
 import os
 import re
 import emoji
+from textblob import TextBlob
+
 
 def getTextFrequencyDictForText(texts, isEmoji = False):
     stop_words = getStopWords()
@@ -24,7 +26,8 @@ def getTextFrequencyDictForText(texts, isEmoji = False):
         if key in stop_words:
             continue
         else:
-            frequencyList.append(dict({"text": key,"value": value}))
+            sentiment = TextBlob(key).sentiment
+            frequencyList.append(dict({"text": key,"value": value, "subjectivity": sentiment[1], "polarity": sentiment[0]}))
     print(texts, frequencyList)
     return frequencyList
 

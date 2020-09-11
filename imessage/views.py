@@ -51,8 +51,9 @@ def success(request):
 @api_view(['GET'])
 def frequency_list(request):
 	frequencyList = getTextFrequencyDictForText(Texts.objects.values('text'))
+	emojiList = getTextFrequencyDictForText(Texts.objects.values('text'), True)
 	if frequencyList != None:
-		return Response({'frequencyList': frequencyList })
+		return Response({'frequencyList': frequencyList, 'emojiList': emojiList })
 	else:
 		return Response({"message":'There was an error creating the vizualization'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
