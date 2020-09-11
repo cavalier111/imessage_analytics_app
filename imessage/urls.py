@@ -11,11 +11,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/texts/', views.TextsListCreate.as_view() ),
     path('api/texts/upload/', views.texts_upload ),
-
+    path('api/texts/frequencyList/', views.frequency_list ),
     url(r'^upload/$', views.texts_upload, name = 'texts_upload'),
     url(r'^home/$', views.texts_upload, name = 'texts_upload'),
     url(r'^success/$', views.success, name = 'success'),
-    url(r'^wordcloud/$', views.wordcloud,name = 'wordcloud'),
     url(r'^emojicloud/$', views.emojicloud,name = 'emojicloud'),
     url(r'^tapbacks/$', views.tapbacks,name = 'tapbacks'),
     url(r'^compare/$', views.compare,name = 'compare'),

@@ -12,10 +12,6 @@ class Wordheader extends Component {
       };
     }
 
-    searchWords =  ()  => {
-      console.log("heyyy");
-    }
-
     handleVizChange = changeEvent => {
       this.setState({
         selectedViz: changeEvent.target.value

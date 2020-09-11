@@ -10,7 +10,7 @@ const initialState = {
   value: '',
 }
 
-let previousSelection;
+let previousSelection = "";
 
 function SearchReducer(state, action) {
   switch (action.type) {
@@ -41,8 +41,7 @@ function Searchbar(props) {
   const handleSearchChange = React.useCallback((e, data) => {
     clearTimeout(timeoutRef.current)
     if (previousSelection != '') {
-      console.log(previousSelection)
-      props.handleSearchSelect(previousSelection, false);
+      props.handleSearchSelect("", previousSelection);
       dispatch({ type: 'UPDATE_SELECTION', selection: '' });
     }
 
@@ -82,9 +81,9 @@ function Searchbar(props) {
         <Search
           loading={loading}
           onResultSelect={(e, data) => {
-             props.handleSearchSelect(data.result.title, true);
-             previousSelection = data.result.title;
-             return dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
+            props.handleSearchSelect(data.result.title, previousSelection);
+            previousSelection = data.result.title;
+            return dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
            }
           }
           onSearchChange={handleSearchChange}

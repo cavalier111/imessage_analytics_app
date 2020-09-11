@@ -12,37 +12,45 @@ class Upload extends Component {
         uploadStatus: "",
         file: null,
         uploadEmpty: false,
+        uploaded: false,
       };
     }
 
-    // handleChange = event => {
-    //     const { name, value } = event.target;
-
-    //     this.setState({
-    //         [name] : value
-    //     });
-    // }
-
-    fileAttached = file => {
-      this.setState({
-        uploadStatus: `${file.name} attached, click upload to upload your file`,
-        uploadText : "Drag your files here or click in this area to replace current file.",
-        file: file,
-        uploadEmpty: true,
-      });
+    fileAttached = (accepted, rejected) => {
+      if(accepted && accepted[0]) {
+        this.setState({
+          uploadStatus: `${accepted[0].name} attached, click upload to upload your file`,
+          uploadText : "Drag your files here or click in this area to replace current file.",
+          file: accepted[0],
+          uploadEmpty: true,
+          errorStatus: ""
+        });
+      } else if (rejected && rejected[0]) {
+        this.setState({
+          errorStatus: `Unabled to attach ${rejected[0].name}, please only upload a csv`,
+        });
+      }
     }
     uploadFile =  ()  => {
       fetch('/api/texts/upload/', {
         // content-type header should not be specified!
         method: 'POST',
         body: this.state.file,
-      })
-        .then(response => response.json())
-        
-        .catch(error => console.log(error))
+      }).then(response => response.json())
+        .catch(error => {
+          this.setState({
+            errorStatus: error.message,
+            uploadText: "Drag your files here or click in this area",
+            uploadStatus: "",
+            file: null,
+            uploadEmpty: false,
+            uploaded: false,
+          });
+        })
         .then(success => {
           this.setState({
-            uploadStatus: "Successfully Uploaded"
+            uploadStatus: "Successfully Uploaded",
+            uploaded: true,
           });
         });
     }
@@ -52,19 +60,18 @@ class Upload extends Component {
     render() {
         return (
             <div className="uploadContainer">
-              <Dropzone onDrop={acceptedFiles => {
-                if (acceptedFiles.length == 1) {
-                  this.fileAttached(acceptedFiles[0])
-                } else {
-                  alert("You must only drop one file")
-                }
-              }}>
+              <Dropzone 
+                onDrop={(accepted, rejected) => this.fileAttached(accepted, rejected)}
+                multiple={false}
+                accept=".csv"
+                >
                 {({getRootProps, getInputProps}) => (
                   
                     <section>
                       <div {...getRootProps()}>
-                        <input {...getInputProps()} />
+                        <input {...getInputProps()}/>
                           <div className="dropContainer">
+                            <p className = "inputP">{this.state.errorStatus}</p>
                             <p className = "inputP">{this.state.uploadStatus}</p>
                             <p className = "inputP">{this.state.uploadText}</p>
                           </div>
@@ -72,7 +79,8 @@ class Upload extends Component {
                     </section>
                 )}
               </Dropzone>
-              <button className = "uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>
+              <button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>
+              <button className="uploadButton" type="submit" disabled={!this.state.uploaded} onClick={this.props.viewVizualizations}>Start</button>
             </div>
         );
     }

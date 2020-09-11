@@ -22,13 +22,15 @@ class Wordcloud extends Component {
         if (this.props.searchedWord != "") {
             const searchedId = "cloud" + this.props.searchedWord;
             const desiredElement = document.getElementById(searchedId);
-            console.log(searchedId,desiredElement);  
             if (desiredElement != null) {
-                if(this.props.selecting) {
-                    desiredElement.classList.add("glowWord");
-                } else {
-                    desiredElement.classList.remove("glowWord");
-                }
+                desiredElement.classList.add("glowWord");
+            }
+        }
+        if (this.props.previousSearchWord != "") {
+            const searchedId = "cloud" + this.props.previousSearchWord;
+            const desiredElement = document.getElementById(searchedId);
+            if (desiredElement != null) {
+                desiredElement.classList.remove("glowWord");
             }
         }
     }

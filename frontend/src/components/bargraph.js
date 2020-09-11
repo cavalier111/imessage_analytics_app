@@ -31,13 +31,15 @@ class Bargraph extends Component {
         if (this.props.searchedWord != "") {
             const searchedId = "bar" + this.props.searchedWord;
             const desiredElement = document.getElementById(searchedId);
-            console.log(searchedId,desiredElement);  
             if (desiredElement != null) {
-                if(this.props.selecting) {
-                    desiredElement.classList.add("glowBar");
-                } else {
-                    desiredElement.classList.remove("glowBar");
-                }
+                desiredElement.classList.add("glowBar");
+            }
+        }
+        if (this.props.previousSearchWord != "") {
+            const searchedId = "bar" + this.props.previousSearchWord;
+            const desiredElement = document.getElementById(searchedId);
+            if (desiredElement != null) {
+                desiredElement.classList.remove("glowBar");
             }
         }
     }

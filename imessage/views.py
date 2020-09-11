@@ -23,16 +23,6 @@ class TextsListCreate(generics.ListCreateAPIView):
     
 @api_view(['POST'])
 def texts_upload(request):
-	# csv_file = request.FILES['file']
-	# let's check if it is a csv file
-	# if not csv_file.name.endswith('.csv'):
-	# 	messages.error(request, 'File must be csv, please try again with a csv file')
-	# 	return render(request, template, prompt)
-
-	# data_set = csv_file.read().decode('UTF-8')
-	# setup a stream which is when we loop through each line we are able to handle a data in a stream
-	# serializer = UploadSerializer(data=request.body)
-	# print(request.Keys())
 	try:
 		stream = io.BytesIO(request.body)
 		decodedStream = stream.read().decode('UTF-8')
@@ -58,9 +48,14 @@ def index(request):
 def success(request):
 	return render(request, 'success.html')
 
-def wordcloud(request):
-	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'))
-	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": False  })
+@api_view(['GET'])
+def frequency_list(request):
+	frequencyList = getTextFrequencyDictForText(Texts.objects.values('text'))
+	if frequencyList != None:
+		return Response({'frequencyList': frequencyList })
+	else:
+		return Response({"message":'There was an error creating the vizualization'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 def emojicloud(request):
 	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'), True)
