@@ -10,16 +10,6 @@ class Bargraph extends Component {
         };
         this.dims.width = 1200 - this.dims.margin.left - this.dims.margin.right;
         this.dims.height = 400 - this.dims.margin.top - this.dims.margin.bottom;
-    
-        this.totalBars = Math.min(200,this.props.frequencyList.length)
-
-        this.frequencyList = this.props.frequencyList.sort((a, b) => d3.descending(a.value, b.value)).slice(0,this.totalBars);
-        this.frequencyList.reverse();
-
-        this.maxWordSize = d3.max(this.frequencyList, d => d.value);
-
-        this.zoomExtent = (this.frequencyList.length / 200) * 24;
-        this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
     }
 
     componentDidMount() {
@@ -27,7 +17,7 @@ class Bargraph extends Component {
         this.setUpTopTen();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         if (this.props.searchedWord != "") {
             const searchedId = "bar" + this.props.searchedWord;
             const desiredElement = document.getElementById(searchedId);
@@ -42,9 +32,24 @@ class Bargraph extends Component {
                 desiredElement.classList.remove("glowBar");
             }
         }
+
+        if(!_.isEqual(prevProps.frequencyList, this.frequencyList)){
+            d3.select("svg").remove();
+            this.drawBarGraph();
+        }
     }
 
     drawBarGraph = () =>  {
+
+        this.totalBars = Math.min(200,this.props.frequencyList.length)
+
+        this.frequencyList = this.props.frequencyList.sort((a, b) => d3.descending(a.value, b.value)).slice(0,this.totalBars);
+        this.frequencyList.reverse();
+
+        this.maxWordSize = d3.max(this.frequencyList, d => d.value);
+
+        this.zoomExtent = (this.frequencyList.length / 200) * 24;
+        this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
         this.svg = d3.select("#bargraph").append("svg")
             .call((svg) => this.zoom(svg))
             .attr("width", this.dims.width + this.dims.margin.left + this.dims.margin.right)

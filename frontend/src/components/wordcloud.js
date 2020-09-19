@@ -8,9 +8,6 @@ let maxLayout;
 class Wordcloud extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            frequencyList: this.props.frequencyList,
-        }
         this.margin = {top: 20, right: 20, bottom: 40, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
@@ -21,7 +18,7 @@ class Wordcloud extends Component {
         this.drawWordCloud();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         if (this.props.searchedWord != "") {
             const searchedId = "cloud" + this.props.searchedWord;
             const desiredElement = document.getElementById(searchedId);
@@ -37,14 +34,9 @@ class Wordcloud extends Component {
             }
         }
 
-        if(!_.isEqual(this.state.frequencyList, this.props.frequencyList)){
+        if(!_.isEqual(prevProps.frequencyList, this.props.frequencyList)){
             d3.select("svg").remove();
-            console.log(this.props.frequencyList);
             maxLayout = null;
-            this.setState({
-                frequencyList: this.props.frequencyList
-            });
-
             this.drawWordCloud();
         }
     }
@@ -156,7 +148,6 @@ class Wordcloud extends Component {
     }
 
     draw = (words, colorAnimated) => {
-        // $("#loader").hide();
         // $("#buttons").css("visibility","visible");
         const tooltip = this.tooltip;
         let data = this.wordcloud.selectAll("text")
@@ -196,7 +187,6 @@ class Wordcloud extends Component {
     }
 
     findMaxLayout = (max_font_size) => {
-        console.log(this.props.frequencyList);
         var maxSize = d3.max(this.props.frequencyList, d => d.value);
         var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
         const layout = cloud();
@@ -211,7 +201,7 @@ class Wordcloud extends Component {
         layout
             .on("end", (output) => {
                 //if all the words are in the wordcliud output, the font is less than 100
-                if ((this.state.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
+                if ((this.props.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
                     // set the maximum sized layout to the current
                     this.maxLayout = layout;
                     // try drawing again with 5 bigger font size
