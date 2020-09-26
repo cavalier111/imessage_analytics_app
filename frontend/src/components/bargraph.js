@@ -33,7 +33,7 @@ class Bargraph extends Component {
             }
         }
 
-        if(!_.isEqual(prevProps.frequencyList, this.frequencyList)){
+        if(!_.isEqual(prevProps.dataType, this.props.dataType)){
             d3.select("svg").remove();
             this.drawBarGraph();
         }
@@ -43,8 +43,7 @@ class Bargraph extends Component {
 
         this.totalBars = Math.min(200,this.props.frequencyList.length)
 
-        this.frequencyList = this.props.frequencyList.sort((a, b) => d3.descending(a.value, b.value)).slice(0,this.totalBars);
-        this.frequencyList.reverse();
+        this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
 
         this.maxWordSize = d3.max(this.frequencyList, d => d.value);
 
@@ -84,6 +83,7 @@ class Bargraph extends Component {
             .text((d) => d.value);
 
         this.bars.on("mousemove", d => this.mouseMove(d));
+        this.bars.on('mouseleave', (actual, i) => this.mouseLeaveBar(actual, i, false));
 
         // for zoomed out view add a lebel for the highest frequency word
         d3.select("#bar" + (this.totalBars-1).toString()).append("text")

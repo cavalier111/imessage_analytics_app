@@ -3,8 +3,10 @@ import './wordcloud.css';
 import * as d3 from 'd3';
 import * as cloud from 'd3.layout.cloud'
 import _ from 'lodash';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-let maxLayout;
+let maxLayoutWord;
+let maxLayoutEmoji;
 class Wordcloud extends Component {
     constructor(props) {
         super(props);
@@ -34,19 +36,19 @@ class Wordcloud extends Component {
             }
         }
 
-        if(!_.isEqual(prevProps.frequencyList, this.props.frequencyList)){
+        if(!_.isEqual(prevProps.dataType, this.props.dataType)){
             d3.select("svg").remove();
-            maxLayout = null;
             this.drawWordCloud();
         }
     }
 
-    zoomed = () => {
-        this.svg.attr("transform", d3.event.transform)
-    }
     drawWordCloud = () =>  {
+        const sizeThreshold = .05 * this.props.frequencyList[0].value
 
-        const zoom = d3.zoom().on("zoom", () => this.zoomed());
+        console.log(sizeThreshold,this.frequencyList)
+
+        // this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold)
+        this.frequencyList = this.props.frequencyList.slice(10,200)
 
         this.svg = d3
             .select("#wordcloud")
@@ -55,7 +57,6 @@ class Wordcloud extends Component {
             .attr("height", this.height + this.margin.top + this.margin.bottom)
             .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
             .attr("id", "svg")
-            .call(zoom)
             .append("g");
 
         this.wordcloud = this.svg
@@ -68,13 +69,10 @@ class Wordcloud extends Component {
         this.fill = d3.scaleOrdinal(d3.schemeCategory10);
         this.setUpLinearColorGrandient();
 
-        if (maxLayout){
-            this.maxLayout = maxLayout;
-        } else{
-            this.findMaxLayout(5);
-            if (this.maxLayout) {
-                maxLayout = this.maxLayout;
-            }
+        if (this.props.dataType == "words") {
+            this.retrieveMaxLayout(this.props.dataType);
+        } else {
+            this.retrieveMaxLayout(maxLayoutEmoji);
         }
 
         this.maxLayout
@@ -186,13 +184,35 @@ class Wordcloud extends Component {
         }
     }
 
+    retrieveMaxLayout = (dataType) => {
+        if (this.props.dataType == "words") {
+            if (maxLayoutWord){
+                this.maxLayout = maxLayoutWord;
+            } else {
+                this.findMaxLayout(5);
+                if (this.maxLayout) {
+                    maxLayoutWord = this.maxLayout;
+                }
+            }
+        } else {
+            if (maxLayoutEmoji){
+                this.maxLayout = maxLayoutEmoji;
+            } else {
+                this.findMaxLayout(5);
+                if (this.maxLayout) {
+                    maxLayoutEmoji = this.maxLayout;
+                }
+            }
+        }
+    }
+
     findMaxLayout = (max_font_size) => {
-        var maxSize = d3.max(this.props.frequencyList, d => d.value);
+        var maxSize = d3.max(this.frequencyList, d => d.value);
         var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
         const layout = cloud();
         layout
             .size([this.width, this.height])
-            .words(this.props.frequencyList)
+            .words(this.frequencyList)
             .rotate(d => 0)
             .text(d => d.text) 
             .font('monospace')
@@ -201,7 +221,7 @@ class Wordcloud extends Component {
         layout
             .on("end", (output) => {
                 //if all the words are in the wordcliud output, the font is less than 100
-                if ((this.props.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
+                if ((this.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
                     // set the maximum sized layout to the current
                     this.maxLayout = layout;
                     // try drawing again with 5 bigger font size
@@ -215,10 +235,35 @@ class Wordcloud extends Component {
             .start()
     }
 
+
     render() {
         return (
             <div>
-                <div id="wordcloud" style={{display: "flex", justifyContent: "center"}}></div>
+                 <TransformWrapper
+                    defaultScale={1}
+                    defaultPositionX={200}
+                    defaultPositionY={100}
+                    pan={{
+                        velocity: true,
+                        velocityEqualToMove: true,
+                      }}
+                      wheel = {{
+                        step:35
+                      }}
+                  >
+                    {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+                      <React.Fragment>
+                        <div className="tools">
+                          <button onClick={zoomIn}>+</button>
+                          <button onClick={zoomOut}>-</button>
+                          <button onClick={resetTransform}>x</button>
+                        </div>
+                        <TransformComponent>
+                            <div id="wordcloud" style={{display: "flex", justifyContent: "center"}}></div>
+                        </TransformComponent>
+                      </React.Fragment>
+                    )}
+                  </TransformWrapper>
             </div>
         );
     }

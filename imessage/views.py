@@ -28,17 +28,21 @@ def texts_upload(request):
 		decodedStream = stream.read().decode('UTF-8')
 		io_string = io.StringIO(decodedStream)
 		next(io_string)
+		count =0
 		for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+			count +=1
 			print(column)
-			if len(column) == 3:
+			if len(column) == 2:
 				_, created = Texts.objects.update_or_create(
 					ROWID=column[0],
 					text=column[1],
-					is_from_me=column[2],
+					# is_from_me=column[2],
+					is_from_me='0',
 				)
 		return Response(None, status=status.HTTP_201_CREATED)
-	except:
-		return Response({"message":'Could not parse CSV',"explanation": 'There was an error parsing the csv'}, status=status.HTTP_400_BAD_REQUEST)
+	except Exception as e:
+		print(str(e))
+		return Response({"message":'There was an error parsing the csv'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

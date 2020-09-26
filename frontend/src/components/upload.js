@@ -32,11 +32,15 @@ class Upload extends Component {
       }
     }
     uploadFile =  ()  => {
-      fetch('/api/texts/upload/', {
-        // content-type header should not be specified!
-        method: 'POST',
-        body: this.state.file,
-      }).then(response => response.json())
+      console.log(this.state.file);
+      let formData = new FormData();
+      formData.append('file', this.state.file);
+      var req = new Request('/api/texts/upload/', {
+        method: "POST",
+        body: this.state.file
+      });
+      fetch(req).then(response => response.json())
+        .then(response => console.log(response))
         .catch(error => {
           this.setState({
             errorStatus: error.message,

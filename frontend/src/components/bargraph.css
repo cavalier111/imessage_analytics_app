@@ -56,9 +56,12 @@ text.divergence {
 }
 
 @keyframes glowingBar {
-  to {
+  from {
         fill: grey;
         opacity: .3;
+    }
+  to {
+        opacity: .7;
     }
 }
 

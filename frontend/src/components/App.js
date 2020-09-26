@@ -4,7 +4,7 @@ import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
-import Navbar from './navbar';
+import NavigationBar from './navigationbar';
 import './loader.scss';
 
 class App extends Component {
@@ -18,7 +18,7 @@ class App extends Component {
       searchedWord: "",
       previousSearchWord: "",
     };
-    // this.viewVizualizations();
+    this.viewVizualizations();
   }
 
   switchViz = (selectedViz) => {
@@ -58,6 +58,7 @@ class App extends Component {
         });
       })
       .then(data => {
+        // data.frequencyList = this.randomlyGenerate();
         console.log(data);
         this.setState(() => {
           return {
@@ -78,14 +79,14 @@ class App extends Component {
     const data = this.state.selectedDataType == 'words' ? this.state.frequencyList : this.state.emojiList;
     if(this.state.loaded) {
       if (this.state.selectedViz == 'wordcloud') {
-        vizualization = <Wordcloud frequencyList={data} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization = <Wordcloud frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       } else {
-        vizualization =  <Bargraph frequencyList={data} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization =  <Bargraph frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       }
     }
     return (
       <div>
-        <Navbar />
+        <NavigationBar />
         {this.state.loading
           ? <div id="wordLoader" className="typing-indicator">
             <span></span>
