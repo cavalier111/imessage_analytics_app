@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { Search, Grid, Header, Segment } from 'semantic-ui-react';
 import Fuse from 'fuse.js'
 import './searchBar.css';

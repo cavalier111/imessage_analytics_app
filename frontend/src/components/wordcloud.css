@@ -1,3 +1,8 @@
+.zoomButton {
+	margin-right: 10px;
+	font-weight: bold !important;
+}
+
 .glowWord {
      animation: .5s glowing infinite alternate;
 }

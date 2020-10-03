@@ -17,6 +17,7 @@ class App extends Component {
       selectedDataType: "words",
       searchedWord: "",
       previousSearchWord: "",
+      fireFilter: true,
     };
     this.viewVizualizations();
   }
@@ -62,12 +63,25 @@ class App extends Component {
         console.log(data);
         this.setState(() => {
           return {
-            currentList: data.frequencyList,
+            originalFrequencyList: data.frequencyList,
             frequencyList: data.frequencyList,
             emojiList: data.emojiList,
             loaded: true,
             loading: false,
           };
+        });
+      });
+  }
+
+  handleFilterApply = (updatedList) => {
+      console.log(updatedList,this.state.frequencyList);
+      this.setState({
+        frequencyList: updatedList,
+        
+      }, () => {
+        console.log(this.state.frequencyList)
+        this.setState({
+          fireFilter: !this.state.fireFilter
         });
       });
   }
@@ -79,7 +93,7 @@ class App extends Component {
     const data = this.state.selectedDataType == 'words' ? this.state.frequencyList : this.state.emojiList;
     if(this.state.loaded) {
       if (this.state.selectedViz == 'wordcloud') {
-        vizualization = <Wordcloud frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization = <Wordcloud frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord} fireFilter={this.state.fireFilter}/>;
       } else {
         vizualization =  <Bargraph frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       }
@@ -96,7 +110,7 @@ class App extends Component {
           : false
         }
         {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}
-        {this.state.loaded ? <Wordheader switchViz={this.switchViz} switchDataType={this.switchDataType} frequencyList={data} handleSearchSelect={this.handleSearchSelect}/> : false}
+        {this.state.loaded ? <Wordheader switchViz={this.switchViz} switchDataType={this.switchDataType} frequencyList={data} originalFrequencyList={this.state.originalFrequencyList} handleFilterApply={this.handleFilterApply} handleSearchSelect={this.handleSearchSelect}/> : false}
         {vizualization}
         <span> {this.state.error} </span>
       </div>

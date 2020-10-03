@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import * as cloud from 'd3.layout.cloud'
 import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import Button from 'react-bootstrap/Button';
 
 let maxLayoutWord;
 let maxLayoutEmoji;
@@ -40,13 +41,22 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.drawWordCloud();
         }
+
+        if(!_.isEqual(prevProps.fireFilter, this.props.fireFilter)){
+            console.log('datatype', this.props.dataType);
+             if (this.props.dataType == "words") {
+                maxLayoutWord = null;
+             } else {
+                maxLayoutEmoji = null;
+             }
+            d3.select("svg").remove();
+            this.drawWordCloud();
+        }
+
     }
 
     drawWordCloud = () =>  {
         const sizeThreshold = .05 * this.props.frequencyList[0].value
-
-        console.log(sizeThreshold,this.frequencyList)
-
         // this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold)
         this.frequencyList = this.props.frequencyList.slice(10,200)
 
@@ -254,9 +264,9 @@ class Wordcloud extends Component {
                     {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
                       <React.Fragment>
                         <div className="tools">
-                          <button onClick={zoomIn}>+</button>
-                          <button onClick={zoomOut}>-</button>
-                          <button onClick={resetTransform}>x</button>
+                          <Button variant="outline-primary" className="rounded-circle zoomButton" onClick={zoomIn}>+</Button>
+                          <Button variant="outline-primary" className="rounded-circle zoomButton" onClick={zoomOut}>-</Button>
+                          <Button variant="outline-primary" className="rounded-circle zoomButton" onClick={resetTransform}>Reset</Button>
                         </div>
                         <TransformComponent>
                             <div id="wordcloud" style={{display: "flex", justifyContent: "center"}}></div>

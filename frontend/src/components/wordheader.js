@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './wordheader.css';
 import Button from 'react-bootstrap/Button';
 import Searchbar from './searchbar';
+import FilterSection from './filtersection';
 
 class Wordheader extends Component {
     constructor(props) {
@@ -30,7 +31,6 @@ class Wordheader extends Component {
         return (
           <div id="header">
             <h1 className="headerText">Total Unique Words: {this.props.frequencyList.length}<span id="totalWords"> </span> </h1>
-            <p  className="headerText" style={{marginBottom: 0}} id="filter"> Filter: stop words</p>
             <div id="buttons" className="buttonSection">
               <Button variant="outline-primary" size="sm" id="reset" style={{textAlign: "center"}}>Reset Zoom</Button>
               {this.state.selectedViz == 'bargraph' ? <Button variant="outline-primary" size="sm" id="topTen" style={{textAlign: "center", display: "none"}}>Zoom to top 10</Button> : false}
@@ -65,6 +65,7 @@ class Wordheader extends Component {
                   </label>
                 </div>
               </div>
+              <FilterSection frequencyListLength={this.props.frequencyList.length} originalFrequencyList={this.props.originalFrequencyList} handleFilterApply={this.props.handleFilterApply} filterName="Amount of words" unfilteredLength={100} /> 
             </div>
           </div> 
         );

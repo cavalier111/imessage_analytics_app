@@ -23,11 +23,9 @@ def getTextFrequencyDictForText(texts, isEmoji = False):
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
-        if key in stop_words:
-            continue
-        else:
-            sentiment = TextBlob(key).sentiment
-            frequencyList.append(dict({"text": key,"value": value, "subjectivity": sentiment[1], "polarity": sentiment[0]}))
+        isStopWord = key in stop_words
+        sentiment = TextBlob(key).sentiment
+        frequencyList.append(dict({"text": key,"value": value, "subjectivity": sentiment[1], "polarity": sentiment[0], "isStopWord": isStopWord}))
     return sorted(frequencyList, key=lambda word: word["value"], reverse=True)
 
 def getStopWords():
