@@ -57,8 +57,8 @@ class Wordcloud extends Component {
 
     drawWordCloud = () =>  {
         const sizeThreshold = .05 * this.props.frequencyList[0].value
-        // this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold)
-        this.frequencyList = this.props.frequencyList.slice(10,200)
+        this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold)
+        // this.frequencyList = this.props.frequencyList.slice(10,200)
 
         this.svg = d3
             .select("#wordcloud")

@@ -60,11 +60,10 @@ class App extends Component {
       })
       .then(data => {
         // data.frequencyList = this.randomlyGenerate();
-        console.log(data);
         this.setState(() => {
           return {
             originalFrequencyList: data.frequencyList,
-            frequencyList: data.frequencyList,
+            frequencyList: data.frequencyList.filter(item => !item.isStopWord),
             emojiList: data.emojiList,
             loaded: true,
             loading: false,
