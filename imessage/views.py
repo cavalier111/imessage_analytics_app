@@ -13,7 +13,8 @@ from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-
+from django.http import HttpResponse
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 #get endpint, not sure If ill use
 class TextsListCreate(generics.ListCreateAPIView):
@@ -61,7 +62,12 @@ def frequency_list(request):
 	else:
 		return Response({"message":'There was an error creating the vizualization'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+@api_view(['GET'])
+def downloadTextExtractor(request):
+	# zip_file = open("/Users/RobbyKlemchek/messagesV2/imessage_analytics_app/imessage/static/admin/img/retrieveImessage.zip", 'rb')
+	response = HttpResponse(zip_file, content_type='application/force-download')
+	response['Content-Disposition'] = 'attachment; filename="%s"' % 'foo.zip'
+	return response
 def emojicloud(request):
 	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'), True)
 	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": True })

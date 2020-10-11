@@ -11,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/texts/', views.TextsListCreate.as_view() ),
     path('api/texts/upload/', views.texts_upload ),
+    path('api/texts/downloadTextExtractor/', views.downloadTextExtractor ),
     path('api/texts/frequencyList/', views.frequency_list ),
     url(r'^upload/$', views.texts_upload, name = 'texts_upload'),
     url(r'^home/$', views.texts_upload, name = 'texts_upload'),
