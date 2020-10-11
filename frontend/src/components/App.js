@@ -1,11 +1,21 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+
+import { connect } from "react-redux";
+
+import { updateFrequencyList } from "../redux/actions/word";
 import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
 import NavigationBar from './navigationbar';
 import './loader.scss';
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateFrequencyList: frequencyList => dispatch(updateFrequencyList(frequencyList))
+  };
+}
 
 class App extends Component {
   constructor(props) {
@@ -60,6 +70,7 @@ class App extends Component {
       })
       .then(data => {
         // data.frequencyList = this.randomlyGenerate();
+        this.props.updateFrequencyList(data.frequencyList.filter(item => !item.isStopWord)),
         this.setState(() => {
           return {
             originalFrequencyList: data.frequencyList,
@@ -117,7 +128,4 @@ class App extends Component {
   }
 }
 
-export default App;
-
-const container = document.getElementById("app");
-render(<App />, container);
+export default connect(null, mapDispatchToProps)(App);

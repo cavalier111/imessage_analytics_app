@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux'
+import { updateFrequencyList } from "../redux/actions/word";
+import { getFrequencyList } from "../redux/selectors/word";
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -6,6 +9,14 @@ import RangeSlider from './rangeslider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import TagsInput from './tagsinput';
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateFrequencyList: frequencyList => {
+      return dispatch(updateFrequencyList(frequencyList));
+    }
+  };
+}
 
 class FilterSection extends Component {
     constructor(props) {
@@ -42,7 +53,9 @@ class FilterSection extends Component {
       filteredList = filteredList.slice(this.state.amount[0],this.state.amount[1]+1).filter(item => {
         return (item.polarity >= this.state.polarity[0]) && (item.polarity <= this.state.polarity[1]) && (item.subjectivity >= this.state.subjectivity[0]) && (item.subjectivity <= this.state.subjectivity[1]);
       });
-      this.props.handleFilterApply(filteredList);
+      // this.props.handleFilterApply(filteredList);
+
+      this.props.updateFrequencyList(filteredList);
     }
 
     updateStopWords = (updatedStopWords) => {
@@ -57,6 +70,7 @@ class FilterSection extends Component {
         return (
           <div>
           <DropdownButton id="dropdown-basic-button" title="Filters">
+            {this.props.frequencyList ? <span> {this.props.frequencyList.length} </span> : <span>No frequencyList</span>}
             <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('amount', newValues)} filterName="Amount of words" range={[1,this.state.amountSliderLimit]} currentRange={this.state.amount} step={1} />
             <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('polarity', newValues)} filterName="Polarity" range={[-1,1]} currentRange={this.state.polarity} step={.05}/>
             <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('subjectivity', newValues)} filterName="Subjectivity" range={[0,1]} currentRange={this.state.subjectivity} step={.05}/>
@@ -72,4 +86,4 @@ class FilterSection extends Component {
     }
 }
 
-export default FilterSection;
+export default connect(state => ({ frequencyList: getFrequencyList(state) }), mapDispatchToProps)(FilterSection);
