@@ -1,10 +1,14 @@
-export const getFrequencyListState = store => store.frequencyList
-
 export const getFrequencyList = store =>
-  getFrequencyListState(store) ? getFrequencyListState(store) : []
+  store.dataType && store.dataType == "emojis" ? getEmojiList(store) : getWordList(store);
 
-// export const getTodoById = (store, id) =>
-//   getTodosState(store) ? { ...getTodosState(store).byIds[id], id } : {}
+export const getWordList = store =>
+  store.wordList ? store.wordList : []
 
-// export const getTodos = store =>
-//   getTodoList(store).map(id => getTodoById(store, id))
+export const getEmojiList = store =>
+  store.emojiList ? store.emojiList : []
+
+export const getDataType = store =>
+  store.dataType ? store.dataType : []
+
+export const getVizType = store =>
+  store.vizType ? store.vizType : []

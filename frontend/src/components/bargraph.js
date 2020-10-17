@@ -1,6 +1,14 @@
 import React, {Component} from 'react';
 import './bargraph.css';
 import * as d3 from 'd3';
+import { connect } from "react-redux";
+import { getFrequencyList, getDataType } from "../redux/selectors/word";
+
+const mapStateToProps = (state) => ({
+  frequencyList: getFrequencyList(state),
+  dataType: getDataType(state),
+});
+
 
 class Bargraph extends Component {
     constructor(props) {
@@ -14,7 +22,7 @@ class Bargraph extends Component {
 
     componentDidMount() {
         this.drawBarGraph();
-        this.setUpTopTen();
+        // this.setUpTopTen();
     }
 
     componentDidUpdate(prevProps) {
@@ -33,7 +41,8 @@ class Bargraph extends Component {
             }
         }
 
-        if(!_.isEqual(prevProps.dataType, this.props.dataType)){
+        if(!_.isEqual(prevProps.dataType, this.props.dataType) || 
+            !_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length) ){
             d3.select("svg").remove();
             this.drawBarGraph();
         }
@@ -42,6 +51,7 @@ class Bargraph extends Component {
     drawBarGraph = () =>  {
 
         this.totalBars = Math.min(200,this.props.frequencyList.length)
+        // this.totalBars = this.props.frequencyList.length;
 
         this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
 
@@ -279,4 +289,4 @@ class Bargraph extends Component {
     }
 }
 
-export default Bargraph;
+export default connect(mapStateToProps)(Bargraph);

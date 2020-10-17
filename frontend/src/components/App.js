@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-
 import { connect } from "react-redux";
-
-import { updateFrequencyList } from "../redux/actions/word";
+import { getVizType } from "../redux/selectors/word";
+import { updateWordList, updateEmojiList } from "../redux/actions/word";
 import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
@@ -13,7 +12,8 @@ import './loader.scss';
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateFrequencyList: frequencyList => dispatch(updateFrequencyList(frequencyList))
+    updateWordList: wordList => dispatch(updateWordList(wordList)),
+    updateEmojiList: emojiList => dispatch(updateEmojiList(emojiList)),
   };
 }
 
@@ -23,25 +23,10 @@ class App extends Component {
     this.state = {
       loaded: false,
       placeholder: "Loading",
-      selectedViz: "wordcloud",
-      selectedDataType: "words",
       searchedWord: "",
       previousSearchWord: "",
-      fireFilter: true,
     };
     this.viewVizualizations();
-  }
-
-  switchViz = (selectedViz) => {
-    if (selectedViz == 'wordcloud') {
-      this.setState({selectedViz: "wordcloud"});
-    } else {
-      this.setState({selectedViz: "bargraph"});
-    }
-  }
-
-  switchDataType = (selectedDataType) => {
-    this.setState({selectedDataType: selectedDataType});
   }
 
   randomlyGenerate = () => {
@@ -70,12 +55,11 @@ class App extends Component {
       })
       .then(data => {
         // data.frequencyList = this.randomlyGenerate();
-        this.props.updateFrequencyList(data.frequencyList.filter(item => !item.isStopWord)),
+        this.props.updateWordList(data.frequencyList.filter(item => !item.isStopWord)),
+        this.props.updateEmojiList(data.emojiList),
         this.setState(() => {
           return {
             originalFrequencyList: data.frequencyList,
-            frequencyList: data.frequencyList.filter(item => !item.isStopWord),
-            emojiList: data.emojiList,
             loaded: true,
             loading: false,
           };
@@ -83,29 +67,14 @@ class App extends Component {
       });
   }
 
-  handleFilterApply = (updatedList) => {
-      console.log(updatedList,this.state.frequencyList);
-      this.setState({
-        frequencyList: updatedList,
-        
-      }, () => {
-        console.log(this.state.frequencyList)
-        this.setState({
-          fireFilter: !this.state.fireFilter
-        });
-      });
-  }
-
-
 
   render() {
     let vizualization;
-    const data = this.state.selectedDataType == 'words' ? this.state.frequencyList : this.state.emojiList;
     if(this.state.loaded) {
-      if (this.state.selectedViz == 'wordcloud') {
-        vizualization = <Wordcloud frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord} fireFilter={this.state.fireFilter}/>;
+      if (this.props.vizType == 'wordcloud') {
+        vizualization = <Wordcloud searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       } else {
-        vizualization =  <Bargraph frequencyList={data} dataType={this.state.selectedDataType} searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization =  <Bargraph searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
       }
     }
     return (
@@ -120,7 +89,7 @@ class App extends Component {
           : false
         }
         {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}
-        {this.state.loaded ? <Wordheader switchViz={this.switchViz} switchDataType={this.switchDataType} frequencyList={data} originalFrequencyList={this.state.originalFrequencyList} handleFilterApply={this.handleFilterApply} handleSearchSelect={this.handleSearchSelect}/> : false}
+        {this.state.loaded ? <Wordheader originalFrequencyList={this.state.originalFrequencyList} handleSearchSelect={this.handleSearchSelect}/> : false}
         {vizualization}
         <span> {this.state.error} </span>
       </div>
@@ -128,4 +97,4 @@ class App extends Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(state => ({ vizType: getVizType(state) }), mapDispatchToProps)(App);

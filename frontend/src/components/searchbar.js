@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 // import _ from 'lodash';
 import { Search, Grid, Header, Segment } from 'semantic-ui-react';
+import { getFrequencyList } from "../redux/selectors/word";
+import { connect } from "react-redux";
 import Fuse from 'fuse.js'
 import './searchBar.css';
 
@@ -9,6 +11,7 @@ const initialState = {
   results: [],
   value: '',
 }
+
 
 let previousSelection = "";
 
@@ -94,5 +97,4 @@ function Searchbar(props) {
   )
 }
 
-
-export default Searchbar;
+export default connect(state => ({ frequencyList: getFrequencyList(state) }))(Searchbar);

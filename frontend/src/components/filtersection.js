@@ -54,7 +54,6 @@ class FilterSection extends Component {
         return (item.polarity >= this.state.polarity[0]) && (item.polarity <= this.state.polarity[1]) && (item.subjectivity >= this.state.subjectivity[0]) && (item.subjectivity <= this.state.subjectivity[1]);
       });
       // this.props.handleFilterApply(filteredList);
-
       this.props.updateFrequencyList(filteredList);
     }
 

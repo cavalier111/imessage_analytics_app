@@ -5,23 +5,34 @@ import * as cloud from 'd3.layout.cloud'
 import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
+import { connect } from "react-redux";
+import { getFrequencyList, getDataType } from "../redux/selectors/word";
 
 let maxLayoutWord;
 let maxLayoutEmoji;
+
+const mapStateToProps = (state) => ({
+  frequencyList: getFrequencyList(state),
+  dataType: getDataType(state),
+});
+
 class Wordcloud extends Component {
     constructor(props) {
         super(props);
+        // this.state = {
+        //     frequencyList: [],
+        // }
         this.margin = {top: 20, right: 20, bottom: 40, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
         this.maxLayout = cloud();
     }
 
-    componentDidMount() {
-        this.drawWordCloud();
+    componentDidMount() { 
+        this.startWordCloud();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.searchedWord != "") {
             const searchedId = "cloud" + this.props.searchedWord;
             const desiredElement = document.getElementById(searchedId);
@@ -41,25 +52,30 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.drawWordCloud();
         }
-
-        if(!_.isEqual(prevProps.fireFilter, this.props.fireFilter)){
-            console.log('datatype', this.props.dataType);
+   
+        if(!_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length)){
              if (this.props.dataType == "words") {
                 maxLayoutWord = null;
              } else {
                 maxLayoutEmoji = null;
              }
             d3.select("svg").remove();
-            this.drawWordCloud();
+            this.startWordCloud();
         }
 
     }
 
-    drawWordCloud = () =>  {
-        const sizeThreshold = .05 * this.props.frequencyList[0].value
-        this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold)
+    startWordCloud = () =>  {
         // this.frequencyList = this.props.frequencyList.slice(10,200)
+        const sizeThreshold = .05 * this.props.frequencyList[0].value;
+        this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
+        this.drawWordCloud();
+        // this.setState({ frequencyList: frequencyListFiltered }, ()=> this.drawWordCloud());
+    
+    }
 
+    drawWordCloud = () => {
+        // console.log("state", this.state);
         this.svg = d3
             .select("#wordcloud")
             .append("svg")
@@ -279,4 +295,4 @@ class Wordcloud extends Component {
     }
 }
 
-export default Wordcloud;
+export default connect(mapStateToProps)(Wordcloud);
