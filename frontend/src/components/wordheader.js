@@ -37,7 +37,7 @@ class Wordheader extends Component {
             <h1 className="headerText">Total Unique Words: {this.props.frequencyList.length}<span id="totalWords"> </span> </h1>
             <div id="buttons" className="buttonSection">
               <Button variant="outline-primary" size="sm" id="reset" style={{textAlign: "center"}}>Reset Zoom</Button>
-              <Searchbar handleSearchSelect={this.props.handleSearchSelect}/>
+              <Searchbar />
               <div>
                 <span>Visualization type:</span>
                 <div className="form-check">

@@ -1,38 +1,63 @@
 import React, {Component} from 'react';
 // import _ from 'lodash';
 import { Search, Grid, Header, Segment } from 'semantic-ui-react';
-import { getFrequencyList } from "../redux/selectors/word";
+import { getVizType, getFrequencyList } from "../redux/selectors/word";
 import { connect } from "react-redux";
 import Fuse from 'fuse.js'
 import './searchBar.css';
 
+const mapStateToProps = (state) => ({
+  frequencyList: getFrequencyList(state),
+  vizType: getVizType(state),
+});
+
+let vizType;
+
 const initialState = {
-  loading: false,
-  results: [],
-  value: '',
-}
-
-
-let previousSelection = "";
+    loading: false,
+    results: [],
+    value: '',
+    previousSelection: '',
+  };
 
 function SearchReducer(state, action) {
-  switch (action.type) {
-    case 'CLEAN_QUERY':
-      return initialState
-    case 'START_SEARCH':
-      return { ...state, loading: true, value: action.query }
-    case 'FINISH_SEARCH':
-      return { ...state, loading: false, results: action.results }
-    case 'UPDATE_SELECTION':
-      return { ...state, value: action.selection }
-    default:
-      throw new Error()
+  if(action.type == 'CLEAN_QUERY') {
+    return initialState;
+  } else if (action.type == 'START_SEARCH') {
+    setGlow(state.previousSelection, true);
+    return { ...state, loading: true, value: action.query };
+  } else if (action.type =='FINISH_SEARCH') {
+    return { ...state, loading: false, results: action.results };
+  } else if (action.type == 'UPDATE_SELECTION') {
+    setGlow(state.previousSelection, true);
+    setGlow(action.value, false);
+    return { ...state, value: action.value, previousSelection: action.value };
+  } else {
+    throw new Error();
+  }
+}
+
+function setGlow(selection, remove) {
+  if (selection != '') {
+      const searchIdPartOne = vizType == 'wordcloud' ? 'cloud' : 'bar';
+      const searchedId = searchIdPartOne + selection;
+      const glowClass = 'glow' + searchIdPartOne;
+      const desiredElement = document.getElementById(searchedId);
+      if (desiredElement != null) {
+        if (remove) {
+          desiredElement.classList.remove(glowClass);
+        } else {
+          desiredElement.classList.add(glowClass);
+        }
+      }
   }
 }
 
 function Searchbar(props) {
+  vizType = props.vizType;
   const [state, dispatch] = React.useReducer(SearchReducer, initialState)
   const { loading, results, value, selection } = state
+        
 
   const formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, value: wordObject.value}));
   const options = {
@@ -43,13 +68,7 @@ function Searchbar(props) {
   const timeoutRef = React.useRef()
   const handleSearchChange = React.useCallback((e, data) => {
     clearTimeout(timeoutRef.current)
-    if (previousSelection != '') {
-      props.handleSearchSelect("", previousSelection);
-      dispatch({ type: 'UPDATE_SELECTION', selection: '' });
-    }
-
     dispatch({ type: 'START_SEARCH', query: data.value })
-
     timeoutRef.current = setTimeout(() => {
       if (data.value.length === 0) {
         dispatch({ type: 'CLEAN_QUERY' })
@@ -84,9 +103,7 @@ function Searchbar(props) {
         <Search
           loading={loading}
           onResultSelect={(e, data) => {
-            props.handleSearchSelect(data.result.title, previousSelection);
-            previousSelection = data.result.title;
-            return dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
+            return dispatch({ type: 'UPDATE_SELECTION', value: data.result.title })
            }
           }
           onSearchChange={handleSearchChange}
@@ -97,4 +114,4 @@ function Searchbar(props) {
   )
 }
 
-export default connect(state => ({ frequencyList: getFrequencyList(state) }))(Searchbar);
+export default connect(mapStateToProps)(Searchbar);

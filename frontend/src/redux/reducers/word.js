@@ -1,10 +1,16 @@
-import { UPDATE_FREQUENCY_LIST, UPDATE_WORD_LIST, UPDATE_EMOJI_LIST, UPDATE_DATA_TYPE, UPDATE_VIZ_TYPE } from "../constants/actionTypes";
+import {
+  UPDATE_FREQUENCY_LIST,
+  UPDATE_WORD_LIST,
+  UPDATE_EMOJI_LIST,
+  UPDATE_DATA_TYPE,
+  UPDATE_VIZ_TYPE
+} from "../constants/actionTypes";
 
 const initialState = {
   frequencyList: [],
   emojiList: [],
   dataType: 'words',
-  vizType: 'wordcloud'
+  vizType: 'wordcloud',
 };
 
 export const rootReducer = (state = initialState, action) => {

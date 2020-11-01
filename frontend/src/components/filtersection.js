@@ -25,7 +25,7 @@ class FilterSection extends Component {
       stopWords = stopWords.map(word => word.text);
       this.state= {
         stopWords: stopWords,
-        amount: [0,this.props.frequencyListLength],
+        amount: [1,this.props.frequencyListLength],
         polarity: [-1,1],
         subjectivity: [0,1],
         stopWordsEnabled: true,
@@ -50,7 +50,7 @@ class FilterSection extends Component {
       if(this.state.stopWordsEnabled) {
         filteredList = filteredList.filter(item => !this.state.stopWords.includes(item.text));
       }
-      filteredList = filteredList.slice(this.state.amount[0],this.state.amount[1]+1).filter(item => {
+      filteredList = filteredList.slice(this.state.amount[0]-1,this.state.amount[1]+1).filter(item => {
         return (item.polarity >= this.state.polarity[0]) && (item.polarity <= this.state.polarity[1]) && (item.subjectivity >= this.state.subjectivity[0]) && (item.subjectivity <= this.state.subjectivity[1]);
       });
       // this.props.handleFilterApply(filteredList);

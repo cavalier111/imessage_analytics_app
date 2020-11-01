@@ -33,27 +33,13 @@ class Wordcloud extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.searchedWord != "") {
-            const searchedId = "cloud" + this.props.searchedWord;
-            const desiredElement = document.getElementById(searchedId);
-            if (desiredElement != null) {
-                desiredElement.classList.add("glowWord");
-            }
-        }
-        if (this.props.previousSearchWord != "") {
-            const searchedId = "cloud" + this.props.previousSearchWord;
-            const desiredElement = document.getElementById(searchedId);
-            if (desiredElement != null) {
-                desiredElement.classList.remove("glowWord");
-            }
-        }
-
-        if(!_.isEqual(prevProps.dataType, this.props.dataType)){
+        console.log(prevProps.frequencyList, this.props.frequencyList)
+        if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();
         }
-   
-        if(!_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length)){
+        if(prevProps.frequencyList && prevProps.frequencyList.length 
+            !== this.props.frequencyList && this.props.frequencyList.length){
              if (this.props.dataType == "words") {
                 maxLayoutWord = null;
              } else {

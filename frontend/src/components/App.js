@@ -40,10 +40,6 @@ class App extends Component {
         return [...new Set(randomParagraph.split(" "))].map((word, i) => ({"text":word, value: Math.floor(Math.random() * 6)}))
     }
 
-  handleSearchSelect = (searchedWord, previousSearchWord) => {
-    this.setState({searchedWord: searchedWord, previousSearchWord: previousSearchWord});
-  }
-
   viewVizualizations = () => {
     this.setState({loading: true});
     fetch("api/texts/frequencyList")
@@ -72,9 +68,9 @@ class App extends Component {
     let vizualization;
     if(this.state.loaded) {
       if (this.props.vizType == 'wordcloud') {
-        vizualization = <Wordcloud searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization = <Wordcloud/>;
       } else {
-        vizualization =  <Bargraph searchedWord={this.state.searchedWord} previousSearchWord={this.state.previousSearchWord}/>;
+        vizualization =  <Bargraph/>;
       }
     }
     return (
@@ -89,7 +85,7 @@ class App extends Component {
           : false
         }
         {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}
-        {this.state.loaded ? <Wordheader originalFrequencyList={this.state.originalFrequencyList} handleSearchSelect={this.handleSearchSelect}/> : false}
+        {this.state.loaded ? <Wordheader originalFrequencyList={this.state.originalFrequencyList}/> : false}
         {vizualization}
         <span> {this.state.error} </span>
       </div>

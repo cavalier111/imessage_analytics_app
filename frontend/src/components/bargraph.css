@@ -49,19 +49,3 @@ text.divergence {
   padding: 5px;
   text-align: center;
 }
-
-
-.glowBar {
-     animation: .5s glowingBar infinite alternate;
-}
-
-@keyframes glowingBar {
-  from {
-        fill: grey;
-        opacity: .3;
-    }
-  to {
-        opacity: .7;
-    }
-}
-

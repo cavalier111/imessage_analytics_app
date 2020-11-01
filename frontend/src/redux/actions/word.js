@@ -1,8 +1,10 @@
-import { UPDATE_FREQUENCY_LIST } from '../constants/actionTypes';
-import { UPDATE_WORD_LIST } from '../constants/actionTypes';
-import { UPDATE_EMOJI_LIST } from '../constants/actionTypes';
-import { UPDATE_DATA_TYPE } from '../constants/actionTypes';
-import { UPDATE_VIZ_TYPE } from '../constants/actionTypes'
+import {
+	UPDATE_FREQUENCY_LIST,
+	UPDATE_WORD_LIST,
+	UPDATE_EMOJI_LIST,
+	UPDATE_DATA_TYPE,
+	UPDATE_VIZ_TYPE
+} from '../constants/actionTypes';
 
 export const updateFrequencyList = payload => ({
 	type: UPDATE_FREQUENCY_LIST,

@@ -26,21 +26,6 @@ class Bargraph extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.searchedWord != "") {
-            const searchedId = "bar" + this.props.searchedWord;
-            const desiredElement = document.getElementById(searchedId);
-            if (desiredElement != null) {
-                desiredElement.classList.add("glowBar");
-            }
-        }
-        if (this.props.previousSearchWord != "") {
-            const searchedId = "bar" + this.props.previousSearchWord;
-            const desiredElement = document.getElementById(searchedId);
-            if (desiredElement != null) {
-                desiredElement.classList.remove("glowBar");
-            }
-        }
-
         if(!_.isEqual(prevProps.dataType, this.props.dataType) || 
             !_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length) ){
             d3.select("svg").remove();
@@ -87,7 +72,7 @@ class Bargraph extends Component {
             .attr("class", "label")
             .attr('text-anchor', 'middle')
             .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
-            .attr("x", (d) => this.x(d.value) + 10)
+            .attr("x", (d) => this.x(d.value) + 4 * d.value.toString().length)
             .style("opacity", 0)
             .style("pointer-events", "none")
             .text((d) => d.value);
@@ -180,7 +165,7 @@ class Bargraph extends Component {
         this.bars.append('text')
           .attr('class', 'divergence')
           .attr('y', (a) => this.y(a.text) + this.y.bandwidth() / 2)
-          .attr('x', (a) => this.x(a.value) + 15)
+          .attr('x', (a) => this.x(a.value) + 7 + 4 * a.value.toString().length)
           .attr('text-anchor', 'middle')
           .style("pointer-events", "none")
           .text((a, idx) => {

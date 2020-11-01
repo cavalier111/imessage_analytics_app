@@ -1,0 +1,29 @@
+.glowbar {
+     animation: .5s glowingBar infinite alternate;
+}
+
+@keyframes glowingBar {
+  from {
+        fill: grey;
+        opacity: .3;
+    }
+  to {
+        opacity: .7;
+    }
+}
+
+.glowcloud {
+     animation: .5s glowingCloud infinite alternate;
+}
+
+@keyframes glowingCloud {
+  to {
+  		opacity: .7;
+        text-shadow: 0 0 10px black;
+    }
+}
+
+.results.transition {
+	max-height: 400px;
+    overflow-y: scroll;
+}
