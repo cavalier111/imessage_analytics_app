@@ -3,7 +3,8 @@ import {
   UPDATE_WORD_LIST,
   UPDATE_EMOJI_LIST,
   UPDATE_DATA_TYPE,
-  UPDATE_VIZ_TYPE
+  UPDATE_VIZ_TYPE,
+  UPDATE_WORDCLOUD_OBJECT
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -11,6 +12,10 @@ const initialState = {
   emojiList: [],
   dataType: 'words',
   vizType: 'wordcloud',
+  cloudObject: {
+    word: null,
+    emoji: null
+  }
 };
 
 export const rootReducer = (state = initialState, action) => {
@@ -50,6 +55,15 @@ export const rootReducer = (state = initialState, action) => {
       ...state,
       vizType: action.payload
     }
+  }
+  if (action.type === UPDATE_WORDCLOUD_OBJECT) {
+    const returnState = {...state};
+    if (state.dataType == 'words') {
+        returnState.cloudObject.word = action.payload;
+    } else {
+      returnState.cloudObject.emoji = action.payload;
+    }
+    return returnState;
   }
   return state;
 }

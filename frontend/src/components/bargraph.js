@@ -3,6 +3,7 @@ import './bargraph.css';
 import * as d3 from 'd3';
 import { connect } from "react-redux";
 import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
@@ -26,8 +27,7 @@ class Bargraph extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(!_.isEqual(prevProps.dataType, this.props.dataType) || 
-            !_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length) ){
+        if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)) {
             d3.select("svg").remove();
             this.drawBarGraph();
         }

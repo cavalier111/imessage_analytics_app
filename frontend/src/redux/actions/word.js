@@ -3,7 +3,8 @@ import {
 	UPDATE_WORD_LIST,
 	UPDATE_EMOJI_LIST,
 	UPDATE_DATA_TYPE,
-	UPDATE_VIZ_TYPE
+	UPDATE_VIZ_TYPE,
+	UPDATE_WORDCLOUD_OBJECT
 } from '../constants/actionTypes';
 
 export const updateFrequencyList = payload => ({
@@ -28,5 +29,10 @@ export const updateDataType = payload => ({
 
 export const updateVizType = payload => ({
 	type: UPDATE_VIZ_TYPE,
+	payload
+});
+
+export const updateWordcloudObject = payload => ({
+	type: UPDATE_WORDCLOUD_OBJECT,
 	payload
 });

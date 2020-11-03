@@ -2,18 +2,16 @@ import React, {Component} from 'react';
 import './wordcloud.css';
 import * as d3 from 'd3';
 import * as cloud from 'd3.layout.cloud'
-import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType } from "../redux/selectors/word";
-
-let maxLayoutWord;
-let maxLayoutEmoji;
+import { getFrequencyList, getDataType, getWordcloudObject } from "../redux/selectors/word";
+import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
+  wordcloudObject: getWordcloudObject(state),
 });
 
 class Wordcloud extends Component {
@@ -25,7 +23,6 @@ class Wordcloud extends Component {
         this.margin = {top: 20, right: 20, bottom: 40, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
-        this.maxLayout = cloud();
     }
 
     componentDidMount() { 
@@ -33,35 +30,21 @@ class Wordcloud extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevProps.frequencyList, this.props.frequencyList)
         if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();
         }
-        if(prevProps.frequencyList && prevProps.frequencyList.length 
-            !== this.props.frequencyList && this.props.frequencyList.length){
-             if (this.props.dataType == "words") {
-                maxLayoutWord = null;
-             } else {
-                maxLayoutEmoji = null;
-             }
+        if(!equal(prevProps.wordcloudObject, this.props.wordcloudObject)){
             d3.select("svg").remove();
             this.startWordCloud();
         }
-
     }
 
     startWordCloud = () =>  {
-        // this.frequencyList = this.props.frequencyList.slice(10,200)
-        const sizeThreshold = .05 * this.props.frequencyList[0].value;
-        this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
-        this.drawWordCloud();
-        // this.setState({ frequencyList: frequencyListFiltered }, ()=> this.drawWordCloud());
-    
+        this.drawWordCloud();    
     }
 
     drawWordCloud = () => {
-        // console.log("state", this.state);
         this.svg = d3
             .select("#wordcloud")
             .append("svg")
@@ -81,13 +64,7 @@ class Wordcloud extends Component {
         this.fill = d3.scaleOrdinal(d3.schemeCategory10);
         this.setUpLinearColorGrandient();
 
-        if (this.props.dataType == "words") {
-            this.retrieveMaxLayout(this.props.dataType);
-        } else {
-            this.retrieveMaxLayout(maxLayoutEmoji);
-        }
-
-        this.maxLayout
+        this.props.wordcloudObject
             .on("end", (words) => this.draw(words,true))
             .start();
     }
@@ -195,58 +172,6 @@ class Wordcloud extends Component {
             }, 5000);
         }
     }
-
-    retrieveMaxLayout = (dataType) => {
-        if (this.props.dataType == "words") {
-            if (maxLayoutWord){
-                this.maxLayout = maxLayoutWord;
-            } else {
-                this.findMaxLayout(5);
-                if (this.maxLayout) {
-                    maxLayoutWord = this.maxLayout;
-                }
-            }
-        } else {
-            if (maxLayoutEmoji){
-                this.maxLayout = maxLayoutEmoji;
-            } else {
-                this.findMaxLayout(5);
-                if (this.maxLayout) {
-                    maxLayoutEmoji = this.maxLayout;
-                }
-            }
-        }
-    }
-
-    findMaxLayout = (max_font_size) => {
-        var maxSize = d3.max(this.frequencyList, d => d.value);
-        var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
-        const layout = cloud();
-        layout
-            .size([this.width, this.height])
-            .words(this.frequencyList)
-            .rotate(d => 0)
-            .text(d => d.text) 
-            .font('monospace')
-            .fontSize(d => Math.floor(fontSizeScale(d.value/maxSize)))
-            .spiral("archimedean")
-        layout
-            .on("end", (output) => {
-                //if all the words are in the wordcliud output, the font is less than 100
-                if ((this.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
-                    // set the maximum sized layout to the current
-                    this.maxLayout = layout;
-                    // try drawing again with 5 bigger font size
-                    return this.findMaxLayout(max_font_size + 5);
-                }
-                //otherwise, max size has been found, return out
-                else {
-                    return undefined;
-                }
-            })
-            .start()
-    }
-
 
     render() {
         return (
