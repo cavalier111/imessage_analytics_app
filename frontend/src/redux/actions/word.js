@@ -36,3 +36,9 @@ export const updateWordcloudObject = payload => ({
 	type: UPDATE_WORDCLOUD_OBJECT,
 	payload
 });
+
+
+export const updateWcTest = payload => ({
+	type: 'Tester',
+	payload
+});

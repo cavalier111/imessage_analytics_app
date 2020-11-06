@@ -3,13 +3,19 @@ import './bargraph.css';
 import * as d3 from 'd3';
 import { connect } from "react-redux";
 import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import { updateWcTest } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
+import WordcloudService from "../services/wordcloud.service";
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
 });
-
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateWcTest: () => dispatch(updateWcTest()),
+  };
+}
 
 class Bargraph extends Component {
     constructor(props) {
@@ -29,11 +35,11 @@ class Bargraph extends Component {
     componentDidUpdate(prevProps) {
         if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)) {
             d3.select("svg").remove();
-            this.drawBarGraph();
+            this.drawBarGraph(true);
         }
     }
 
-    drawBarGraph = () =>  {
+    drawBarGraph = (updating = false) =>  {
 
         this.totalBars = Math.min(200,this.props.frequencyList.length)
         // this.totalBars = this.props.frequencyList.length;
@@ -106,8 +112,14 @@ class Bargraph extends Component {
             .on('end', (d,i) =>  { 
               if(i==this.totalBars-1) {
                 if (d3.select(".label").style('opacity') == 0) {
-                  d3.select('#barSvg').select("#favorite").transition().duration(1500).style("opacity", 1);
+                  d3.select('#barSvg').select("#favorite").transition().duration(1500).style("opacity", 1).on('end', () => {
+                    console.log('finished!')
+                    if (updating && this.props.dataType == 'words') {
+                        this.props.updateWcTest();
+                    }
+                  });;
                 }
+                
               }
             })
             ;
@@ -274,4 +286,4 @@ class Bargraph extends Component {
     }
 }
 
-export default connect(mapStateToProps)(Bargraph);
+export default connect(mapStateToProps, mapDispatchToProps)(Bargraph);
