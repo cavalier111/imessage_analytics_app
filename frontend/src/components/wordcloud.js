@@ -7,6 +7,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
 import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import equal from 'fast-deep-equal';
 
 let maxLayoutWord;
 let maxLayoutEmoji;
@@ -38,8 +39,7 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.drawWordCloud();
         }
-        if(prevProps.frequencyList && prevProps.frequencyList.length 
-            !== this.props.frequencyList && this.props.frequencyList.length){
+        if(!equal(prevProps.frequencyList, this.props.frequencyList)){
              if (this.props.dataType == "words") {
                 maxLayoutWord = null;
              } else {
@@ -54,7 +54,11 @@ class Wordcloud extends Component {
     startWordCloud = () =>  {
         // this.frequencyList = this.props.frequencyList.slice(10,200)
         const sizeThreshold = .05 * this.props.frequencyList[0].value;
-        this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
+        if (this.props.dataType == 'words'){
+            this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
+        } else {
+            this.frequencyList = this.props.frequencyList;
+        }
         this.drawWordCloud();
         // this.setState({ frequencyList: frequencyListFiltered }, ()=> this.drawWordCloud());
     

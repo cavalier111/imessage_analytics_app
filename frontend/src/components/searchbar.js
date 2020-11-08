@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 // import _ from 'lodash';
 import { Search, Grid, Header, Segment } from 'semantic-ui-react';
-import { getVizType, getFrequencyList } from "../redux/selectors/word";
+import { getVizType, getFrequencyList, getDataType } from "../redux/selectors/word";
 import { connect } from "react-redux";
 import Fuse from 'fuse.js'
 import './searchBar.css';
@@ -9,6 +9,7 @@ import './searchBar.css';
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   vizType: getVizType(state),
+  dataType: getDataType(state),
 });
 
 let vizType;
@@ -54,19 +55,22 @@ function setGlow(selection, remove) {
 }
 
 function Searchbar(props) {
-  vizType = props.vizType;
-  const [state, dispatch] = React.useReducer(SearchReducer, initialState)
-  const { loading, results, value, selection } = state
-        
-
-  const formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, value: wordObject.value}));
-  const options = {
+   const options = {
       includeScore: false,
       keys: ['title']
   };
-  const fuse = new Fuse(formatedFrequencyList, options);
+  const [fuse, setFuse] = React.useState();
+  React.useEffect(() => {
+      console.log(props.frequencyList);
+      const formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, value: wordObject.value}));
+      const fusey = new Fuse(formatedFrequencyList, options)
+      setFuse(fusey);
+  }, [props.dataType]);
+  vizType = props.vizType;
+  const [state, dispatch] = React.useReducer(SearchReducer, initialState)
+  const { loading, results, value, selection } = state
   const timeoutRef = React.useRef()
-  const handleSearchChange = React.useCallback((e, data) => {
+  const handleSearchChange = React.useCallback((e, data, fuse) => {
     clearTimeout(timeoutRef.current)
     dispatch({ type: 'START_SEARCH', query: data.value })
     timeoutRef.current = setTimeout(() => {
@@ -85,7 +89,6 @@ function Searchbar(props) {
       //   results: _.filter(formatedFrequencyList, isMatch),
       // })
       // mapValues(fuse.search(data.value), result => result.item),
-
       dispatch({
         type: 'FINISH_SEARCH',
         results: fuse.search(data.value).map(result => result.item),
@@ -106,7 +109,7 @@ function Searchbar(props) {
             return dispatch({ type: 'UPDATE_SELECTION', value: data.result.title })
            }
           }
-          onSearchChange={handleSearchChange}
+          onSearchChange={(e, data) => handleSearchChange(e,data,fuse)}
           results={results}
           value={value}
         />

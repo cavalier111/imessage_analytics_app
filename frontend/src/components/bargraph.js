@@ -3,6 +3,7 @@ import './bargraph.css';
 import * as d3 from 'd3';
 import { connect } from "react-redux";
 import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
@@ -26,92 +27,89 @@ class Bargraph extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(!_.isEqual(prevProps.dataType, this.props.dataType) || 
-            !_.isEqual(prevProps && prevProps.frequencyList.length, this.props.frequencyList.length) ){
-            d3.select("svg").remove();
-            this.drawBarGraph();
+        if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)) {
+          d3.select("svg").remove();
+          this.drawBarGraph();
         }
     }
 
     drawBarGraph = () =>  {
+      this.totalBars = Math.min(200,this.props.frequencyList.length)
+      // this.totalBars = this.props.frequencyList.length;
 
-        this.totalBars = Math.min(200,this.props.frequencyList.length)
-        // this.totalBars = this.props.frequencyList.length;
+      this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
 
-        this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
+      this.maxWordSize = d3.max(this.frequencyList, d => d.value);
 
-        this.maxWordSize = d3.max(this.frequencyList, d => d.value);
-
-        this.zoomExtent = (this.frequencyList.length / 200) * 24;
-        this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
-        this.svg = d3.select("#bargraph").append("svg")
-            .call((svg) => this.zoom(svg))
-            .attr("width", this.dims.width + this.dims.margin.left + this.dims.margin.right)
-            .attr("height", this.dims.height + this.dims.margin.top + this.dims.margin.bottom)
-            .attr("id", "barSvg")
-            .append("g")
-            .attr("transform", "translate(" + this.dims.margin.left + "," + this.dims.margin.top + ")");
+      this.zoomExtent = (this.frequencyList.length / 200) * 24;
+      this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
+      this.svg = d3.select("#bargraph").append("svg")
+          .call((svg) => this.zoom(svg))
+          .attr("width", this.dims.width + this.dims.margin.left + this.dims.margin.right)
+          .attr("height", this.dims.height + this.dims.margin.top + this.dims.margin.bottom)
+          .attr("id", "barSvg")
+          .append("g")
+          .attr("transform", "translate(" + this.dims.margin.left + "," + this.dims.margin.top + ")");
 
 
-        this.tooltip = d3.select("body").append("div").attr("class", "toolTip").attr("id","tooltipBar");
-        
-        this.setUpAxes();
-        // function to scale opacity with frequency
-        this.opacity = d3.scaleLinear()
-            .domain([0, this.maxWordSize])
-            .range([.01,1]);
+      this.tooltip = d3.select("body").append("div").attr("class", "toolTip").attr("id","tooltipBar");
+      
+      this.setUpAxes();
+      // function to scale opacity with frequency
+      this.opacity = d3.scaleLinear()
+          .domain([0, this.maxWordSize])
+          .range([.01,1]);
 
-        this.bars = this.svg.selectAll(".bar")
-            .data(this.frequencyList)
-            .enter()
-            .append("g")
-            .attr("id", (d,i) => "bar" + i.toString())
+      this.bars = this.svg.selectAll(".bar")
+          .data(this.frequencyList)
+          .enter()
+          .append("g")
+          .attr("id", (d,i) => "bar" + i.toString())
 
-        //add a text to the right of each bar to show count
-        this.bars.append("text")
-            .attr("class", "label")
-            .attr('text-anchor', 'middle')
-            .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
-            .attr("x", (d) => this.x(d.value) + 4 * d.value.toString().length)
-            .style("opacity", 0)
-            .style("pointer-events", "none")
-            .text((d) => d.value);
+      //add a text to the right of each bar to show count
+      this.bars.append("text")
+          .attr("class", "label")
+          .attr('text-anchor', 'middle')
+          .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
+          .attr("x", (d) => this.x(d.value) + 4 * d.value.toString().length)
+          .style("opacity", 0)
+          .style("pointer-events", "none")
+          .text((d) => d.value);
 
-        this.bars.on("mousemove", d => this.mouseMove(d));
-        this.bars.on('mouseleave', (actual, i) => this.mouseLeaveBar(actual, i, false));
+      this.bars.on("mousemove", d => this.mouseMove(d));
+      this.bars.on('mouseleave', (actual, i) => this.mouseLeaveBar(actual, i, false));
 
-        // for zoomed out view add a lebel for the highest frequency word
-        d3.select("#bar" + (this.totalBars-1).toString()).append("text")
-            .attr("id", "favorite")
-            .attr('text-anchor', 'end')
-            .style("opacity", 0)
-            .style("pointer-events", "none")
-            .attr("font-size", "20px")
-            .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
-            .attr("x", (d) => 0)
-            .text((d) => `Your favorite word: ${d.text} \u2933`);
-        
-        this.bars.append("rect")
-            .attr("class", "bar")
-            .attr("id", (d) =>  "bar" + d.text)
-            .attr("opacity", (d) => this.opacity(d.value))
-            .attr("y", (d) =>  this.y(d.text))
-            .attr("height", this.y.bandwidth())
-            .attr("width", 0)
-            .transition()
-            .duration(1500)
-            .delay((d,i) => i*10 )
-            .attr("width", (d) => this.x(d.value))
-            .attr("x", 0)
-            .on('end', (d,i) =>  { 
-              if(i==this.totalBars-1) {
-                if (d3.select(".label").style('opacity') == 0) {
-                  d3.select('#barSvg').select("#favorite").transition().duration(1500).style("opacity", 1);
-                }
+      // for zoomed out view add a lebel for the highest frequency word
+      d3.select("#bar" + (this.totalBars-1).toString()).append("text")
+          .attr("id", "favorite")
+          .attr('text-anchor', 'end')
+          .style("opacity", 0)
+          .style("pointer-events", "none")
+          .attr("font-size", "20px")
+          .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
+          .attr("x", (d) => 0)
+          .text((d) => `Your favorite word: ${d.text} \u2933`);
+      
+      this.bars.append("rect")
+          .attr("class", "bar")
+          .attr("id", (d) =>  "bar" + d.text)
+          .attr("opacity", (d) => this.opacity(d.value))
+          .attr("y", (d) =>  this.y(d.text))
+          .attr("height", this.y.bandwidth())
+          .attr("width", 0)
+          .transition()
+          .duration(1500)
+          .delay((d,i) => i*10 )
+          .attr("width", (d) => this.x(d.value))
+          .attr("x", 0)
+          .on('end', (d,i) =>  { 
+            if(i==this.totalBars-1) {
+              if (d3.select(".label").style('opacity') == 0) {
+                d3.select('#barSvg').select("#favorite").transition().duration(1500).style("opacity", 1);
               }
-            })
-            ;
-
+            }
+          })
+          ;
     }
 
     setUpAxes = () => {

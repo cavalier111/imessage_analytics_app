@@ -37,7 +37,7 @@ class Upload extends Component {
       formData.append('file', this.state.file);
       var req = new Request('/api/texts/upload/', {
         method: "POST",
-        body: this.state.file
+        body: formData
       });
       fetch(req).then(response => response.json())
         .then(response => console.log(response))

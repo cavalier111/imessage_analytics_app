@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 import os
 import re
 import emoji
+import emojis
 from textblob import TextBlob
 
 
@@ -18,11 +19,12 @@ def getTextFrequencyDictForText(texts, isEmoji = False):
             wordsList += [removeEmoji(alphaNumeric(word).lower()) for word in text['text'].split()]
     else:
         for text in texts:
-            wordsList += [char for char in text['text'] if char in emoji.UNICODE_EMOJI]
-    if '' in wordsList: wordsList.remove('')
+            wordsList += extractEmojis(text)
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
+        if key == "":
+            continue
         isStopWord = key in stop_words
         sentiment = TextBlob(key).sentiment
         frequencyList.append(dict({"text": key,"value": value, "subjectivity": sentiment[1], "polarity": sentiment[0], "isStopWord": isStopWord}))
@@ -58,3 +60,20 @@ def removeEmoji(string):
                            u"\U000024C2-\U0001F251"
                            "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
+
+#method to get emojis out of text, required due to ambiguity since some emojis are multiple chars
+def extractEmojis(text):
+    emojiOnlyText = ''.join([char for char in text['text'] if char in emoji.UNICODE_EMOJI])
+    emojiCodes = emoji.demojize(emojiOnlyText)
+    splitDemoji = emojiCodes.split('::')
+    for i in range(len(splitDemoji)-1):
+        splitDemoji[i] +=':'
+    for i in range(1,len(splitDemoji)):
+        splitDemoji[i] = ':' + splitDemoji[i]
+    emojiString = emoji.emojize(' '.join(splitDemoji))
+    return emojiString.split(' ')
+
+
+def getEmojiTagsAndCategories(emoj):
+    print(emoj, emoj.encode('unicode-escape'),  emoji.demojize(emoj), emojis.db.get_emoji_by_code(emoj))
+
