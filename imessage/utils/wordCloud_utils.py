@@ -22,7 +22,6 @@ def getTextFrequencyDictForText(texts, dataType = 'word'):
         for text in texts:
             wordsList += extractEmojis(text)
     else:
-        validate = URLValidator()
         for text in texts:
             nonVLink = ''
             for word in text['text'].split():
