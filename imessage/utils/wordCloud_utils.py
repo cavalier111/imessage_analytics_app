@@ -8,18 +8,30 @@ import re
 import emoji
 import emojis
 from textblob import TextBlob
+from urllib.parse import urlparse
 
 
-def getTextFrequencyDictForText(texts, isEmoji = False):
+def getTextFrequencyDictForText(texts, dataType = 'word'):
     stop_words = getStopWords()
     alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
     wordsList = []
-    if not isEmoji:
+    if dataType=="word":
         for text in texts:
             wordsList += [removeEmoji(alphaNumeric(word).lower()) for word in text['text'].split()]
-    else:
+    elif dataType=="emoji":
         for text in texts:
             wordsList += extractEmojis(text)
+    else:
+        validate = URLValidator()
+        for text in texts:
+            nonVLink = ''
+            for word in text['text'].split():
+                try:
+                    parsed = urlparse(word)
+                    if parsed.netloc:
+                        wordsList+=[parsed.netloc]
+                except:
+                    pass
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
