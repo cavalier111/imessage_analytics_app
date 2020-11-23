@@ -9,36 +9,45 @@ import emoji
 import emojis
 from textblob import TextBlob
 from urllib.parse import urlparse
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-
-def getTextFrequencyDictForText(texts, dataType = 'word'):
-    stop_words = getStopWords()
+def getTextFrequencyDictForText(texts):
+    global analyzer
+    analyzer = SentimentIntensityAnalyzer()
+    # print(TextBlob("heart").sentiment, TextBlob("red").sentiment)
+    global alphaNumeric
     alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
-    wordsList = []
-    if dataType=="word":
-        for text in texts:
-            wordsList += [removeEmoji(alphaNumeric(word).lower()) for word in text['text'].split()]
-    elif dataType=="emoji":
-        for text in texts:
-            wordsList += extractEmojis(text)
-    else:
-        for text in texts:
-            nonVLink = ''
-            for word in text['text'].split():
-                try:
-                    parsed = urlparse(word)
-                    if parsed.netloc:
-                        wordsList+=[parsed.netloc]
-                except:
-                    pass
+
+    listDict = dict({"wordsList": [], "emojiList": [], "linkList": []})
+    for text in texts:
+        listDict["wordsList"] += extractWords(text)
+        listDict["emojiList"] += extractEmojis(text)
+        listDict["linkList"] += extractLinks(text)
+    return {
+        'frequencyList': getDataForTexts(listDict["wordsList"], 'word'),
+        'emojiList': getDataForTexts(listDict["emojiList"], 'emoji'),
+        'linkList': getDataForTexts(listDict["linkList"], 'link'),
+        }
+
+def getDataForTexts(wordsList, dataType):
+    if dataType == 'word':
+        stop_words = getStopWords()
     fullTermsDict = Counter(wordsList)
     frequencyList = []
     for key, value in fullTermsDict.items():
         if key == "":
             continue
-        isStopWord = key in stop_words
-        sentiment = TextBlob(key).sentiment
-        frequencyList.append(dict({"text": key,"value": value, "subjectivity": sentiment[1], "polarity": sentiment[0], "isStopWord": isStopWord}))
+        textObject = dict({"text": key,"value": value })
+        if dataType == 'word':
+            textObject["isStopWord"] = key in stop_words
+            sentiment = TextBlob(key).sentiment
+            textObject["polarity"] = sentiment[0]
+            textObject["subjectivity"] = sentiment[1]
+        elif dataType == 'emoji':
+            textObject.update(getEmojiTagsAndCategories(key))
+            sentiment = analyzer.polarity_scores(textObject['searchTerm'])
+            textObject["sentiment"] = sentiment["compound"]
+        frequencyList.append(textObject)
     return sorted(frequencyList, key=lambda word: word["value"], reverse=True)
 
 def getStopWords():
@@ -61,16 +70,14 @@ def getStopWords():
     stop_words |= extra_stop_words
     return stop_words
 
-def removeEmoji(string):
-    emoji_pattern = re.compile("["
-                           u"\U0001F600-\U0001F64F"  # emoticons
-                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                           u"\U00002702-\U000027B0"
-                           u"\U000024C2-\U0001F251"
-                           "]+", flags=re.UNICODE)
-    return emoji_pattern.sub(r'', string)
+def extractWords(text):
+    wordList = []
+    for word in text['text'].split():
+        alphaNumericWord = removeEmoji(alphaNumeric(word).lower())
+        parsed = urlparse(alphaNumericWord)
+        if not parsed.netloc:
+            wordList.append(alphaNumericWord)
+    return wordList
 
 #method to get emojis out of text, required due to ambiguity since some emojis are multiple chars
 def extractEmojis(text):
@@ -84,7 +91,40 @@ def extractEmojis(text):
     emojiString = emoji.emojize(' '.join(splitDemoji))
     return emojiString.split(' ')
 
+def extractLinks(text):
+    linkList = []
+    for word in text['text'].split():
+        parsed = urlparse(word)
+        if parsed.netloc:
+            linkList += [parsed.netloc]
+    return linkList
+
 
 def getEmojiTagsAndCategories(emoj):
-    print(emoj, emoj.encode('unicode-escape'),  emoji.demojize(emoj), emojis.db.get_emoji_by_code(emoj))
+    emojDetails = dict({"name": ' '.join(emoji.demojize(emoj)[1:-1].split('_'))})
+    details = emojis.db.get_emoji_by_code(emoj)
+    searchTerm = emojDetails["name"]
+    if details:
+        emojDetails['aliases'] = [' '.join(alias.split('_')) for alias in details.aliases]
+        for alias in emojDetails['aliases']:
+            searchTerm += " " + alias
+        emojDetails['tags'] = details.tags
+        for tag in emojDetails['tags']:
+            searchTerm += " " + tag
+        emojDetails['category'] = details.category
+    emojDetails['searchTerm'] = searchTerm
+    return emojDetails
+    # print(emoj, emojDetails,  emoji.demojize(emoj), emojis.db.get_emoji_by_code(emoj))
+
+
+def removeEmoji(string):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', string)
 

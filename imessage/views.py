@@ -55,13 +55,11 @@ def success(request):
 
 @api_view(['GET'])
 def frequency_list(request):
-	frequencyList = getTextFrequencyDictForText(Texts.objects.values('text'), 'word')
-	emojiList = getTextFrequencyDictForText(Texts.objects.values('text'), 'emoji')
-	linksList = getTextFrequencyDictForText(Texts.objects.values('text'), 'link')
-	if frequencyList != None:
-		return Response({'frequencyList': frequencyList, 'emojiList': emojiList, 'linksList': linksList })
-	else:
-		return Response({"message":'There was an error creating the vizualization'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
+	# try:
+	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
+	# except Exception as e:
+	# 	return Response({"message":'There was an error creating the vizualization', "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 def downloadTextExtractor(request):
