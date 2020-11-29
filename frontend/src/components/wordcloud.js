@@ -34,7 +34,6 @@ class Wordcloud extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevProps.frequencyList, this.props.frequencyList)
         if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();

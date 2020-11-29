@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './upload.css';
 import Dropzone from 'react-dropzone';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUpload } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faUpload } from '@fortawesome/free-solid-svg-icons'
 
 class Upload extends Component {
     constructor(props) {
@@ -83,7 +83,8 @@ class Upload extends Component {
                     </section>
                 )}
               </Dropzone>
-              <button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>
+              {/*<button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>*/}
+              <button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload</button>
               <button className="uploadButton" type="submit" disabled={!this.state.uploaded} onClick={this.props.viewVizualizations}>Start</button>
             </div>
         );

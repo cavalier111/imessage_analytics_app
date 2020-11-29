@@ -68,7 +68,7 @@ class Wordheader extends Component {
                   </label>
                 </div>
               </div>
-              <FilterSection frequencyListLength={this.props.frequencyList.length} originalFrequencyList={this.props.originalFrequencyList} filterName="Amount of words" /> 
+              <FilterSection /> 
             </div>
           </div> 
         );

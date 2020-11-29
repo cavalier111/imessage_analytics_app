@@ -1,26 +1,29 @@
 
 import React from 'react';
 import './tagsinput.scss';
+import { updateStopWords } from "../redux/actions/word";
+import { getFilter,getFrequencyListOriginal } from "../redux/selectors/word";
+import {useDispatch, useSelector} from "react-redux";
 
 export default function TagsInput(props) {
-  const [tags, setTags] = React.useState(props.tags);
+  const tags = useSelector((state) => getFilter(state,'stopWords'));
   const [newTagsCount, setNewTagsCount] = React.useState(0);
+  const originalFrequencyList = useSelector((state) => getFrequencyListOriginal(state));
+  const dispatch = useDispatch();
 
   const removeTags = indexToRemove => {
     const updatedList = [...tags.filter((_, index) => index !== indexToRemove)]
-    setTags(updatedList);
+    dispatch(updateStopWords(updatedList, 'stopWords'));
     if(indexToRemove<newTagsCount){
       setNewTagsCount(newTagsCount - 1);
     }
-    props.updateStopWords(updatedList);
   };
 
   const addTags = event => {
-    if (event.target.value !== "" && props.originalFrequencyList.some(item => item.text==event.target.value )) {
+    if (event.target.value !== "" && originalFrequencyList.some(item => item.text==event.target.value ) && !tags.includes(event.target.value)) {
       const updatedList = [event.target.value, ...tags];
-      setTags(updatedList);
+      dispatch(updateStopWords(updatedList));
       setNewTagsCount(newTagsCount + 1);
-      props.updateStopWords(updatedList);
       event.target.value = "";
     }
   };

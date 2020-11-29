@@ -12,11 +12,14 @@ const useStyles = makeStyles({
 export default function RangeSlider(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(props.currentRange);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
     props.handleFilterChange(newValue);
   };
+
+  React.useEffect(() => {
+    setValue(props.currentRange)
+  }, [props.currentRange]);
 
   return (
     <div className={classes.root} style={{margin:"10px"}}>
@@ -29,8 +32,8 @@ export default function RangeSlider(props) {
         valueLabelDisplay="auto"
         aria-labelledby="range-slider"
         min={props.range[0]}
-  		max={props.range[1]}
-  		step={props.step}
+    		max={props.range[1]}
+    		step={props.step}
       />
     </div>
   );

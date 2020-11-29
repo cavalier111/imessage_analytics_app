@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux'
-import { updateFrequencyList } from "../redux/actions/word";
-import { getFrequencyList } from "../redux/selectors/word";
+import { handleFilterApply } from "../redux/actions/word";
+import { getDataType, getFilter } from "../redux/selectors/word";
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -10,79 +10,82 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import TagsInput from './tagsinput';
 
+const mapStateToProps = (state) => ({
+  dataType: getDataType(state),
+  maxEnd: getFilter(state,'maxEnd'),
+  stopWordsEnabled: getFilter(state,'stopWordsEnabled'),
+  startEnd: getFilter(state,'startEnd'),
+  polarity: getFilter(state,'polarity'),
+  subjectivity: getFilter(state,'subjectivity'),
+});
+
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateFrequencyList: frequencyList => {
-      return dispatch(updateFrequencyList(frequencyList));
-    }
+    handleFilterApply: (payload) => dispatch(handleFilterApply(payload)),
   };
 }
 
 class FilterSection extends Component {
     constructor(props) {
       super(props);
-      var stopWords = this.props.originalFrequencyList.filter(word => word.isStopWord);
-      stopWords = stopWords.map(word => word.text);
       this.state= {
-        stopWords: stopWords,
-        amount: [1,this.props.frequencyListLength],
-        polarity: [-1,1],
-        subjectivity: [0,1],
-        stopWordsEnabled: true,
-        amountSliderLimit: this.props.originalFrequencyList.length - stopWords.length,
+        startEnd: this.props.startEnd,
+        polarity: this.props.polarity,
+        subjectivity: this.props.subjectivity,
+        stopWordsEnabled: this.props.stopWordsEnabled,
       }
     }
 
     handleFilterChange = (type, newValues) => {
-      this.setState({
-        [type]: newValues,
+       this.setState({
+         [type]: newValues,
       });
+     }
+
+    componentDidUpdate(prevProps) {
+      if(prevProps.dataType !== this.props.dataType) {
+        this.setState({
+          startEnd: this.props.startEnd,
+          polarity: this.props.polarity,
+          subjectivity: this.props.subjectivity,
+          stopWordsEnabled: this.props.stopWordsEnabled,
+        });
+      }
     }
 
     toggleStopWords = () => {
       this.setState({
         stopWordsEnabled: !this.state.stopWordsEnabled,
-      })
-    }
-
-    handleFilterApply = () => {
-      var filteredList = this.props.originalFrequencyList;
-      if(this.state.stopWordsEnabled) {
-        filteredList = filteredList.filter(item => !this.state.stopWords.includes(item.text));
-      }
-      filteredList = filteredList.slice(this.state.amount[0]-1,this.state.amount[1]+1).filter(item => {
-        return (item.polarity >= this.state.polarity[0]) && (item.polarity <= this.state.polarity[1]) && (item.subjectivity >= this.state.subjectivity[0]) && (item.subjectivity <= this.state.subjectivity[1]);
       });
-      // this.props.handleFilterApply(filteredList);
-      this.props.updateFrequencyList(filteredList);
     }
-
-    updateStopWords = (updatedStopWords) => {
-      this.setState({
-        stopWords: updatedStopWords,
-        amountSliderLimit: this.state.amountSliderLimit - 1,
-      })
-    }
-
 
     render() {
         return (
           <div>
+          <span> State: {this.state.stopWordsEnabled}</span>
+          <span> props: {this.props.stopWordsEnabled}</span>
           <DropdownButton id="dropdown-basic-button" title="Filters">
-            {this.props.frequencyList ? <span> {this.props.frequencyList.length} </span> : <span>No frequencyList</span>}
-            <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('amount', newValues)} filterName="Amount of words" range={[1,this.state.amountSliderLimit]} currentRange={this.state.amount} step={1} />
-            <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('polarity', newValues)} filterName="Polarity" range={[-1,1]} currentRange={this.state.polarity} step={.05}/>
-            <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('subjectivity', newValues)} filterName="Subjectivity" range={[0,1]} currentRange={this.state.subjectivity} step={.05}/>
-            <FormControlLabel
-              control={<Switch checked={this.state.stopWordsEnabled} onChange={this.toggleStopWords} name="excludedwords" />}
-              label="Enabled excluded words"
-            />
-            <TagsInput updateStopWords={this.updateStopWords}  tags={this.state.stopWords} originalFrequencyList={this.props.originalFrequencyList}/>
-            <Button onClick={this.handleFilterApply} variant="outline-primary" size="sm" id="reset" style={{textAlign: "center", margin: "10px"}}>Apply filters</Button>
+            <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('startEnd', newValues)} filterName="Start and End point" range={[1,this.props.maxEnd]} step={1} currentRange={this.state.startEnd} />
+            {this.props.dataType!='links' ?
+              <div>
+                <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('polarity', newValues)} filterName="Polarity" range={[-1,1]} step={.05} currentRange={this.state.polarity} />
+                <RangeSlider  handleFilterChange={(newValues) => this.handleFilterChange('subjectivity', newValues)} filterName="Subjectivity" range={[0,1]} step={.05} currentRange={this.state.subjectivity} />
+              </div>
+            : false }
+            {this.props.dataType=='words' ?
+              <div>
+                <FormControlLabel
+                  control={<Switch checked={this.state.stopWordsEnabled} onChange={this.toggleStopWords} name="excludedwords" />}
+                  label="Enabled excluded words"
+                />
+                <TagsInput/>
+              </div>
+            : false }
+            <Button onClick={() => this.props.handleFilterApply(this.state)} variant="outline-primary" size="sm" id="reset" style={{textAlign: "center", margin: "10px"}}>Apply filters</Button>
           </DropdownButton>
           </div> 
         );
     }
 }
 
-export default connect(state => ({ frequencyList: getFrequencyList(state) }), mapDispatchToProps)(FilterSection);
+export default connect(mapStateToProps, mapDispatchToProps)(FilterSection);
