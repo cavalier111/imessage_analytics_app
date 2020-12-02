@@ -24,7 +24,7 @@ def getTextFrequencyDictForText(texts):
         listDict["emojiList"] += extractEmojis(text)
         listDict["linkList"] += extractLinks(text)
     return {
-        'frequencyList': getDataForTexts(listDict["wordsList"], 'word'),
+        'wordList': getDataForTexts(listDict["wordsList"], 'word'),
         'emojiList': getDataForTexts(listDict["emojiList"], 'emoji'),
         'linkList': getDataForTexts(listDict["linkList"], 'link'),
         }
@@ -40,13 +40,12 @@ def getDataForTexts(wordsList, dataType):
         textObject = dict({"text": key,"value": value })
         if dataType == 'word':
             textObject["isStopWord"] = key in stop_words
-            sentiment = TextBlob(key).sentiment
-            textObject["polarity"] = sentiment[0]
-            textObject["subjectivity"] = sentiment[1]
+            textObject["polarity"] = analyzer.polarity_scores(key)["compound"]
+            textObject["subjectivity"] = TextBlob(key).sentiment[1]
         elif dataType == 'emoji':
             textObject.update(getEmojiTagsAndCategories(key))
-            sentiment = analyzer.polarity_scores(textObject['searchTerm'])
-            textObject["sentiment"] = sentiment["compound"]
+            textObject["polarity"] = analyzer.polarity_scores(textObject['searchTerm'])["compound"]
+            textObject["subjectivity"] = TextBlob(textObject['searchTerm']).sentiment[1]
         frequencyList.append(textObject)
     return sorted(frequencyList, key=lambda word: word["value"], reverse=True)
 
@@ -114,8 +113,6 @@ def getEmojiTagsAndCategories(emoj):
         emojDetails['category'] = details.category
     emojDetails['searchTerm'] = searchTerm
     return emojDetails
-    # print(emoj, emojDetails,  emoji.demojize(emoj), emojis.db.get_emoji_by_code(emoj))
-
 
 def removeEmoji(string):
     emoji_pattern = re.compile("["

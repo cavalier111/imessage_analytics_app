@@ -1,20 +1,8 @@
 export const getFrequencyList = store =>
-  store.dataType && store.dataType == "emojis" ? getEmojiList(store) : getWordList(store);
+  store.freuquencyLists[store.dataType] ? store.freuquencyLists[store.dataType] : []
 
  export const getFrequencyListOriginal = store =>
-  store.dataType && store.dataType == "emojis" ? getEmojiListOriginal(store) : getWordListOriginal(store);
-
-export const getWordList = store =>
-  store.wordList ? store.wordList : []
-
-export const getEmojiList = store =>
-  store.emojiList ? store.emojiList : []
-
-export const getWordListOriginal = store =>
-  store.wordListOriginal ? store.wordListOriginal : []
-
-export const getEmojiListOriginal = store =>
-  store.emojiListOriginal ? store.emojiListOriginal : []
+  store.unfilteredFreuquencyLists[store.dataType] ? store.unfilteredFreuquencyLists[store.dataType] : []
 
 export const getDataType = store =>
   store.dataType ? store.dataType : []
@@ -34,7 +22,10 @@ export const getFilter = (store,type) => {
 	  case 'subjectivity':
 	    defaultVal = [0,1]
 	    break;
-	  case 'stopWords':
+	  case 'stopWordsDefault':
+	    defaultVal = []
+	    break;
+	  case 'stopWordsUser':
 	    defaultVal = []
 	    break;
 	  case 'stopWordsEnabled':

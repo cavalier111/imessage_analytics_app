@@ -88,7 +88,7 @@ class Bargraph extends Component {
           .attr("font-size", "20px")
           .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
           .attr("x", (d) => 0)
-          .text((d) => `Your favorite word: ${d.text} \u2933`);
+          .text((d) => `Your favorite: ${d.text} \u2933`);
       
       this.bars.append("rect")
           .attr("class", "bar")

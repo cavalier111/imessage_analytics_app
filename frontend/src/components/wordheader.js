@@ -67,6 +67,12 @@ class Wordheader extends Component {
                     Emojis
                   </label>
                 </div>
+                <div className="form-check">
+                  <input className="form-check-input" type="radio" name="dataType" id="typeRadios3" value="links" checked={this.props.dataType  === 'links'} onChange={this.handleDataTypeChange} />
+                  <label className="form-check-label" htmlFor="typeRadios3">
+                    Links
+                  </label>
+                </div>
               </div>
               <FilterSection /> 
             </div>

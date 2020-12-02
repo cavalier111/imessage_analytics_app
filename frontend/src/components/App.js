@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 import { connect } from "react-redux";
 import { getVizType } from "../redux/selectors/word";
-import { updateWordList, updateEmojiList } from "../redux/actions/word";
+import { initalizeFrequencyLists } from "../redux/actions/word";
 import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
@@ -12,8 +12,7 @@ import './loader.scss';
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateWordList: wordList => dispatch(updateWordList(wordList)),
-    updateEmojiList: emojiList => dispatch(updateEmojiList(emojiList)),
+    initalizeFrequencyLists: frequencyLists => dispatch(initalizeFrequencyLists(frequencyLists)),
   };
 }
 
@@ -26,6 +25,9 @@ class App extends Component {
       searchedWord: "",
       previousSearchWord: "",
     };
+  }
+  componentDidMount() {
+    // this.viewVizualizations();
   }
   randomlyGenerate = () => {
         // for (var i = 0; i <100; i++) { 
@@ -49,8 +51,7 @@ class App extends Component {
       })
       .then(data => {
         // data.frequencyList = this.randomlyGenerate();
-        this.props.updateWordList(data.frequencyList);
-        this.props.updateEmojiList(data.emojiList);
+        this.props.initalizeFrequencyLists(data);
         this.setState({loaded: true, loading: false});
       });
   }
@@ -60,12 +61,11 @@ class App extends Component {
     const eList = [{"text":"❤","value":212,"name":"red heart","searchTerm":"red heart","polarity":0.6369,"subjectivity":0.0},{"text":"😍","value":127,"name":"smiling face with heart-eyes","aliases":["heart eyes"],"tags":["love","crush"],"category":"Smileys & Emotion","searchTerm":"smiling face with heart-eyes heart eyes love crush","polarity":0.8957,"subjectivity":0.6},{"text":"😘","value":91,"name":"face blowing a kiss","aliases":["kissing heart"],"tags":["flirt"],"category":"Smileys & Emotion","searchTerm":"face blowing a kiss kissing heart flirt","polarity":0.8934,"subjectivity":0.0},{"text":"😭","value":75,"name":"loudly crying face","aliases":["sob"],"tags":["sad","cry","bawling"],"category":"Smileys & Emotion","searchTerm":"loudly crying face sob sad cry bawling","polarity":-0.8834,"subjectivity":0.8},{"text":"🥰","value":61,"name":"smiling face with 3 hearts","aliases":["smiling face with three hearts"],"tags":["love"],"category":"Smileys & Emotion","searchTerm":"smiling face with 3 hearts smiling face with three hearts love","polarity":0.9628,"subjectivity":0.6},{"text":"😂","value":53,"name":"face with tears of joy","aliases":["joy"],"tags":["tears"],"category":"Smileys & Emotion","searchTerm":"face with tears of joy joy tears","polarity":0.7003,"subjectivity":0.2},{"text":"💕","value":32,"name":"two hearts","aliases":["two hearts"],"tags":[],"category":"Smileys & Emotion","searchTerm":"two hearts two hearts","polarity":0.8625,"subjectivity":0.0},{"text":"🤩","value":21,"name":"star-struck","aliases":["star struck"],"tags":["eyes"],"category":"Smileys & Emotion","searchTerm":"star-struck star struck eyes","polarity":-0.25,"subjectivity":0.0}];
     const lList = [{"text":"twitter.com","value":65},{"text":"www.reddit.com","value":35},{"text":"m.youtube.com","value":7},{"text":"www.youtube.com","value":6},{"text":"vm.tiktok.com","value":6},{"text":"www.facebook.com","value":5},{"text":"www.amazon.com","value":3},{"text":"www.google.com","value":2},{"text":"www.wsj.com","value":2},{"text":"www.stubhub.com","value":2},{"text":"open.spotify.com","value":2},{"text":"apple.news","value":2},{"text":"www.bedbathandbeyond.com","value":2},{"text":"www.saksoff5th.com","value":1},{"text":"www.target.com","value":1},{"text":"people.com","value":1},{"text":"majorevents.virginia.edu","value":1},{"text":"foodforall.com","value":1},{"text":"www.sndcrabhouse.com","value":1},{"text":"www.supperroom.com","value":1},{"text":"www.avligreek.com","value":1},{"text":"www.tavernakyclades.com","value":1},{"text":"space194.com","value":1},{"text":"www.nakedapartments.com","value":1},{"text":"www.indeed.com","value":1},{"text":"www.cavalierdaily.com","value":1},{"text":"www.setlist.fm","value":1},{"text":"www.theslothinstitutecostarica.org","value":1},{"text":"www.people-press.org","value":1},{"text":"m.tiktok.com","value":1},{"text":"thesmithrestaurant.com","value":1},{"text":"www.ifyourereadingthis.org","value":1},{"text":"www.nytimes.com","value":1},{"text":"www.washingtonpost.com","value":1},{"text":"www.sciencenews.org","value":1},{"text":"www.eventbrite.com","value":1},{"text":"www.trulia.com","value":1},{"text":"www.buzzfeed.com","value":1},{"text":"news.virginia.edu","value":1},{"text":"www.zillow.com","value":1},{"text":"tickets.amtrak.com","value":1},{"text":"finance.yahoo.com","value":1}];
     const mockResponse = {
-      frequencyList: fList,
-      // emojiList: eList,
+      wordList: fList,
+      emojiList: eList,
       linkList: lList,
     };
-    this.props.updateWordList(fList);
-    this.props.updateEmojiList(eList);
+    this.props.initalizeFrequencyLists(mockResponse);
     
   }
 
@@ -94,8 +94,9 @@ class App extends Component {
         {this.state.loaded ? <Wordheader/> : false}
         {vizualization}
         <span> {this.state.error} </span>
-                <button type="submit" onClick={() => this.mockData()}>mock</button>
-        <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start</button>
+        <button type="submit" onClick={() => this.mockData()}>mock</button>
+        <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>
+        <button type="submit" onClick={() => this.viewVizualizations()}>Start Real</button>
       </div>
     );
   }

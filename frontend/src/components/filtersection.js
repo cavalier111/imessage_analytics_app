@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux'
-import { handleFilterApply } from "../redux/actions/word";
+import { toggleStopWords, handleFilterApply } from "../redux/actions/word";
 import { getDataType, getFilter } from "../redux/selectors/word";
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -9,6 +9,7 @@ import RangeSlider from './rangeslider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import TagsInput from './tagsinput';
+import store from "../redux/store/word";
 
 const mapStateToProps = (state) => ({
   dataType: getDataType(state),
@@ -22,17 +23,19 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     handleFilterApply: (payload) => dispatch(handleFilterApply(payload)),
+    toggleStopWords: () => dispatch(toggleStopWords()),
   };
 }
 
 class FilterSection extends Component {
     constructor(props) {
       super(props);
+      console.log(props);
       this.state= {
         startEnd: this.props.startEnd,
         polarity: this.props.polarity,
         subjectivity: this.props.subjectivity,
-        stopWordsEnabled: this.props.stopWordsEnabled,
+        stopWordsEnabled: store.getState().filters.words.stopWordsEnabled,
       }
     }
 
@@ -43,12 +46,14 @@ class FilterSection extends Component {
      }
 
     componentDidUpdate(prevProps) {
+      console.log('lol', prevProps);
       if(prevProps.dataType !== this.props.dataType) {
+        console.log(prevProps, this.props);
         this.setState({
           startEnd: this.props.startEnd,
           polarity: this.props.polarity,
           subjectivity: this.props.subjectivity,
-          stopWordsEnabled: this.props.stopWordsEnabled,
+          stopWordsEnabled: store.getState().filters.words.stopWordsEnabled,
         });
       }
     }
@@ -57,13 +62,12 @@ class FilterSection extends Component {
       this.setState({
         stopWordsEnabled: !this.state.stopWordsEnabled,
       });
+      this.props.toggleStopWords();
     }
 
     render() {
         return (
           <div>
-          <span> State: {this.state.stopWordsEnabled}</span>
-          <span> props: {this.props.stopWordsEnabled}</span>
           <DropdownButton id="dropdown-basic-button" title="Filters">
             <RangeSlider handleFilterChange={(newValues) => this.handleFilterChange('startEnd', newValues)} filterName="Start and End point" range={[1,this.props.maxEnd]} step={1} currentRange={this.state.startEnd} />
             {this.props.dataType!='links' ?

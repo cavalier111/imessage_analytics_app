@@ -8,21 +8,19 @@ import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
 import { getFrequencyList, getDataType } from "../redux/selectors/word";
 import equal from 'fast-deep-equal';
+import store from "../redux/store/word";
 
 let maxLayoutWord;
 let maxLayoutEmoji;
 
 const mapStateToProps = (state) => ({
-  frequencyList: getFrequencyList(state),
+  frequencyList:  store.getState().freuquencyLists.words,
   dataType: getDataType(state),
 });
 
 class Wordcloud extends Component {
     constructor(props) {
         super(props);
-        // this.state = {
-        //     frequencyList: [],
-        // }
         this.margin = {top: 20, right: 20, bottom: 40, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 450 - this.margin.top - this.margin.bottom;
@@ -30,10 +28,12 @@ class Wordcloud extends Component {
     }
 
     componentDidMount() { 
+        console.log('wordclod', this.props)
         this.startWordCloud();
     }
 
     componentDidUpdate(prevProps, prevState) {
+        console.log('--------------', prevProps,this.props)
         if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();

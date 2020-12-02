@@ -1,19 +1,24 @@
 import {
   UPDATE_FREQUENCY_LIST,
-  UPDATE_WORD_LIST,
-  UPDATE_EMOJI_LIST,
+  INITIALIZE_FREQUENCY_LISTS,
   UPDATE_DATA_TYPE,
   UPDATE_VIZ_TYPE,
   UPDATE_STOPWORDS,
-  TOGGLE_STOP_WORDS,
+  TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
 } from "../constants/actionTypes";
 
 const initialState = {
-  wordList: [],
-  wordListOriginal: [],
-  emojiList: [],
-  emojiListOriginal:[],
+  freuquencyLists: {
+    words: [],
+    emojis: [],
+    links:[],
+  },
+  unfilteredFreuquencyLists: {
+    words: [],
+    emojis: [],
+    links:[],
+  },
   dataType: 'words',
   vizType: 'wordcloud',
   filters: {
@@ -23,7 +28,8 @@ const initialState = {
       polarity: [-1,1],
       subjectivity:[0,1],
       stopWordsEnabled: true,
-      stopWords:[],
+      stopWordsUser:[],
+      stopWordsDefault:[],
     },
     emojis: {
       startEnd: [1,1],
@@ -36,46 +42,46 @@ const initialState = {
 
 export const rootReducer = (state = initialState, action) => {
   if (action.type === UPDATE_FREQUENCY_LIST) {
-      if (state.dataType == 'words') {
-        return {
-          ...state,
-          wordList: action.payload,
-        }
-      } else {
-        return {
-          ...state,
-          emojiList: action.payload
-        }
-      }
-  }
-  if (action.type === UPDATE_WORD_LIST) {
     return {
       ...state,
-      wordList: action.payload.filter(item => !item.isStopWord),
-      wordListOriginal:  action.payload,
+      freuquencyLists: {
+        ...state.freuquencyLists,
+        [state.dataType]: action.payload,
+      }
+    }
+  }
+  if (action.type === INITIALIZE_FREQUENCY_LISTS) {
+    return {
+      ...state,
+      freuquencyLists: {
+        ...state.freuquencyLists,
+        words: action.payload.wordList.filter(item => !item.isStopWord),
+        emojis: action.payload.emojiList,
+        links: action.payload.linkList,
+      },
+      unfilteredFreuquencyLists: {
+        ...state.unfilteredFreuquencyLists,
+        words: action.payload.wordList,
+        emojis: action.payload.emojiList,
+        links: action.payload.linkList,
+      },
       filters: {
         ...state.filters,
         words: {
             ...state.filters.words,
-            startEnd: [1, action.payload.length],
-            stopWords: action.payload.filter(item => item.isStopWord).map(item=>item.text),
-            maxEnd: action.payload.length,
-          }
-        }
-    }
-  }
-  if (action.type === UPDATE_EMOJI_LIST) {
-    return {
-      ...state,
-      emojiList: action.payload,
-      emojiListOriginal: action.payload,
-      filters: {
-        ...state.filters,
+            startEnd: [1, action.payload.wordList.length],
+            stopWordsDefault: action.payload.wordList.filter(item => item.isStopWord).map(item=>item.text),
+            maxEnd: action.payload.wordList.filter(item => !item.isStopWord).length,
+          },
         emojis: {
           ...state.filters.emojis,
-          startEnd: [1, action.payload.length],
-          maxEnd: action.payload.length,
-        }
+          startEnd: [1, action.payload.emojiList.length],
+          maxEnd: action.payload.emojiList.length,
+        },
+        links: {
+          ...state.filters.emojis,
+          startEnd: [1, action.payload.linkList.length],
+        },
       }
     }
   }
@@ -91,25 +97,43 @@ export const rootReducer = (state = initialState, action) => {
       vizType: action.payload
     }
   }
+  if (action.type === TOGGLE_STOPWORDS) {
+    const currentEnable = state.filters.words.stopWordsEnabled;
+    const newMaxEnd = currentEnable 
+      ? state.unfilteredFreuquencyLists.words.length 
+      : state.unfilteredFreuquencyLists.words.length - state.filters.words.stopWordsDefault.length - state.filters.words.stopWordsUser.length;
+    return {
+      ...state,
+      filters: {
+        ...state.filters,
+        words: {
+          ...state.filters.words,
+          maxEnd: newMaxEnd,
+          stopWordsEnabled: !currentEnable,
+        }
+      }
+    }
+  }
   if (action.type === UPDATE_STOPWORDS) {
-    const frequencyListOriginal = state.dataType == 'words' ? state.wordListOriginal : state.emojiListOriginal;
+    const frequencyListOriginal = state.unfilteredFreuquencyLists[state.dataType];
+    const stopWordList = action.payload.defaultStop ? 'stopWordsDefault' : 'stopWordsUser'
     return {
       ...state,
       filters: {
         ...state.filters,
         [state.dataType]: {
           ...state.filters[state.dataType],
-          maxEnd: frequencyListOriginal.length - action.payload.length,
-          stopWords: action.payload,
+          maxEnd: frequencyListOriginal.length - action.payload.stopWords.length,
+          [stopWordList]: action.payload.stopWords,
         }
       }
     }
   }
 
   if (action.type === HANDLE_FILTER_APPLY) {
-      var filteredList = state.dataType == 'words' ? state.wordListOriginal : state.emojiListOriginal;
-      if(action.payload.stopWordsEnabled && state.dataType=='words') {
-        filteredList = filteredList.filter(item => !state.filters.words.stopWords.includes(item.text));
+      var filteredList =  state.unfilteredFreuquencyLists[state.dataType];
+      if(state.filters.words.stopWordsEnabled && state.dataType=='words') {
+        filteredList = filteredList.filter(item => !state.filters.words.stopWordsDefault.includes(item.text) && !state.filters.words.stopWordsUser.includes(item.text));
       }
       filteredList = filteredList.slice(action.payload.startEnd[0]-1, action.payload.startEnd[1]+1);
       if(state.dataType!='links') {
@@ -121,7 +145,10 @@ export const rootReducer = (state = initialState, action) => {
       var dataList = state.dataType == 'words' ? 'wordList' : "emojiList";
       return {
         ...state,
-        [dataList]: filteredList,
+        freuquencyLists: {
+          ...state.freuquencyLists,
+          [state.dataType]: filteredList,
+        },
         filters: {
           ...state.filters,
           [state.dataType]: {
@@ -129,7 +156,6 @@ export const rootReducer = (state = initialState, action) => {
             startEnd: action.payload.startEnd,
             polarity: action.payload.polarity,
             subjectivity: action.payload.subjectivity,
-            stopWordsEnabled: action.payload.stopWordsEnabled
           }
         }
       }
