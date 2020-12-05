@@ -95,7 +95,10 @@ def extractLinks(text):
     for word in text['text'].split():
         parsed = urlparse(word)
         if parsed.netloc:
-            linkList += [parsed.netloc]
+            currLink = parsed.netloc
+            if parsed.netloc[0:4] == 'www.':
+                currLink = currLink[4:]
+            linkList += [currLink]
     return linkList
 
 

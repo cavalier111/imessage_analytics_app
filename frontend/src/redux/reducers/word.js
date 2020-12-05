@@ -45,6 +45,7 @@ const initialState = {
     },
     links: {
       startEnd: [1,1],
+      maxEnd: 1,
     }
   },
 };
@@ -90,6 +91,7 @@ export const rootReducer = (state = initialState, action) => {
         links: {
           ...state.filters.links,
           startEnd: [1, action.payload.linkList.length],
+          maxEnd: action.payload.linkList.length,
         },
       }
     }
