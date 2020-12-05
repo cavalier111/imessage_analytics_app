@@ -6,18 +6,24 @@ import {
   UPDATE_STOPWORDS,
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
+  UPDATE_WORDCLOUD_LAYOUT,
 } from "../constants/actionTypes";
 
 const initialState = {
   freuquencyLists: {
     words: [],
     emojis: [],
-    links:[],
+    links: [],
   },
   unfilteredFreuquencyLists: {
     words: [],
     emojis: [],
-    links:[],
+    links: [],
+  },
+  wordcloudLayout: {
+    words: null,
+    emojis: null,
+    links: null,
   },
   dataType: 'words',
   vizType: 'wordcloud',
@@ -36,6 +42,9 @@ const initialState = {
       maxEnd: 1,
       polarity: [-1,1],
       subjectivity:[0,1],
+    },
+    links: {
+      startEnd: [1,1],
     }
   },
 };
@@ -79,7 +88,7 @@ export const rootReducer = (state = initialState, action) => {
           maxEnd: action.payload.emojiList.length,
         },
         links: {
-          ...state.filters.emojis,
+          ...state.filters.links,
           startEnd: [1, action.payload.linkList.length],
         },
       }
@@ -114,6 +123,7 @@ export const rootReducer = (state = initialState, action) => {
       }
     }
   }
+
   if (action.type === UPDATE_STOPWORDS) {
     const frequencyListOriginal = state.unfilteredFreuquencyLists[state.dataType];
     const stopWordList = action.payload.defaultStop ? 'stopWordsDefault' : 'stopWordsUser'
@@ -143,23 +153,38 @@ export const rootReducer = (state = initialState, action) => {
         });
       }
       var dataList = state.dataType == 'words' ? 'wordList' : "emojiList";
+      //Update the appropraite freq list, clear the wordcloud layout, update the filters
       return {
         ...state,
         freuquencyLists: {
           ...state.freuquencyLists,
           [state.dataType]: filteredList,
         },
+        wordcloudLayout: {
+          ...state.wordcloudLayout,
+          [state.dataType]: null,
+        },
         filters: {
           ...state.filters,
           [state.dataType]: {
             ...state.filters[state.dataType],
-            startEnd: action.payload.startEnd,
-            polarity: action.payload.polarity,
-            subjectivity: action.payload.subjectivity,
+            startEnd: action.payload.startEnd ? action.payload.startEnd : [1,1],
+            polarity: action.payload.polarity ? action.payload.polarity : [-1,1],
+            subjectivity: action.payload.subjectivity ? action.payload.polarity : [0,1],
           }
         }
       }
   }
+  if (action.type === UPDATE_WORDCLOUD_LAYOUT) {
+    return {
+      ...state,
+      wordcloudLayout: {
+          ...state.wordcloudLayout,
+          [state.dataType]: action.payload,
+      }
+    }
+  }
+
   return state;
 }
 

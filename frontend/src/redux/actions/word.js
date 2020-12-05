@@ -5,7 +5,8 @@ import {
 	UPDATE_VIZ_TYPE,
 	TOGGLE_STOPWORDS,
 	UPDATE_STOPWORDS,
-	HANDLE_FILTER_APPLY
+	HANDLE_FILTER_APPLY,
+	UPDATE_WORDCLOUD_LAYOUT
 } from '../constants/actionTypes';
 
 export const updateFrequencyList = payload => ({
@@ -39,5 +40,10 @@ export const updateStopWords = payload => ({
 
 export const handleFilterApply = payload => ({
 	type: HANDLE_FILTER_APPLY,
+	payload
+});
+
+export const updateWordcloudLayout = payload => ({
+	type: UPDATE_WORDCLOUD_LAYOUT,
 	payload
 });

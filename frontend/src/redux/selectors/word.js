@@ -10,6 +10,9 @@ export const getDataType = store =>
 export const getVizType = store =>
   store.vizType ? store.vizType : []
 
+export const getWordcloudLayout = store =>
+  store.wordcloudLayout[store.dataType] ? store.wordcloudLayout[store.dataType] : null
+
 export const getFilter = (store,type) => {
   let defaultVal;
   switch(type) {
@@ -36,4 +39,3 @@ export const getFilter = (store,type) => {
   }
   return store.filters[store.dataType][type] ? store.filters[store.dataType][type] : defaultVal;
 }
-

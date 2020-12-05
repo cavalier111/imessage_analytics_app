@@ -9,6 +9,7 @@ import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
 import NavigationBar from './navigationbar';
 import './loader.scss';
+import store from "../redux/store/word";
 
 const mapDispatchToProps = (dispatch) => {
   return {

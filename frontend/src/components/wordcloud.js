@@ -6,17 +6,21 @@ import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import { getFrequencyList, getDataType, getWordcloudLayout } from "../redux/selectors/word";
+import { updateWordcloudLayout } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
-import store from "../redux/store/word";
-
-let maxLayoutWord;
-let maxLayoutEmoji;
 
 const mapStateToProps = (state) => ({
-  frequencyList:  store.getState().freuquencyLists.words,
+  frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
+  wordcloudLayout: getWordcloudLayout(state),
 });
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateWordcloudLayout: layout => dispatch(updateWordcloudLayout(layout)),
+  };
+}
 
 class Wordcloud extends Component {
     constructor(props) {
@@ -33,21 +37,11 @@ class Wordcloud extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log('--------------', prevProps,this.props)
-        if(prevProps.dataType !== this.props.dataType){
+        this.retrieveMaxLayout();
+        if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)){
             d3.select("svg").remove();
             this.drawWordCloud();
         }
-        if(!equal(prevProps.frequencyList, this.props.frequencyList)){
-             if (this.props.dataType == "words") {
-                maxLayoutWord = null;
-             } else {
-                maxLayoutEmoji = null;
-             }
-            d3.select("svg").remove();
-            this.startWordCloud();
-        }
-
     }
 
     startWordCloud = () =>  {
@@ -84,11 +78,7 @@ class Wordcloud extends Component {
         this.fill = d3.scaleOrdinal(d3.schemeCategory10);
         this.setUpLinearColorGrandient();
 
-        if (this.props.dataType == "words") {
-            this.retrieveMaxLayout(this.props.dataType);
-        } else {
-            this.retrieveMaxLayout(maxLayoutEmoji);
-        }
+        this.retrieveMaxLayout();
 
         this.maxLayout
             .on("end", (words) => this.draw(words,true))
@@ -199,24 +189,13 @@ class Wordcloud extends Component {
         }
     }
 
-    retrieveMaxLayout = (dataType) => {
-        if (this.props.dataType == "words") {
-            if (maxLayoutWord){
-                this.maxLayout = maxLayoutWord;
-            } else {
-                this.findMaxLayout(5);
-                if (this.maxLayout) {
-                    maxLayoutWord = this.maxLayout;
-                }
-            }
+    retrieveMaxLayout = () => {
+        if (this.props.wordcloudLayout){
+            this.maxLayout = this.props.wordcloudLayout;
         } else {
-            if (maxLayoutEmoji){
-                this.maxLayout = maxLayoutEmoji;
-            } else {
-                this.findMaxLayout(5);
-                if (this.maxLayout) {
-                    maxLayoutEmoji = this.maxLayout;
-                }
+            this.findMaxLayout(5);
+            if (this.maxLayout) {
+                 this.props.updateWordcloudLayout(this.maxLayout);
             }
         }
     }
@@ -284,4 +263,4 @@ class Wordcloud extends Component {
     }
 }
 
-export default connect(mapStateToProps)(Wordcloud);
+export default connect(mapStateToProps, mapDispatchToProps)(Wordcloud);
