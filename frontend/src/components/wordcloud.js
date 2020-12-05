@@ -38,10 +38,16 @@ class Wordcloud extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.retrieveMaxLayout();
-        if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)){
+        console.log('--------------', prevProps,this.props)
+        if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();
         }
+        if(!equal(prevProps.frequencyList, this.props.frequencyList)){
+            d3.select("svg").remove();
+            this.startWordCloud();
+        }
+
     }
 
     startWordCloud = () =>  {
