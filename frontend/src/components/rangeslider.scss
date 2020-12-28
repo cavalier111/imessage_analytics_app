@@ -1,0 +1,10 @@
+.sliderWrapper {
+	margin: 10px;
+	display: grid;
+	grid-template-columns: 150px;
+}
+
+.rangeSlider {
+	width: 300px;
+	grid-column: 2;
+}

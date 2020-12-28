@@ -7,6 +7,7 @@ import {
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
   UPDATE_WORDCLOUD_LAYOUT,
+  RECOLOR
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -35,7 +36,7 @@ const initialState = {
       subjectivity:[0,1],
       stopWordsEnabled: true,
       stopWordsUser:[],
-      stopWordsDefault:[],
+      stopWordsDefault:[]
     },
     emojis: {
       startEnd: [1,1],
@@ -47,6 +48,28 @@ const initialState = {
       startEnd: [1,1],
       maxEnd: 1,
     }
+  },
+  colorFilters : {
+    words: {
+      colorCodedBy: {
+        wordcloud: 'none',
+        bargraph: 'none',
+      },
+      color: {
+        wordcloud: 'multi',
+        bargraph: 'blue',
+      }
+    },
+    emojis: {
+      colorCodedBy: {
+        wordcloud: 'none',
+        bargraph: 'none',
+      },
+      color: {
+        wordcloud: 'multi',
+        bargraph: 'blue',
+      }
+    },
   },
 };
 
@@ -183,6 +206,22 @@ export const rootReducer = (state = initialState, action) => {
       wordcloudLayout: {
           ...state.wordcloudLayout,
           [state.dataType]: action.payload,
+      }
+    }
+  }
+
+  if (action.type === RECOLOR) {
+    return {
+      ...state,
+      colorFilters: {
+        ...state.colorFilters,
+        [state.dataType]: {
+          ...state.colorFilters[state.dataType],
+          [action.payload.recolorType] : {
+            ...state.colorFilters[state.dataType][action.payload.recolorType],
+            [state.vizType]: action.payload.color,
+          }
+        }
       }
     }
   }

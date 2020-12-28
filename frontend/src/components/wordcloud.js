@@ -6,19 +6,22 @@ import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType, getWordcloudLayout } from "../redux/selectors/word";
-import { updateWordcloudLayout } from "../redux/actions/word";
+import { getFrequencyList, getDataType, getWordcloudLayout, getColorFilter } from "../redux/selectors/word";
+import { updateWordcloudLayout, recolor } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
   wordcloudLayout: getWordcloudLayout(state),
+  color: getColorFilter(state, 'color'),
+  colorCodedBy: getColorFilter(state, 'colorCodedBy'),
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
     updateWordcloudLayout: layout => dispatch(updateWordcloudLayout(layout)),
+    recolor: payload => dispatch(recolor(payload)),
   };
 }
 
@@ -47,7 +50,16 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.startWordCloud();
         }
-
+        if(prevProps.colorCodedBy !== this.props.colorCodedBy){
+            if(this.props.colorCodedBy == "none") {
+                this.wordcloud.selectAll("text").style("fill", 'blue');
+            } else {
+                this.wordcloud.selectAll("text").style("fill", this.props.color);
+            }
+        }
+        if(prevProps.color !== this.props.color){
+            this.wordcloud.selectAll("text").style("fill", this.props.color);
+        }
     }
 
     startWordCloud = () =>  {
@@ -235,10 +247,24 @@ class Wordcloud extends Component {
             .start()
     }
 
+    recolor = (color) => {
+        console.log('here recolor');
+        if(this.wordcloud) {
+            if(color) {
+                this.props.recolor({color: 'green', recolorType: 'color'})
+            }
+            else {
+                this.props.recolor({color: 'polarity', recolorType: 'colorCodedBy'})
+            }
+        }
+    }
+
 
     render() {
         return (
             <div>
+                <button type="submit" onClick={() => this.recolor(true)}>recolor</button>
+                <button type="submit" onClick={() => this.recolor(false)}>colorBy</button>
                  <TransformWrapper
                     defaultScale={1}
                     defaultPositionX={200}
