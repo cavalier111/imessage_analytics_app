@@ -66,6 +66,25 @@ class App extends Component {
     
   }
 
+  callExpressApi = () => {
+        const fList = [{"text":"i","value":6507,"isStopWord":false,"polarity":0.0,"subjectivity":0.0},{"text":"to","value":3376,"isStopWord":false,"polarity":0.0,"subjectivity":0.0},{"text":"you","value":3234,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"and","value":2866,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"the","value":2250,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"a","value":2000,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"im","value":1958,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"my","value":1765,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"it","value":1606,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"just","value":1430,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"so","value":1412,"isStopWord":true,"polarity":0.0,"subjectivity":0.0},{"text":"but","value":1406,"isStopWord":true,"polarity":0.0,"subjectivity":0.0}];
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frequencyList: fList, width: 1200, height: 450 })
+    };
+    fetch('http://localhost:3000/wordcloudCalculator/maxWordSize', requestOptions)
+      .then(response => response.json())
+      .catch(error => {
+        this.setState({
+          error: error.message
+        });
+      })
+      .then(data => {
+        console.log(data);
+      });
+  }
+
 
   render() {
     let vizualization;
@@ -92,6 +111,7 @@ class App extends Component {
         {vizualization}
         <span> {this.state.error} </span>
         <button type="submit" onClick={() => this.mockData()}>mock</button>
+        <button type="submit" onClick={() => this.callExpressApi()}>Express</button>
         <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>
         <button type="submit" onClick={() => this.viewVizualizations()}>Start Real</button>
       </div>

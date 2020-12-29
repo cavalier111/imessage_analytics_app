@@ -10,6 +10,8 @@ import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../
 import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 
+const localLayoutCalculation = false;
+
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
@@ -74,6 +76,7 @@ class Wordcloud extends Component {
         const sizeThreshold = .05 * this.props.frequencyList[0].value;
         if (this.props.dataType == 'words'){
             this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
+            console.log("flist", this.frequencyList);
         } else {
             this.frequencyList = this.props.frequencyList;
         }
@@ -105,9 +108,9 @@ class Wordcloud extends Component {
 
         this.retrieveMaxLayout();
 
-        this.maxLayout
-            .on("end", (words) => this.draw(words,true))
-            .start();
+        // this.maxLayout
+        //     .on("end", (words) => {console.log(words); this.draw(words,true);})
+        //     .start();
     }
 
     setUpLinearColorGrandient = () => {
@@ -218,11 +221,47 @@ class Wordcloud extends Component {
         if (this.props.wordcloudLayout){
             this.maxLayout = this.props.wordcloudLayout;
         } else {
-            this.findMaxLayout(5);
+            if(localLayoutCalculation) {
+                this.findMaxLayout(5);
+            } else {
+                this.fetchMaxLayout();
+            }
             if (this.maxLayout) {
                  this.props.updateWordcloudLayout(this.maxLayout);
             }
         }
+    }
+
+    fetchMaxLayout = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ frequencyList: this.frequencyList, width: this.width, height: this.height })
+        };
+        fetch('http://localhost:3000/wordcloudCalculator/maxWordSize', requestOptions)
+            .then(response => response.json())
+            .catch(error => {
+                console.log(error)
+            })
+            .then(maxFontSize => {
+                console.log(maxFontSize);
+                const layout = cloud();
+                var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, maxFontSize]);
+                layout
+                    .size([this.width, this.height])
+                    .words(this.frequencyList)
+                    .rotate(d => 0)
+                    .text(d => d.text) 
+                    .font('monospace')
+                    .fontSize(d => Math.floor(fontSizeScale(d.value/maxFontSize)))
+                    .spiral("archimedean")
+                layout
+                    .on("end", (words) => {
+                        this.maxLayout = layout;
+                        this.props.updateWordcloudLayout(this.maxLayout);
+                        this.draw(words,true);
+                    }).start();
+            });
     }
 
     findMaxLayout = (max_font_size) => {

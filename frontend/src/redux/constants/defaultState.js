@@ -53,7 +53,6 @@ export const defaultState = {
     emojis: {
       wordcloud: {
         colorCodedBy: 'none',
-        color: 'rainbow',
       },
       bargraph: {
         colorCodedBy: 'none',
