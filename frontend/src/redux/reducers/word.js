@@ -7,73 +7,12 @@ import {
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
   UPDATE_WORDCLOUD_LAYOUT,
-  RECOLOR
+  UPDATE_STYLE
 } from "../constants/actionTypes";
+import { defaultState } from "../constants/defaultState";
 
-const initialState = {
-  freuquencyLists: {
-    words: [],
-    emojis: [],
-    links: [],
-  },
-  unfilteredFreuquencyLists: {
-    words: [],
-    emojis: [],
-    links: [],
-  },
-  wordcloudLayout: {
-    words: null,
-    emojis: null,
-    links: null,
-  },
-  dataType: 'words',
-  vizType: 'wordcloud',
-  filters: {
-    words: {
-      startEnd: [1,1],
-      maxEnd: 1,
-      polarity: [-1,1],
-      subjectivity:[0,1],
-      stopWordsEnabled: true,
-      stopWordsUser:[],
-      stopWordsDefault:[]
-    },
-    emojis: {
-      startEnd: [1,1],
-      maxEnd: 1,
-      polarity: [-1,1],
-      subjectivity:[0,1],
-    },
-    links: {
-      startEnd: [1,1],
-      maxEnd: 1,
-    }
-  },
-  colorFilters : {
-    words: {
-      colorCodedBy: {
-        wordcloud: 'none',
-        bargraph: 'none',
-      },
-      color: {
-        wordcloud: 'multi',
-        bargraph: 'blue',
-      }
-    },
-    emojis: {
-      colorCodedBy: {
-        wordcloud: 'none',
-        bargraph: 'none',
-      },
-      color: {
-        wordcloud: 'multi',
-        bargraph: 'blue',
-      }
-    },
-  },
-};
 
-export const rootReducer = (state = initialState, action) => {
+export const rootReducer = (state = defaultState, action) => {
   if (action.type === UPDATE_FREQUENCY_LIST) {
     return {
       ...state,
@@ -210,16 +149,16 @@ export const rootReducer = (state = initialState, action) => {
     }
   }
 
-  if (action.type === RECOLOR) {
+  if (action.type === UPDATE_STYLE) {
     return {
       ...state,
-      colorFilters: {
-        ...state.colorFilters,
+      styles: {
+        ...state.styles,
         [state.dataType]: {
-          ...state.colorFilters[state.dataType],
-          [action.payload.recolorType] : {
-            ...state.colorFilters[state.dataType][action.payload.recolorType],
-            [state.vizType]: action.payload.color,
+          ...state.styles[state.dataType],
+          [state.vizType]: {
+            ...state.styles[state.dataType][state.vizType],
+            [action.payload.type]: action.payload.value,
           }
         }
       }

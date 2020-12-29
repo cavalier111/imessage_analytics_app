@@ -1,0 +1,35 @@
+.sideBar {
+	padding: 1rem;
+}
+
+.closeButton {
+	text-decoration: none !important;
+}
+
+
+.header {
+	display: flex;
+	justify-content: space-between;
+}
+
+p {
+	color: grey !important;
+}
+
+.hueColorPicker, .circleColorPicker {
+	margin-bottom: 1rem;
+}
+
+.rainbowCircle {
+  	background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	cursor: pointer;
+	margin: 14px 0px 10px 0px;
+	box-shadow: black 0px 0px 0px 3px inset;
+}
+
+.rainbowCircle:hover {
+  	transform: scale(1.2);
+}

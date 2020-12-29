@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { toggleStopWords, handleFilterApply } from "../redux/actions/word";
 import { getDataType, getFilter } from "../redux/selectors/word";
 import Button from 'react-bootstrap/Button';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+// import Dropdown from 'react-bootstrap/Dropdown';
+// import DropdownButton from 'react-bootstrap/DropdownButton';
 import RangeSlider from './rangeslider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -73,6 +73,7 @@ class FilterSection extends Component {
         return;
       }
       console.log(open, event);
+
       this.setState({ sideBarOpen: open });
     };
 

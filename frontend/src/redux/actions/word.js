@@ -7,7 +7,7 @@ import {
 	UPDATE_STOPWORDS,
 	HANDLE_FILTER_APPLY,
 	UPDATE_WORDCLOUD_LAYOUT,
-	RECOLOR
+	UPDATE_STYLE
 } from '../constants/actionTypes';
 
 export const updateFrequencyList = payload => ({
@@ -49,7 +49,7 @@ export const updateWordcloudLayout = payload => ({
 	payload
 });
 
-export const recolor = payload => ({
-	type: RECOLOR,
+export const updateStyle = payload => ({
+	type: UPDATE_STYLE,
 	payload
 });

@@ -3,6 +3,7 @@ import './wordheader.css';
 import Button from 'react-bootstrap/Button';
 import Searchbar from './searchbar';
 import FilterSection from './filtersection';
+import StyleSection from './stylesection';
 import { connect } from "react-redux";
 import { updateDataType, updateVizType } from "../redux/actions/word";
 import { getFrequencyList, getDataType, getVizType } from "../redux/selectors/word";
@@ -75,6 +76,7 @@ class Wordheader extends Component {
                 </div>
               </div>
               <FilterSection /> 
+              <StyleSection />
             </div>
           </div> 
         );

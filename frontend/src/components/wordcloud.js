@@ -6,22 +6,23 @@ import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType, getWordcloudLayout, getColorFilter } from "../redux/selectors/word";
-import { updateWordcloudLayout, recolor } from "../redux/actions/word";
+import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../redux/selectors/word";
+import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
   wordcloudLayout: getWordcloudLayout(state),
-  color: getColorFilter(state, 'color'),
-  colorCodedBy: getColorFilter(state, 'colorCodedBy'),
+  color: getStyle(state, 'color'),
+  colorCodedBy: getStyle(state, 'colorCodedBy'),
+  font: getStyle(state, 'font'),
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
     updateWordcloudLayout: layout => dispatch(updateWordcloudLayout(layout)),
-    recolor: payload => dispatch(recolor(payload)),
+    updateStyle: payload => dispatch(updateStyle(payload)),
   };
 }
 
@@ -52,13 +53,19 @@ class Wordcloud extends Component {
         }
         if(prevProps.colorCodedBy !== this.props.colorCodedBy){
             if(this.props.colorCodedBy == "none") {
-                this.wordcloud.selectAll("text").style("fill", 'blue');
+                this.wordcloud.selectAll(".word").style("fill", 'blue');
             } else {
-                this.wordcloud.selectAll("text").style("fill", this.props.color);
+                this.wordcloud.selectAll(".word").style("fill", this.props.color);
             }
         }
         if(prevProps.color !== this.props.color){
-            this.wordcloud.selectAll("text").style("fill", this.props.color);
+            if(this.props.color =='rainbow') {
+                this.wordcloud.selectAll(".word").style("fill", (d, i) => this.fill(i));  
+            }      
+        }
+        if(prevProps.font !== this.props.font){
+            console.log('new font', this.props.font);
+            this.wordcloud.selectAll(".word").style("font-family", this.props.font);
         }
     }
 
@@ -194,15 +201,15 @@ class Wordcloud extends Component {
             .attr('class','word')
             .attr('id', d => "cloud" + d.text)
             .style("font-size", d => d.size + "px")
-            .style('font-family', 'monospace')
-            .style("fill", (d,i) => colorAnimated ? "url(#animate-gradient)" : this.fill(i))
+            .style('font-family', this.props.font)
+            .style("fill", (d,i) => colorAnimated ? "url(#animate-gradient)" : this.props.color =='rainbow' ? this.fill(i) : this.props.color)
             .attr("text-anchor", "middle")
             .attr("transform", d => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")")
             .text(d => d.text);
 
         if (colorAnimated) {
             setTimeout(() => { 
-                this.wordcloud.selectAll(".word").style("fill", (d, i) => this.fill(i))
+                this.wordcloud.selectAll(".word").style("fill", (d, i) =>  this.props.color =='rainbow' ? this.fill(i) : this.props.color)                
             }, 5000);
         }
     }
@@ -247,24 +254,11 @@ class Wordcloud extends Component {
             .start()
     }
 
-    recolor = (color) => {
-        console.log('here recolor');
-        if(this.wordcloud) {
-            if(color) {
-                this.props.recolor({color: 'green', recolorType: 'color'})
-            }
-            else {
-                this.props.recolor({color: 'polarity', recolorType: 'colorCodedBy'})
-            }
-        }
-    }
 
 
     render() {
         return (
             <div>
-                <button type="submit" onClick={() => this.recolor(true)}>recolor</button>
-                <button type="submit" onClick={() => this.recolor(false)}>colorBy</button>
                  <TransformWrapper
                     defaultScale={1}
                     defaultPositionX={200}

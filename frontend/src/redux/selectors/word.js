@@ -1,3 +1,5 @@
+import { defaultState } from "../constants/defaultState";
+
 export const getFrequencyList = store =>
   store.freuquencyLists[store.dataType] ? store.freuquencyLists[store.dataType] : []
 
@@ -26,17 +28,8 @@ export const getFilter = (store,type) => {
   	return store.filters[store.dataType][type] ? store.filters[store.dataType][type] : defaultVal;
 }
 
-export const getColorFilter = (store,type) => {
-	const defaultValues = {
-		colorCodedBy: {
-	        wordcloud: 'none',
-	        bargraph: 'none',
-	    },
-		color: {
-			wordcloud: 'multi',
-			bargraph: 'blue',
-		}
-	};
-  	const defaultVal = defaultValues[type][store.vizType] ? defaultValues[type][store.vizType] : null;
-  	return store.colorFilters[store.dataType][type][store.vizType] ? store.colorFilters[store.dataType][type][store.vizType] : defaultVal;
+export const getStyle = (store,type) => {
+	const defaultValues =  defaultState.styles;
+  	const defaultVal = defaultValues[store.dataType][store.vizType][type] ? defaultValues[store.dataType][store.vizType][type] : null;
+  	return store.styles[store.dataType][store.vizType][type] ? store.styles[store.dataType][store.vizType][type] : defaultVal;
 }
