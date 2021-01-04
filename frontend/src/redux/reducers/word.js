@@ -150,6 +150,15 @@ export const rootReducer = (state = defaultState, action) => {
   }
 
   if (action.type === UPDATE_STYLE) {
+    if (action.payload.type == "background") {
+      return {
+        ...state,
+        styles: {
+          ...state.styles,
+          background: action.payload.value,
+        }
+      }
+    }
     return {
       ...state,
       styles: {

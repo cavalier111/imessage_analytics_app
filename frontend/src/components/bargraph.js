@@ -2,14 +2,15 @@ import React, {Component} from 'react';
 import './bargraph.css';
 import * as d3 from 'd3';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType } from "../redux/selectors/word";
+import { getFrequencyList, getDataType, getStyle } from "../redux/selectors/word";
 import equal from 'fast-deep-equal';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
+  color: getStyle(state, 'color'),
+  colorCodedBy: getStyle(state, 'colorCodedBy'),
 });
-
 
 class Bargraph extends Component {
     constructor(props) {
@@ -30,6 +31,17 @@ class Bargraph extends Component {
         if(prevProps.dataType !== this.props.dataType || !equal(prevProps.frequencyList, this.props.frequencyList)) {
           d3.select("svg").remove();
           this.drawBarGraph();
+        }
+        if(prevProps.color !== this.props.color){
+            const bars = this.svg.selectAll(".bar");
+            if(this.props.color =='rainbow') {
+                // interpolateRainbow also nice
+                bars
+                  .style("fill", (d, i) => d3.scaleSequential(d3.interpolateSinebow)(i/bars._groups[0].length))
+                  .style('opacity', 1); 
+            } else {
+                bars.style("opacity", (d) => this.opacity(d.value))
+            }
         }
     }
 
@@ -89,11 +101,12 @@ class Bargraph extends Component {
           .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
           .attr("x", (d) => 0)
           .text((d) => `Your favorite: ${d.text} \u2933`);
-      
+      console.log('hola', this.bars);
       this.bars.append("rect")
           .attr("class", "bar")
           .attr("id", (d) =>  "bar" + d.text)
-          .attr("opacity", (d) => this.opacity(d.value))
+          .attr('fill', (d,i) => this.props.color=="rainbow" ? d3.scaleSequential(d3.interpolateSinebow)(i/this.bars._groups[0].length) : this.props.color)
+          .attr("opacity", (d) =>  this.props.color=="rainbow" ? 1 : this.opacity(d.value))
           .attr("y", (d) =>  this.y(d.text))
           .attr("height", this.y.bandwidth())
           .attr("width", 0)

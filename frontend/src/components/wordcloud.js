@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../redux/selectors/word";
 import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
+import { gradientColors } from './constants/colors';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
@@ -42,7 +43,6 @@ class Wordcloud extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.retrieveMaxLayout();
-        console.log('--------------', prevProps,this.props)
         if(prevProps.dataType !== this.props.dataType){
             d3.select("svg").remove();
             this.drawWordCloud();
@@ -125,54 +125,29 @@ class Wordcloud extends Component {
             //color at 0% and 100%
             .attr("spreadMethod", "reflect");
 
-        var randomColors = [
-            // '#FF6633', '#FFB399','#3366E6', '#999966', '#4DB380', '#FF4D4D',
-            "#ff0000", "#ffa500", "#ffff00","#008000" ,"#0000ff" ,"#4b0082", "#ee82ee"
-        ];
-
         //Append the colors evenly along the gradient
         linearGradient.selectAll(".stop")
             .data(this.fill.range())
             .enter().append("stop")
-            .attr("offset", (d,i) => i/(randomColors.length-1))
+            .attr("offset", (d,i) => i/(gradientColors.length-1))
             .attr("stop-color", (d) => d);
-        linearGradient.append("animate")
-            .attr("attributeName","x1")
-            .attr("values","0%;2000%")
-            .attr("dur","5s")
-            .attr("repeatCount","0");
-        linearGradient.append("animate")
-            .attr("attributeName","x2")
-            .attr("values","1000%;3000%")
-            .attr("dur","5s")
-            .attr("repeatCount","0");
 
-        linearGradient.append("animate")
-            .attr("attributeName","y1")
-            .attr("values","0%;2000%")
-            .attr("dur","5s")
-            .attr("repeatCount","0");
-        linearGradient.append("animate")
-            .attr("attributeName","y2")
-            .attr("values","1000%;3000%")
-            .attr("dur","5s")
-            .attr("repeatCount","0");
+        const values = ['0%;2000%', '1000%;3000%'];
+        const attributes = [['x1', values[0]], ['x2', values[1]], ['y1', values[0]], ['y2', values[1]]]
+        attributes.forEach(attr =>
+            linearGradient.append("animate")
+                .attr("attributeName",attr[0])
+                .attr("values",attr[1])
+                .attr("dur","5s")
+                .attr("repeatCount","0"),
+        );
     }
 
     setToolTip = () => {
         this.tooltip = d3.select("body")
             .append("div")
             .attr("id", "tooltip")
-            .style("position", "absolute")
-            .style("z-index", "10")
-            .style("display", "none")
-            .style("background-color", "#007bff")
-            // .style("width", "120px")
-            .style("color", "#fff")
-            .style("text-align", "center")
-            .style("border-radius", "6px")
-            .style("padding", "5px")
-            .style("opacity", "1");
+            .attr("class", "wordTooltip");
     }
 
     draw = (words, colorAnimated) => {
@@ -218,14 +193,14 @@ class Wordcloud extends Component {
         if (this.props.wordcloudLayout){
             this.maxLayout = this.props.wordcloudLayout;
         } else {
-            this.findMaxLayout(5);
+            this.findMaxLayout(5,20);
             if (this.maxLayout) {
                  this.props.updateWordcloudLayout(this.maxLayout);
             }
         }
     }
 
-    findMaxLayout = (max_font_size) => {
+    findMaxLayout = (max_font_size, incrementor) => {
         var maxSize = d3.max(this.frequencyList, d => d.value);
         var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
         const layout = cloud();
@@ -240,11 +215,15 @@ class Wordcloud extends Component {
         layout
             .on("end", (output) => {
                 //if all the words are in the wordcliud output, the font is less than 100
-                if ((this.frequencyList.length <= output.length) && (max_font_size < 100)) {  // compare between input ant output
+                if ((this.frequencyList.length <= output.length) && (max_font_size < 106)) {  // compare between input ant output
                     // set the maximum sized layout to the current
                     this.maxLayout = layout;
                     // try drawing again with 5 bigger font size
-                    return this.findMaxLayout(max_font_size + 5);
+                    return this.findMaxLayout(max_font_size + incrementor, incrementor);
+                }
+                else if(incrementor > 5) {
+                    const incrementorSteps = {20: 10, 10: 5};
+                    this.findMaxLayout(max_font_size - incrementor + incrementorSteps[incrementor], incrementorSteps[incrementor] );
                 }
                 //otherwise, max size has been found, return out
                 else {

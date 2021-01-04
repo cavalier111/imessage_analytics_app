@@ -11,13 +11,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import './stylesection.scss';
 import { fontFamilys } from './constants/fonts';
-import { colorPalette } from './constants/colors';
+import { colorPalette, colorPaletteBg } from './constants/colors';
 import { HuePicker, CirclePicker } from 'react-color';
 
 const mapStateToProps = (state) => ({
   dataType: getDataType(state),
   vizType: getVizType(state),
   color: getStyle(state, 'color'),
+  background: getStyle(state, 'color'),
   colorCodedBy: getStyle(state, 'colorCodedBy'),
   font: getStyle(state, 'font'),
 });
@@ -65,18 +66,32 @@ class StyleSection extends Component {
     }
 
     updateColor = (color) => {
-      const words = document.getElementsByClassName("word");
-      for (var i = 0; i < words.length; i++) {
-          words[i].style.fill=color.hex;
+      const desiredClass = this.props.vizType == "wordcloud" ? 'word' : 'bar';
+      const elements = document.getElementsByClassName(desiredClass);
+      for (var i = 0; i < elements.length; i++) {
+          elements[i].style.fill=color.hex;
       }
       this.setState({hueColor: color.hex});
       document.getElementsByClassName("rainbowCircle")[0].style.boxShadow = "none";
     }
 
     handleRainbowClick = () => {
-      this.setState({hueColor:"#FF0000"});
+      if (this.props.vizType == "wordcloud") {
+        this.setState({hueColor:"#FF0000"});
+      } else {
+        const elements = document.getElementsByClassName('bar');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].classList.add("rainbowBars");
+        }
+      }
       this.props.updateStyle({type: "color", value: "rainbow"});
       document.getElementsByClassName("rainbowCircle")[0].style.boxShadow = "black 0px 0px 0px 3px inset";
+    }
+
+    updateBackground = (color) => {
+      const body = document.getElementsByTagName("BODY")[0];
+      body.style.background = color.hex;
+      this.setState({bgColor: color.hex});
     }
 
     render() {
@@ -110,6 +125,28 @@ class StyleSection extends Component {
                     onChangeComplete={(color) => this.props.updateStyle({type: "color", value: color.hex})}
                   />
                   <div onClick={this.handleRainbowClick} className="rainbowCircle"></div>
+                </div>
+              : false }
+
+              {this.props.background ?
+                <div>
+                  <h5>
+                    Choose a color for the background
+                  </h5>
+                  <HuePicker
+                    className="hueColorPicker"
+                    color={this.state.bgColor}
+                    onChange={this.updateBackground}
+                    onChangeComplete={(color) => this.props.updateStyle({type: "background", value: color.hex})}
+                  />
+                  <CirclePicker
+                    className="circleColorPicker"
+                    color={this.state.bgColor}
+                    colors={colorPaletteBg}
+                    onChange={this.updateBackground}
+                    width="316px"
+                    onChangeComplete={(color) => this.props.updateStyle({type: "background", value: color.hex})}
+                  />
                 </div>
               : false }
               {this.props.colorCodedBy ?

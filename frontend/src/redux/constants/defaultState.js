@@ -38,6 +38,7 @@ export const defaultState = {
     }
   },
   styles : {
+    background: '#fff',
     words: {
       wordcloud: {
         colorCodedBy: 'none',
@@ -47,7 +48,6 @@ export const defaultState = {
       bargraph: {
         colorCodedBy: 'none',
         color: '#007bff',
-        font: 'monospace',
       },
     },
     emojis: {
@@ -67,7 +67,6 @@ export const defaultState = {
       },
       bargraph: {
         color: '#007bff',
-        font: 'monospace',
       },
     }
   },
