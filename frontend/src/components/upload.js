@@ -32,15 +32,14 @@ class Upload extends Component {
       }
     }
     uploadFile =  ()  => {
-      console.log(this.state.file);
       let formData = new FormData();
       formData.append('file', this.state.file);
       var req = new Request('/api/texts/upload/', {
         method: "POST",
         body: formData
       });
-      fetch(req).then(response => response.json())
-        .then(response => console.log(response))
+      fetch(req)
+        .then(response => response.json())
         .catch(error => {
           this.setState({
             errorStatus: error.message,

@@ -32,7 +32,6 @@ const mapDispatchToProps = (dispatch) => {
 class FilterSection extends Component {
     constructor(props) {
       super(props);
-      console.log(props);
       this.state = {
         startEnd: this.props.startEnd,
         polarity: this.props.polarity,
@@ -49,9 +48,7 @@ class FilterSection extends Component {
      }
 
     componentDidUpdate(prevProps) {
-      console.log('lol', prevProps);
       if(prevProps.dataType !== this.props.dataType) {
-        console.log(prevProps, this.props);
         this.setState({
           startEnd: this.props.startEnd,
           polarity: this.props.polarity,
@@ -72,8 +69,6 @@ class FilterSection extends Component {
       if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
         return;
       }
-      console.log(open, event);
-
       this.setState({ sideBarOpen: open });
     };
 

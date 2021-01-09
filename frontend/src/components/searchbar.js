@@ -57,7 +57,6 @@ function setGlow(selection, remove) {
       const searchedId = searchIdPartOne + searchIdPartTwo;
       const glowClass = 'glow' + searchIdPartOne;
       const desiredElement = document.getElementById(searchedId);
-      console.log(searchedId,desiredElement);
       if (desiredElement != null) {
         if (remove) {
           desiredElement.classList.remove(glowClass);
@@ -109,7 +108,6 @@ function Searchbar(props) {
       //   results: _.filter(formatedFrequencyList, isMatch),
       // })
       // mapValues(fuse.search(data.value), result => result.item),
-      console.log(fuse.search(data.value));
       dispatch({
         type: 'FINISH_SEARCH',
         results: fuse.search(data.value).map(result => result.item),

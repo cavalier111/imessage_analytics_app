@@ -37,7 +37,6 @@ class Wordcloud extends Component {
     }
 
     componentDidMount() { 
-        console.log('wordclod', this.props)
         this.startWordCloud();
     }
 
@@ -64,7 +63,6 @@ class Wordcloud extends Component {
             }      
         }
         if(prevProps.font !== this.props.font){
-            console.log('new font', this.props.font);
             this.wordcloud.selectAll(".word").style("font-family", this.props.font);
         }
     }
@@ -83,7 +81,6 @@ class Wordcloud extends Component {
     }
 
     drawWordCloud = () => {
-        // console.log("state", this.state);
         this.svg = d3
             .select("#wordcloud")
             .append("svg")
