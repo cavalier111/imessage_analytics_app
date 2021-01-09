@@ -48,7 +48,6 @@ class Bargraph extends Component {
 
     drawBarGraph = () =>  {
       this.totalBars = Math.min(200,this.props.frequencyList.length)
-      // this.totalBars = this.props.frequencyList.length;
 
       this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
 

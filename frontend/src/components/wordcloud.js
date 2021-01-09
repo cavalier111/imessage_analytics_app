@@ -10,6 +10,7 @@ import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../
 import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 import { gradientColors } from './constants/colors';
+import { colorScales } from './constants/colorScales';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
@@ -50,17 +51,22 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.startWordCloud();
         }
+        // clean this up (set a variable for what it will be filled by and inly have one this.wordcloud.selectAll(".word").style("fill",...)
         if(prevProps.colorCodedBy !== this.props.colorCodedBy){
             if(this.props.colorCodedBy == "none") {
-                this.wordcloud.selectAll(".word").style("fill", 'blue');
+                if(this.props.color =='rainbow') {
+                    this.wordcloud.selectAll(".word").style("fill", (d, i) => this.fill(i));  
+                } else {
+                     this.wordcloud.selectAll(".word").style("fill", this.props.color);
+                }
             } else {
-                this.wordcloud.selectAll(".word").style("fill", this.props.color);
+                this.wordcloud.selectAll(".word").style("fill", (d, i) => colorScales[this.props.colorCodedBy](d[this.props.colorCodedBy]));
             }
         }
         if(prevProps.color !== this.props.color){
             if(this.props.color =='rainbow') {
                 this.wordcloud.selectAll(".word").style("fill", (d, i) => this.fill(i));  
-            }      
+            }
         }
         if(prevProps.font !== this.props.font){
             this.wordcloud.selectAll(".word").style("font-family", this.props.font);
@@ -71,7 +77,7 @@ class Wordcloud extends Component {
         // this.frequencyList = this.props.frequencyList.slice(10,200)
         const sizeThreshold = .05 * this.props.frequencyList[0].value;
         if (this.props.dataType == 'words'){
-            this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,700);
+            this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,500);
         } else {
             this.frequencyList = this.props.frequencyList;
         }

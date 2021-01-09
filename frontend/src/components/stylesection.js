@@ -12,6 +12,7 @@ import Select from '@material-ui/core/Select';
 import './stylesection.scss';
 import { fontFamilys } from './constants/fonts';
 import { colorPalette, colorPaletteBg } from './constants/colors';
+import { colorScales } from './constants/colorScales';
 import { HuePicker, CirclePicker } from 'react-color';
 
 const mapStateToProps = (state) => ({
@@ -104,8 +105,8 @@ class StyleSection extends Component {
                 <h3>Filters</h3>
                 <Button variant="link" onClick={this.toggleSidebar(false)} className="closeButton">Close</Button>
               </div>  
-              {(this.props.color && (this.props.colorCodedBy=='none' || !this.props.colorCodedBy)) ?
-                <div>
+              {(this.props.color) ?
+                <div className={(this.props.colorCodedBy=='none' || !this.props.colorCodedBy) ? "normal" : "greyOut"}>
                   <h5>
                     Choose a color for the
                     {this.props.vizType == "wordcloud" ? <span> words</span> :  <span> bars</span> }
@@ -127,7 +128,27 @@ class StyleSection extends Component {
                   <div onClick={this.handleRainbowClick} className="rainbowCircle"></div>
                 </div>
               : false }
-
+              {(this.props.colorCodedBy) ?
+                <div className={(this.props.colorCodedBy && this.props.colorCodedBy != 'none') ? "normal" : "greyOut"}>
+                  <h5>
+                    Color code the visualization by one of the following variables:
+                  </h5>
+                  <div className="form-check">
+                    <input className="form-check-input" type="radio" name="scaleOption" id='nonescale' value='nonescale' checked={this.props.colorCodedBy === 'none'} onChange={() => this.props.updateStyle({type: "colorCodedBy", value: 'none'})} />
+                    <label className="form-check-label" htmlFor='nonescale'>
+                      none
+                    </label>
+                  </div>
+                  {Object.keys(colorScales).map((scale,i) => 
+                    <div className="form-check">
+                      <input className="form-check-input" type="radio" name="scaleOption" id={`scale${i}`} value={`scale${i}`} checked={this.props.colorCodedBy === scale} onChange={() => this.props.updateStyle({type: "colorCodedBy", value: scale})} />
+                      <label className="form-check-label" htmlFor={`scale${i}`}>
+                        {scale}
+                      </label>
+                    </div>
+                  )}
+                </div>
+              : false }
               {this.props.background ?
                 <div>
                   <h5>
@@ -147,11 +168,6 @@ class StyleSection extends Component {
                     width="316px"
                     onChangeComplete={(color) => this.props.updateStyle({type: "background", value: color.hex})}
                   />
-                </div>
-              : false }
-              {this.props.colorCodedBy ?
-                <div>
-                  
                 </div>
               : false }
               {this.props.font ?

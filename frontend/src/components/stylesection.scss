@@ -33,3 +33,8 @@ p {
 .rainbowCircle:hover {
   	transform: scale(1.2);
 }
+
+.greyOut {
+  filter: grayscale(100%);
+  opacity: .5;
+}
