@@ -41,7 +41,7 @@ class Bargraph extends Component {
                   .style("fill", (d, i) => this.rainbowScale(i/bars._groups[0].length))
                   .style('opacity', 1); 
             } else {
-                bars.style("opacity", (d) => this.opacity(d.value))
+                bars.style("opacity", (d) => this.opacity(d.frequency))
             }
         }
     }
@@ -51,7 +51,7 @@ class Bargraph extends Component {
 
       this.frequencyList = this.props.frequencyList.slice(0,this.totalBars).reverse();
 
-      this.maxWordSize = d3.max(this.frequencyList, d => d.value);
+      this.maxWordSize = d3.max(this.frequencyList, d => d.frequency);
 
       this.zoomExtent = (this.frequencyList.length / 200) * 24;
       this.topTenZoom = (this.frequencyList.length / 200) * 22.5;
@@ -83,10 +83,10 @@ class Bargraph extends Component {
           .attr("class", "label")
           .attr('text-anchor', 'middle')
           .attr("y", (d) => this.y(d.text) + this.y.bandwidth() / 2 + 4)
-          .attr("x", (d) => this.x(d.value) + 4 * d.value.toString().length)
+          .attr("x", (d) => this.x(d.frequency) + 4 * d.frequency.toString().length)
           .style("opacity", 0)
           .style("pointer-events", "none")
-          .text((d) => d.value);
+          .text((d) => d.frequency);
 
       this.bars.on("mousemove", d => this.mouseMove(d));
       this.bars.on('mouseleave', (actual, i) => this.mouseLeaveBar(actual, i, false));
@@ -105,14 +105,14 @@ class Bargraph extends Component {
           .attr("class", "bar")
           .attr("id", (d) =>  "bar" + d.text)
           .attr('fill', (d,i) => this.props.color=="rainbow" ? this.rainbowScale(i/this.bars._groups[0].length) : this.props.color)
-          .attr("opacity", (d) => this.props.color=="rainbow" ? 1 : this.opacity(d.value))
+          .attr("opacity", (d) => this.props.color=="rainbow" ? 1 : this.opacity(d.frequency))
           .attr("y", (d) =>  this.y(d.text))
           .attr("height", this.y.bandwidth())
           .attr("width", 0)
           .transition()
           .duration(1500)
           .delay((d,i) => i*10 )
-          .attr("width", (d) => this.x(d.value))
+          .attr("width", (d) => this.x(d.frequency))
           .attr("x", 0)
           .on('end', (d,i) =>  { 
             if(i==this.totalBars-1) {
@@ -154,13 +154,13 @@ class Bargraph extends Component {
         d3.select(currentElement)
           // .transition()
           // .duration(300)
-          .attr("opacity", (d) => .6 * this.opacity(d.value))
+          .attr("opacity", (d) => .6 * this.opacity(d.frequency))
           .attr('y', (a) => this.y(a.text) - this.y.bandwidth()/2)
           .attr('height', this.y.bandwidth()*2)
-          .attr("width", (d) => this.x(d.value));
+          .attr("width", (d) => this.x(d.frequency));
 
         //add a the comparison line
-        const lineLocation = this.x(actual.value);
+        const lineLocation = this.x(actual.frequency);
 
         const line = this.svg.append('line')
           .attr('class', 'line')
@@ -175,11 +175,11 @@ class Bargraph extends Component {
         this.bars.append('text')
           .attr('class', 'divergence')
           .attr('y', (a) => this.y(a.text) + this.y.bandwidth() / 2)
-          .attr('x', (a) => this.x(a.value) + 7 + 4 * a.value.toString().length)
+          .attr('x', (a) => this.x(a.frequency) + 7 + 4 * a.frequency.toString().length)
           .attr('text-anchor', 'middle')
           .style("pointer-events", "none")
           .text((a, idx) => {
-            const divergence = (a.value - actual.value);
+            const divergence = (a.frequency - actual.frequency);
             let text = ''
             if (divergence > 0) text += '+'
             text += divergence
@@ -191,7 +191,7 @@ class Bargraph extends Component {
         this.tooltip.style("left", d3.event.pageX+10+"px");
         this.tooltip.style("top", d3.event.pageY-25+"px");
         this.tooltip.style("display", "inline-block");
-        this.tooltip.html((d.text) + " " + (d.value));
+        this.tooltip.html((d.text) + " " + (d.frequency));
     }
 
     mouseLeaveBar = (actual, i, zoomed) => {
@@ -204,9 +204,9 @@ class Bargraph extends Component {
         d3.select(currentElement)
           // .transition()
           // .duration(300)
-          .attr("opacity", (d) => this.props.color=="rainbow" ? 1 : this.opacity(d.value))
+          .attr("opacity", (d) => this.props.color=="rainbow" ? 1 : this.opacity(d.frequency))
           .attr("width", (d) => {
-                return this.x(d.value);
+                return this.x(d.frequency);
         });
         if (zoomed){
           d3.select(currentElement)

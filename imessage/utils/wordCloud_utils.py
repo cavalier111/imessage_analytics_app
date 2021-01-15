@@ -37,7 +37,7 @@ def getDataForTexts(wordsList, dataType):
     for key, value in fullTermsDict.items():
         if key == "":
             continue
-        textObject = dict({"text": key,"value": value })
+        textObject = dict({"text": key,"frequency": value })
         if dataType == 'word':
             textObject["isStopWord"] = key in stop_words
             textObject["polarity"] = analyzer.polarity_scores(key)["compound"]
@@ -47,7 +47,7 @@ def getDataForTexts(wordsList, dataType):
             textObject["polarity"] = analyzer.polarity_scores(textObject['searchTerm'])["compound"]
             textObject["subjectivity"] = TextBlob(textObject['searchTerm']).sentiment[1]
         frequencyList.append(textObject)
-    return sorted(frequencyList, key=lambda word: word["value"], reverse=True)
+    return sorted(frequencyList, key=lambda word: word["frequency"], reverse=True)
 
 def getStopWords():
     #get list stop words txt file

@@ -18,18 +18,18 @@ let dataType;
 const initialState = {
     loading: false,
     results: [],
-    value: '',
+    frequency: '',
     previousSelection: '',
   };
 
 const resultRendererWord = (wordObject) =>
   <div>
-    <span className="searchResultTitle"> {wordObject.title}</span> <span className="searchResultValue">{wordObject.value} </span>
+    <span className="searchResultTitle"> {wordObject.title}</span> <span className="searchResultValue">{wordObject.frequency} </span>
   </div>
 
 const resultRendererEmoji = (wordObject) =>
   <div>
-    <span className="searchResultTitle"> {wordObject.display}</span> <span className="searchResultValue">{wordObject.value} </span>
+    <span className="searchResultTitle"> {wordObject.display}</span> <span className="searchResultValue">{wordObject.frequency} </span>
   </div>
 
 
@@ -38,13 +38,13 @@ function SearchReducer(state, action) {
     return initialState;
   } else if (action.type == 'START_SEARCH') {
     setGlow(state.previousSelection, true);
-    return { ...state, loading: true, value: action.query };
+    return { ...state, loading: true, frequency: action.query };
   } else if (action.type =='FINISH_SEARCH') {
     return { ...state, loading: false, results: action.results };
   } else if (action.type == 'UPDATE_SELECTION') {
     setGlow(state.previousSelection, true);
-    setGlow(action.value, false);
-    return { ...state, value:action.value, previousSelection: action.value };
+    setGlow(action.frequency, false);
+    return { ...state, frequency:action.frequency, previousSelection: action.frequency };
   } else {
     throw new Error();
   }
@@ -76,9 +76,9 @@ function Searchbar(props) {
   React.useEffect(() => {
       let formatedFrequencyList;
       if(props.dataType == 'emojis') {
-        formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.searchTerm, display: wordObject.text, value: wordObject.value}));
+        formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.searchTerm, display: wordObject.text, frequency: wordObject.frequency}));
       } else {
-        formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, display: wordObject.text, value: wordObject.value}));
+        formatedFrequencyList = props.frequencyList.map(wordObject => ({title: wordObject.text, display: wordObject.text, frequency: wordObject.frequency}));
       }
       const fusey = new Fuse(formatedFrequencyList, options)
       setFuse(fusey);
@@ -87,7 +87,7 @@ function Searchbar(props) {
   dataType = props.dataType;
   const resultRenderer = props.dataType == 'emojis' ? resultRendererEmoji : resultRendererWord;
   const [state, dispatch] = React.useReducer(SearchReducer, initialState)
-  const { loading, results, value, selection } = state
+  const { loading, results, frequency, selection } = state
   const timeoutRef = React.useRef()
   const handleSearchChange = React.useCallback((e, data, fuse) => {
     clearTimeout(timeoutRef.current)
@@ -125,13 +125,13 @@ function Searchbar(props) {
         <Search
           loading={loading}
           onResultSelect={(e, data) => {
-            return dispatch({ type: 'UPDATE_SELECTION', value: data.result })
+            return dispatch({ type: 'UPDATE_SELECTION', frequency: data.result })
            }
           }
           resultRenderer={resultRenderer}
           onSearchChange={(e, data) => handleSearchChange(e,data,fuse)}
           results={results}
-          value={value.display}
+          value={frequency.display}
         />
      
   )

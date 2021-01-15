@@ -75,9 +75,9 @@ class Wordcloud extends Component {
 
     startWordCloud = () =>  {
         // this.frequencyList = this.props.frequencyList.slice(10,200)
-        const sizeThreshold = .05 * this.props.frequencyList[0].value;
+        const sizeThreshold = .05 * this.props.frequencyList[0].frequency;
         if (this.props.dataType == 'words'){
-            this.frequencyList = this.props.frequencyList.filter(word => word.value > sizeThreshold).slice(0,500);
+            this.frequencyList = this.props.frequencyList.filter(word => word.frequency > sizeThreshold).slice(0,500);
         } else {
             this.frequencyList = this.props.frequencyList;
         }
@@ -165,7 +165,7 @@ class Wordcloud extends Component {
             .on('end', () => {
                  d3.selectAll("text")
                     .on("mouseover", d => {
-                        const toolTipText = d.text + " was used " + d.value + " times";
+                        const toolTipText = d.text + " was used " + d.frequency + " times";
                         tooltip.text(toolTipText); 
                         document.getElementById("tooltip").className = "tooltip";
                         return tooltip.style("display", "inline-block");
@@ -204,7 +204,7 @@ class Wordcloud extends Component {
     }
 
     findMaxLayout = (max_font_size, incrementor) => {
-        var maxSize = d3.max(this.frequencyList, d => d.value);
+        var maxSize = d3.max(this.frequencyList, d => d.frequency);
         var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
         const layout = cloud();
         layout
@@ -213,7 +213,7 @@ class Wordcloud extends Component {
             .rotate(d => 0)
             .text(d => d.text) 
             .font('monospace')
-            .fontSize(d => Math.floor(fontSizeScale(d.value/maxSize)))
+            .fontSize(d => Math.floor(fontSizeScale(d.frequency/maxSize)))
             .spiral("archimedean")
         layout
             .on("end", (output) => {
