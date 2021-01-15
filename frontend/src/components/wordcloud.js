@@ -53,15 +53,7 @@ class Wordcloud extends Component {
         }
         // clean this up (set a variable for what it will be filled by and inly have one this.wordcloud.selectAll(".word").style("fill",...)
         if(prevProps.colorCodedBy !== this.props.colorCodedBy){
-            if(this.props.colorCodedBy == "none") {
-                if(this.props.color =='rainbow') {
-                    this.wordcloud.selectAll(".word").style("fill", (d, i) => this.fill(i));  
-                } else {
-                     this.wordcloud.selectAll(".word").style("fill", this.props.color);
-                }
-            } else {
-                this.wordcloud.selectAll(".word").style("fill", (d, i) => colorScales[this.props.colorCodedBy](d[this.props.colorCodedBy]));
-            }
+            this.wordcloud.selectAll(".word").style("fill", this.getColorCoding(prevProps));
         }
         if(prevProps.color !== this.props.color){
             if(this.props.color =='rainbow') {
@@ -180,14 +172,14 @@ class Wordcloud extends Component {
             .attr('id', d => "cloud" + d.text)
             .style("font-size", d => d.size + "px")
             .style('font-family', this.props.font)
-            .style("fill", (d,i) => colorAnimated ? "url(#animate-gradient)" : this.props.color =='rainbow' ? this.fill(i) : this.props.color)
+            .style("fill", (d,i) => colorAnimated ? "url(#animate-gradient)" : this.getColorCoding()(d,i))
             .attr("text-anchor", "middle")
             .attr("transform", d => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")")
             .text(d => d.text);
 
         if (colorAnimated) {
             setTimeout(() => { 
-                this.wordcloud.selectAll(".word").style("fill", (d, i) =>  this.props.color =='rainbow' ? this.fill(i) : this.props.color)                
+                this.wordcloud.selectAll(".word").style("fill", this.getColorCoding())                
             }, 5000);
         }
     }
@@ -234,6 +226,22 @@ class Wordcloud extends Component {
                 }
             })
             .start()
+    }
+
+    getColorCoding = () => {
+        if(this.props.colorCodedBy == "none") {
+            if(this.props.color =='rainbow') {
+                return (d, i) => this.fill(i);
+            } else {
+                 return (d,i) => this.props.color;
+            }
+        } else {
+            return (d, i) => {
+                var maxSize = d3.max(this.frequencyList, d => d.frequency);
+                const scaleVal = this.props.colorCodedBy == "frequency" ? (d.frequency/(maxSize)) : d[this.props.colorCodedBy];
+                return colorScales[this.props.colorCodedBy](scaleVal);
+            };
+        }
     }
 
 

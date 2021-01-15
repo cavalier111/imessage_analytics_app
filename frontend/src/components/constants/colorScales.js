@@ -10,7 +10,7 @@ export const subjectivityScale = d3.scaleLinear()
 
 export const frequencyScale = d3.scaleLinear()
     .domain([0,1])
-  	.range(["rgba(0,0,0,0)","rgba(0,0,0,1)"]);
+  	.range(["rgba(0,23,255,0)","rgba(0,23,255,1)"]);
 
 export const colorScales = {
 	"polarity": polarityScale,
