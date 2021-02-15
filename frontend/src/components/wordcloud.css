@@ -15,12 +15,34 @@
 	opacity: 1;
 }
 
+#colorKeySection {
+    visibility: hidden;
+    display: grid;
+    grid-template-rows: 20px 100px 40px;
+    position: absolute;
+    right: 30px;
+}
+
+#colorKeyTopText {
+	text-align: center;
+	margin-top: 20px;
+	margin-right: 10px;
+    justify-self: end;
+}
+
 #colorKey {
+	grid-row-start: 2;
+	grid-column-start: 2;
 	width: 15px;
 	height: 100px;
-	position: absolute;
-    right: 30px;
-    margin-top: 30px;
-    visibility: hidden;
     border-radius: 5px;
+}
+
+#colorKeyBottomText {
+	grid-row-start: 3;
+	text-align: center;
+	margin-top: -20px;
+	margin-right: 10px;
+	justify-self: end;
+
 }

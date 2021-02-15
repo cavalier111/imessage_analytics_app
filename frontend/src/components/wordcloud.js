@@ -264,14 +264,26 @@ class Wordcloud extends Component {
     }
 
     setColorKey = () => {
-        const colorKeyDiv = document.getElementById("colorKey");
-        console.log("this.props.colorCodedBy",this.props.colorCodedBy);
-        if (this.props.colorCodedBy != "none" && !this.props.codeByOpacity){
-            colorKeyDiv.style.background = `linear-gradient(${colorArrays[this.props.colorCodedBy].join(', ')})`;
-            console.log(`linear-gradient(${colorArrays[this.props.colorCodedBy].join(', ')})`);
-            colorKeyDiv.style.visibility = "visible";
+        const colorKeySectionDiv = document.getElementById("colorKeySection");
+        if (this.props.colorCodedBy != "none"){
+            colorKeySectionDiv.style.visibility = "visible";
+            const currColors = colorArrays[this.props.colorCodedBy];
+            const colorKey = document.getElementById("colorKey");
+            const topText = document.getElementById("colorKeyTopText")
+            const bottomText = document.getElementById("colorKeyBottomText")
+            topText.innerHTML = currColors.topText;
+            bottomText.innerHTML = currColors.bottomText;
+            if(!this.props.codeByOpacity) {
+                colorKey.style.background = `linear-gradient(${currColors.colors.join(', ')})`;
+                topText.style.color = currColors.colors[0];
+                bottomText.style.color = currColors.colors[currColors.colors.length - 1];
+            } else {
+                colorKey.style.background = `linear-gradient(${this.props.color}, transparent)`;
+                topText.style.color = this.props.color;
+                bottomText.style.color = this.props.color;
+            }
         } else {
-            colorKeyDiv.style.visibility = "hidden";
+            colorKeySectionDiv.style.visibility = "hidden";
         }
     }
 
@@ -279,7 +291,11 @@ class Wordcloud extends Component {
     render() {
         return (
             <div>
-                              <div id="colorKey"></div>
+                <div id="colorKeySection">
+                    <div id="colorKeyTopText">Positive</div>
+                    <div id="colorKey"></div>
+                    <div id="colorKeyBottomText">Negative</div>
+                </div>
 
                  <TransformWrapper
                     defaultScale={1}

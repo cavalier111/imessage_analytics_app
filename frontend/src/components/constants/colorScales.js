@@ -1,20 +1,20 @@
 import * as d3 from 'd3';
 
 
-export const polarityColors = ["red", "grey", "green"];
-export const subjectivityColors = ["grey", "blue"];
-export const frequencyColors = ["grey", "blue"];
+export const polarityColors = ["green", "grey", "red"];
+export const subjectivityColors = ["blue", "grey"];
+export const frequencyColors = ["blue", "grey"];
 
 export const polarityScale = d3.scaleLinear()
-    .domain([-1, 0, 1])
+    .domain([1, 0, -1])
     .range(polarityColors);
 
 export const subjectivityScale = d3.scaleLinear()
-    .domain([0, 1])
+    .domain([1, 0])
     .range(subjectivityColors);
 
 export const frequencyScale = d3.scaleLinear()
-    .domain([0,1])
+    .domain([1,0])
   	.range(frequencyColors);
 
 export const colorScales = {
@@ -34,8 +34,20 @@ export const colorScales = {
 	}
 };
 export const colorArrays = {
-	"polarity": polarityColors,
-	"subjectivity": subjectivityColors,
-	"frequency": frequencyColors,
+	"polarity": {
+		"colors": polarityColors,
+		"topText": "Positive",
+		"bottomText": "Negative",
+	},
+	"subjectivity": {
+		"colors": subjectivityColors,
+		"topText": "High subjectivity",
+		"bottomText": "Low subjectivity",
+	},
+	"frequency": {
+		"colors": frequencyColors,
+		"topText": "Frequent",
+		"bottomText": "Infrequent",
+	},
 	// "partOfSpeech": partOfSpeechColors,
 };
