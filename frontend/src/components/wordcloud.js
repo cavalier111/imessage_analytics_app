@@ -10,7 +10,7 @@ import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../
 import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 import { gradientColors } from './constants/colors';
-import { colorScales } from './constants/colorScales';
+import { colorScales, colorArrays } from './constants/colorScales';
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
@@ -19,6 +19,7 @@ const mapStateToProps = (state) => ({
   color: getStyle(state, 'color'),
   colorCodedBy: getStyle(state, 'colorCodedBy'),
   font: getStyle(state, 'font'),
+  codeByOpacity: getStyle(state, 'codeByOpacity'),
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -51,9 +52,11 @@ class Wordcloud extends Component {
             d3.select("svg").remove();
             this.startWordCloud();
         }
-        // clean this up (set a variable for what it will be filled by and inly have one this.wordcloud.selectAll(".word").style("fill",...)
-        if(prevProps.colorCodedBy !== this.props.colorCodedBy){
-            this.wordcloud.selectAll(".word").style("fill", this.getColorCoding(prevProps));
+        if(prevProps.colorCodedBy !== this.props.colorCodedBy || prevProps.codeByOpacity !== this.props.codeByOpacity){
+            this.wordcloud.selectAll(".word")
+                .style("fill", this.getColorCoding())
+                .attr("opacity", this.getOpacityCoding());
+            this.setColorKey();
         }
         if(prevProps.color !== this.props.color){
             if(this.props.color =='rainbow') {
@@ -95,13 +98,18 @@ class Wordcloud extends Component {
 
         this.setToolTip();
 
+        this.setColorKey();
+
         this.fill = d3.scaleOrdinal(d3.schemeCategory10);
         this.setUpLinearColorGrandient();
 
         this.retrieveMaxLayout();
 
         this.maxLayout
-            .on("end", (words) => this.draw(words,true))
+            .on("end", (words) => {
+                this.wordsInCloud = words;
+                return this.draw(words,true);
+            })
             .start();
     }
 
@@ -179,7 +187,9 @@ class Wordcloud extends Component {
 
         if (colorAnimated) {
             setTimeout(() => { 
-                this.wordcloud.selectAll(".word").style("fill", this.getColorCoding())                
+                this.wordcloud.selectAll(".word")
+                .style("fill", this.getColorCoding())       
+                .attr("opacity", this.getOpacityCoding());         
             }, 5000);
         }
     }
@@ -204,7 +214,7 @@ class Wordcloud extends Component {
             .words(this.frequencyList)
             .rotate(d => 0)
             .text(d => d.text) 
-            .font('monospace')
+            .font(this.props.font)
             .fontSize(d => Math.floor(fontSizeScale(d.frequency/maxSize)))
             .spiral("archimedean")
         layout
@@ -229,26 +239,48 @@ class Wordcloud extends Component {
     }
 
     getColorCoding = () => {
-        if(this.props.colorCodedBy == "none") {
+        console.log('colorArrays',colorArrays)
+        if(this.props.colorCodedBy == "none" || this.props.codeByOpacity) {
             if(this.props.color =='rainbow') {
                 return (d, i) => this.fill(i);
             } else {
-                 return (d,i) => this.props.color;
+                 return this.props.color;
             }
         } else {
             return (d, i) => {
                 var maxSize = d3.max(this.frequencyList, d => d.frequency);
                 const scaleVal = this.props.colorCodedBy == "frequency" ? (d.frequency/(maxSize)) : d[this.props.colorCodedBy];
-                return colorScales[this.props.colorCodedBy](scaleVal);
+                return colorScales[this.props.dataType][this.props.colorCodedBy](scaleVal);
             };
         }
     }
 
+    getOpacityCoding = () => {
+        const maxValue =  d3.max(this.wordsInCloud, d => d[this.props.colorCodedBy]);
+        const opacity = d3.scaleLinear()
+          .domain([0, maxValue])
+          .range([.1,1]);
+        return this.props.codeByOpacity ?  (d) => opacity(d[this.props.colorCodedBy]) : 1;
+    }
+
+    setColorKey = () => {
+        const colorKeyDiv = document.getElementById("colorKey");
+        console.log("this.props.colorCodedBy",this.props.colorCodedBy);
+        if (this.props.colorCodedBy != "none" && !this.props.codeByOpacity){
+            colorKeyDiv.style.background = `linear-gradient(${colorArrays[this.props.colorCodedBy].join(', ')})`;
+            console.log(`linear-gradient(${colorArrays[this.props.colorCodedBy].join(', ')})`);
+            colorKeyDiv.style.visibility = "visible";
+        } else {
+            colorKeyDiv.style.visibility = "hidden";
+        }
+    }
 
 
     render() {
         return (
             <div>
+                              <div id="colorKey"></div>
+
                  <TransformWrapper
                     defaultScale={1}
                     defaultPositionX={200}

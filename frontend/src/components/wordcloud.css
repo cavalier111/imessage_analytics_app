@@ -14,3 +14,13 @@
 	padding: 5px;
 	opacity: 1;
 }
+
+#colorKey {
+	width: 15px;
+	height: 100px;
+	position: absolute;
+    right: 30px;
+    margin-top: 30px;
+    visibility: hidden;
+    border-radius: 5px;
+}

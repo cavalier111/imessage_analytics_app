@@ -1,20 +1,41 @@
 import * as d3 from 'd3';
 
+
+export const polarityColors = ["red", "grey", "green"];
+export const subjectivityColors = ["grey", "blue"];
+export const frequencyColors = ["grey", "blue"];
+
 export const polarityScale = d3.scaleLinear()
     .domain([-1, 0, 1])
-    .range(["red", "grey", "green"]);
+    .range(polarityColors);
 
 export const subjectivityScale = d3.scaleLinear()
     .domain([0, 1])
-    .range(["grey", "blue"]);
+    .range(subjectivityColors);
 
 export const frequencyScale = d3.scaleLinear()
     .domain([0,1])
-  	.range(["rgba(0,23,255,0)","rgba(0,23,255,1)"]);
+  	.range(frequencyColors);
 
 export const colorScales = {
-	"polarity": polarityScale,
-	"subjectivity": subjectivityScale,
-	"frequency": frequencyScale,
-	// "partOfSpeech": partOfSpeechScale,
+	words: {
+		"polarity": polarityScale,
+		"subjectivity": subjectivityScale,
+		"frequency": frequencyScale,
+		// "partOfSpeech": partOfSpeechScale,
+	},
+	emojis: {
+		"polarity": polarityScale,
+		"subjectivity": subjectivityScale,
+		"frequency": frequencyScale,
+	},
+	links: {
+		"frequency": frequencyScale,
+	}
+};
+export const colorArrays = {
+	"polarity": polarityColors,
+	"subjectivity": subjectivityColors,
+	"frequency": frequencyColors,
+	// "partOfSpeech": partOfSpeechColors,
 };

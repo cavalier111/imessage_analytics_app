@@ -42,21 +42,25 @@ export const defaultState = {
     words: {
       wordcloud: {
         colorCodedBy: 'none',
+        codeByOpacity: false,
         color: 'rainbow',
         font: 'monospace',
       },
       bargraph: {
         colorCodedBy: 'none',
+        codeByOpacity: false,
         color: '#007bff',
       },
     },
     emojis: {
       wordcloud: {
         colorCodedBy: 'none',
+        codeByOpacity: false,
         color: 'rainbow',
       },
       bargraph: {
         colorCodedBy: 'none',
+        codeByOpacity: false,
         color: '#007bff',
       },
     },
@@ -64,9 +68,13 @@ export const defaultState = {
       wordcloud: {
         color: 'rainbow',
         font: 'monospace',
+        colorCodedBy: 'none',
+        codeByOpacity: false,
       },
       bargraph: {
         color: '#007bff',
+        colorCodedBy: 'none',
+        codeByOpacity: false,
       },
     }
   },

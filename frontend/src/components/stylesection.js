@@ -14,6 +14,8 @@ import { fontFamilys } from './constants/fonts';
 import { colorPalette, colorPaletteBg } from './constants/colors';
 import { colorScales } from './constants/colorScales';
 import { HuePicker, CirclePicker } from 'react-color';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const mapStateToProps = (state) => ({
   dataType: getDataType(state),
@@ -22,6 +24,7 @@ const mapStateToProps = (state) => ({
   background: getStyle(state, 'color'),
   colorCodedBy: getStyle(state, 'colorCodedBy'),
   font: getStyle(state, 'font'),
+  codeByOpacity: getStyle(state, 'codeByOpacity'),
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -48,6 +51,9 @@ class StyleSection extends Component {
 
      componentDidUpdate(prevProps) {
       if((prevProps.dataType !== this.props.dataType) ||  (prevProps.vizType !== this.props.vizType)){
+        this.setState({
+          codeByOpacity: !this.state.codeByOpacity,
+        });
         if(this.props.color == "rainbow") {
           this.setState({
             hueColor: "#FF0000",
@@ -66,13 +72,31 @@ class StyleSection extends Component {
       }
     }
 
+    toggleCodeByOpacity = () => {
+      this.props.updateStyle({type: "codeByOpacity", value: !this.state.codeByOpacity})
+      if(!this.state.codeByOpacity) {
+        document.getElementById("colorPickerSection").className = "normal";
+      } else if (this.props.colorCodedBy != 'none'){
+        document.getElementById("colorPickerSection").className = "greyOut";
+      }
+      this.setState({
+        codeByOpacity: !this.state.codeByOpacity,
+      });
+    }
+
     updateColor = (color) => {
+      document.getElementById("colorPickerSection").className = "normal";
       const desiredClass = this.props.vizType == "wordcloud" ? 'word' : 'bar';
       const elements = document.getElementsByClassName(desiredClass);
       for (var i = 0; i < elements.length; i++) {
+        console.log(color.hex);
           elements[i].style.fill=color.hex;
       }
       this.setState({hueColor: color.hex});
+      if(!this.props.codeByOpacity) {
+        document.getElementById("colorCodingSection").className = "greyOut";
+        this.props.updateStyle({type: "colorCodedBy", value: 'none'});
+      }
       document.getElementsByClassName("rainbowCircle")[0].style.boxShadow = "none";
     }
 
@@ -102,11 +126,11 @@ class StyleSection extends Component {
             <Drawer anchor='right' open={this.state.sideBarOpen} onClose={this.toggleSidebar(false)}>
             <div className="sideBar">
               <div className="header">
-                <h3>Filters</h3>
+                <h3>Styles</h3>
                 <Button variant="link" onClick={this.toggleSidebar(false)} className="closeButton">Close</Button>
               </div>  
               {(this.props.color) ?
-                <div className={(this.props.colorCodedBy=='none' || !this.props.colorCodedBy) ? "normal" : "greyOut"}>
+                <div id="colorPickerSection" className={(this.props.colorCodedBy=='none' || !this.props.colorCodedBy || this.props.codeByOpacity) ? "normal" : "greyOut"}>
                   <h5>
                     Choose a color for the
                     {this.props.vizType == "wordcloud" ? <span> words</span> :  <span> bars</span> }
@@ -129,7 +153,7 @@ class StyleSection extends Component {
                 </div>
               : false }
               {(this.props.colorCodedBy) ?
-                <div className={(this.props.colorCodedBy && this.props.colorCodedBy != 'none') ? "normal" : "greyOut"}>
+                <div id="colorCodingSection" className={(this.props.colorCodedBy && this.props.colorCodedBy != 'none') ? "normal" : "greyOut"}>
                   <h5>
                     Color code the visualization by one of the following variables:
                   </h5>
@@ -139,7 +163,7 @@ class StyleSection extends Component {
                       none
                     </label>
                   </div>
-                  {Object.keys(colorScales).map((scale,i) => 
+                  {Object.keys(colorScales[this.props.dataType]).map((scale,i) => 
                     <div className="form-check">
                       <input className="form-check-input" type="radio" name="scaleOption" id={`scale${i}`} value={`scale${i}`} checked={this.props.colorCodedBy === scale} onChange={() => this.props.updateStyle({type: "colorCodedBy", value: scale})} />
                       <label className="form-check-label" htmlFor={`scale${i}`}>
@@ -147,6 +171,10 @@ class StyleSection extends Component {
                       </label>
                     </div>
                   )}
+                  <FormControlLabel
+                    control={<Switch checked={this.state.codeByOpacity} onChange={this.toggleCodeByOpacity} name="opacityToggle" />}
+                    label="Code by opacity instead of color"
+                  />
                 </div>
               : false }
               {this.props.background ?
