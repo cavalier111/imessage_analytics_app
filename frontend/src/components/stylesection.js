@@ -89,7 +89,6 @@ class StyleSection extends Component {
       const desiredClass = this.props.vizType == "wordcloud" ? 'word' : 'bar';
       const elements = document.getElementsByClassName(desiredClass);
       for (var i = 0; i < elements.length; i++) {
-        console.log(color.hex);
           elements[i].style.fill=color.hex;
       }
       this.setState({hueColor: color.hex});
