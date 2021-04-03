@@ -9,7 +9,7 @@ import RangeSlider from './rangeslider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import TagsInput from './tagsinput';
-import store from "../redux/store/word";
+import store from "../redux/store/store";
 import Drawer from '@material-ui/core/Drawer';
 import './filtersection.scss';
 

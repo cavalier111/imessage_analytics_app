@@ -9,10 +9,10 @@ import {
   UPDATE_WORDCLOUD_LAYOUT,
   UPDATE_STYLE
 } from "../constants/actionTypes";
-import { defaultState } from "../constants/defaultState";
+import { defaultWordState } from "../constants/defaultWordState";
 
 
-export const rootReducer = (state = defaultState, action) => {
+export const word = (state = defaultWordState, action) => {
   if (action.type === UPDATE_FREQUENCY_LIST) {
     return {
       ...state,
@@ -177,4 +177,4 @@ export const rootReducer = (state = defaultState, action) => {
   return state;
 }
 
-export default rootReducer;
+export default word;

@@ -8,10 +8,10 @@ import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
 import './loader.scss';
-import store from "../redux/store/word";
+import store from "../redux/store/store";
 import { Switch, Route } from "react-router-dom";
 import Login from "./login";
-import Signup from "./signup";
+import Register from "./register";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -90,7 +90,7 @@ class Home extends Component {
         }
         <Switch>
             <Route exact path={"/login/"} component={Login}/>
-            <Route exact path={"/signup/"} component={Signup}/>
+            <Route exact path={"/register/"} component={Register}/>
             <Route path={"/"} render={() => <div>Home again</div>}/>
         </Switch>
         {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}

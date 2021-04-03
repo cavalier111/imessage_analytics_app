@@ -1,4 +1,4 @@
-import { defaultState } from "../constants/defaultState";
+import { defaultWordState } from "../constants/defaultWordState";
 
 export const getFrequencyList = store =>
   store.freuquencyLists[store.dataType] ? store.freuquencyLists[store.dataType] : []
@@ -29,7 +29,7 @@ export const getFilter = (store,type) => {
 }
 
 export const getStyle = (store,type) => {
-	const defaultValues =  defaultState.styles;
+	const defaultValues =  defaultWordState.styles;
 	if (type == "background") {
 		const defaultVal = defaultValues.background ? defaultValues.background : null;
 		return store.styles.background ? store.styles.background : defaultVal;
