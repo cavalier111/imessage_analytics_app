@@ -3,6 +3,7 @@ import './upload.css';
 import Dropzone from 'react-dropzone';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faUpload } from '@fortawesome/free-solid-svg-icons'
+import axiosInstance from '../axiosApi'
 
 class Upload extends Component {
     constructor(props) {
@@ -34,12 +35,11 @@ class Upload extends Component {
     uploadFile =  ()  => {
       let formData = new FormData();
       formData.append('file', this.state.file);
-      var req = new Request('/api/texts/upload/', {
+      var req = new Request('/texts/upload/', {
         method: "POST",
         body: formData
       });
-      fetch(req)
-        .then(response => response.json())
+      axiosInstance.post('/texts/upload/', formData)
         .catch(error => {
           this.setState({
             errorStatus: error.message,

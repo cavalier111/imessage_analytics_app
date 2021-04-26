@@ -12,6 +12,7 @@ import store from "../redux/store/store";
 import { Switch, Route } from "react-router-dom";
 import Login from "./login";
 import Register from "./register";
+import axiosInstance from '../axiosApi'
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -42,8 +43,8 @@ class Home extends Component {
 
   viewVizualizations = () => {
     this.setState({loading: true});
-    fetch("api/texts/frequencyList")
-      .then(response => response.json())
+    axiosInstance.get("texts/frequencyList")
+      .then(response => response.data)
       .catch(error => {
         this.setState({
           error: error.message
@@ -91,7 +92,7 @@ class Home extends Component {
         <Switch>
             <Route exact path={"/login/"} component={Login}/>
             <Route exact path={"/register/"} component={Register}/>
-            <Route path={"/"} render={() => <div>Home again</div>}/>
+            {/*<Route path={"/"} render={() => <div>Home again</div>}/>*/}
         </Switch>
         {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}
         {this.state.loaded ? <Wordheader/> : false}

@@ -1,19 +1,19 @@
 import { defaultWordState } from "../constants/defaultWordState";
 
 export const getFrequencyList = store =>
-  store.freuquencyLists[store.dataType] ? store.freuquencyLists[store.dataType] : []
+  store.word.freuquencyLists[store.word.dataType] ? store.word.freuquencyLists[store.word.dataType] : []
 
  export const getFrequencyListOriginal = store =>
-  store.unfilteredFreuquencyLists[store.dataType] ? store.unfilteredFreuquencyLists[store.dataType] : []
+  store.word.unfilteredFreuquencyLists[store.word.dataType] ? store.word.unfilteredFreuquencyLists[store.word.dataType] : []
 
 export const getDataType = store =>
-  store.dataType ? store.dataType : []
+  store.word.dataType ? store.word.dataType : []
 
 export const getVizType = store =>
-  store.vizType ? store.vizType : []
+  store.word.vizType ? store.word.vizType : []
 
 export const getWordcloudLayout = store =>
-  store.wordcloudLayout[store.dataType] ? store.wordcloudLayout[store.dataType] : null
+  store.word.wordcloudLayout[store.word.dataType] ? store.word.wordcloudLayout[store.word.dataType] : null
 
 export const getFilter = (store,type) => {
 	const defaultValues = {
@@ -25,15 +25,15 @@ export const getFilter = (store,type) => {
 		stopWordsEnabled: true,
 	}
   	const defaultVal = defaultValues[type] ? defaultValues[type] : null;
-  	return store.filters[store.dataType][type] ? store.filters[store.dataType][type] : defaultVal;
+  	return store.word.filters[store.word.dataType][type] ? store.word.filters[store.word.dataType][type] : defaultVal;
 }
 
 export const getStyle = (store,type) => {
 	const defaultValues =  defaultWordState.styles;
 	if (type == "background") {
 		const defaultVal = defaultValues.background ? defaultValues.background : null;
-		return store.styles.background ? store.styles.background : defaultVal;
+		return store.word.styles.background ? store.word.styles.background : defaultVal;
 	}
-  	const defaultVal = defaultValues[store.dataType][store.vizType][type] ? defaultValues[store.dataType][store.vizType][type] : null;
-  	return store.styles[store.dataType][store.vizType][type] ? store.styles[store.dataType][store.vizType][type] : defaultVal;
+  	const defaultVal = defaultValues[store.word.dataType][store.word.vizType][type] ? defaultValues[store.word.dataType][store.word.vizType][type] : null;
+  	return store.word.styles[store.word.dataType][store.word.vizType][type] ? store.word.styles[store.word.dataType][store.word.vizType][type] : defaultVal;
 }
