@@ -53,7 +53,7 @@ class FilterSection extends Component {
           startEnd: this.props.startEnd,
           polarity: this.props.polarity,
           subjectivity: this.props.subjectivity,
-          stopWordsEnabled: store.getState().filters.words.stopWordsEnabled,
+          stopWordsEnabled: store.getState().word.filters.words.stopWordsEnabled,
         });
       }
     }
