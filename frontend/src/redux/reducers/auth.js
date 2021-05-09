@@ -7,6 +7,8 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  REFRESH_SUCCESS,
+  REFRESH_FAIL,
 } from '../constants/actionTypes';
 
 const initialState = {
@@ -41,8 +43,17 @@ export default function (state = initialState, action) {
         isAuthenticated: true,
         isLoading: false,
       };
+    case REFRESH_SUCCESS:
+      localStorage.setItem('access_token', action.payload.access);
+      return {
+        ...state,
+        ...action.payload,
+        isAuthenticated: true,
+        isLoading: false,
+      };
     case AUTH_ERROR:
     case LOGIN_FAIL:
+    case REFRESH_FAIL:
     case LOGOUT_SUCCESS:
     case REGISTER_FAIL:
       localStorage.removeItem('access_token');

@@ -10,6 +10,8 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  REFRESH_SUCCESS,
+  REFRESH_FAIL,
 } from '../constants/actionTypes';
 
 
@@ -33,22 +35,6 @@ import {
 //       });
 //     });
 // };
-
-    // handleSubmitWThen(event){
-    //     event.preventDefault();
-    //     axiosInstance.post('/token/obtain/', {
-    //             username: this.state.username,
-    //             password: this.state.password
-    //         }).then(
-    //             result => {
-    //                 axiosInstance.defaults.headers['Authorization'] = "JWT " + result.data.access;
-    //                 localStorage.setItem('access_token', result.data.access);
-    //                 localStorage.setItem('refresh_token', result.data.refresh);
-    //             }
-    //         ).catch (error => {
-    //             throw error;
-    //         })
-    // }
 
 // LOGIN USER
 export const login = (username, password) => (dispatch) => {
@@ -80,22 +66,24 @@ export const login = (username, password) => (dispatch) => {
 };
 
 
-// async handleSubmit(event) {
-//         event.preventDefault();
-//         try {
-//             const response = await axiosInstance.post('/user/create/', {
-//                 username: this.state.username,
-//                 email: this.state.email,
-//                 password: this.state.password
-//             });
-//             return response;
-//         } catch (error) {
-//             console.log(error.stack);
-//             this.setState({
-//                 errors:error.response.data
-//             });
-//         }
-//     }
+export const refreshToken = ()  => (dispatch) => {
+  axiosInstance
+    .post('/token/refresh/', {refresh: localStorage.getItem('refresh_token')})
+    .then((res) => {
+        dispatch({
+          type: REFRESH_SUCCESS,
+          payload: res.data,
+        });
+        axiosInstance.defaults.headers['Authorization'] = "JWT " + res.data.access;
+    })
+    .catch((err) => {
+      dispatch(returnErrors(err.response.data, err.response.status));
+      dispatch({
+        type: REFRESH_FAIL,
+      });
+    });
+};
+
 
 // REGISTER USER
 export const register = ({ username, password, email }) => (dispatch) => {
@@ -125,21 +113,6 @@ export const register = ({ username, password, email }) => (dispatch) => {
     });
 };
 
-
-// async handleLogout() {
-//         try {
-//             const response = await axiosInstance.post('/blacklist/', {
-//                 "refresh_token": localStorage.getItem("refresh_token")
-//             });
-//             localStorage.removeItem('access_token');
-//             localStorage.removeItem('refresh_token');
-//             axiosInstance.defaults.headers['Authorization'] = null;
-//             return response;
-//         }
-//         catch (e) {
-//             console.log(e);
-//         }
-//     };
 // LOGOUT USER
 export const logout = () => (dispatch, getState) => {
   axiosInstance
@@ -155,25 +128,3 @@ export const logout = () => (dispatch, getState) => {
     });
 };
 
-
-
-
-// Setup config with token - helper function
-export const tokenConfig = (getState) => {
-  // Get token from state
-  const token = getState().auth.token;
-
-  // Headers
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  // If token, add to headers config
-  if (token) {
-    config.headers['Authorization'] = `Token ${token}`;
-  }
-
-  return config;
-};

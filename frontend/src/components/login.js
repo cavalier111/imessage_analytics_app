@@ -53,7 +53,7 @@ export class Login extends Component {
                 value={password}
               />
             </div>
-
+            <p className="errorText"> { this.props.errors.msg.detail } </p>
             <div className="form-group">
               <button type="submit" className="btn btn-primary">
                 Login
@@ -71,6 +71,7 @@ export class Login extends Component {
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
+  errors: state.errors,
 });
 
 export default connect(mapStateToProps, { login })(Login);

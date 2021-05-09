@@ -239,7 +239,6 @@ class Wordcloud extends Component {
     }
 
     getColorCoding = () => {
-        console.log('colorArrays',colorArrays)
         if(this.props.colorCodedBy == "none" || this.props.codeByOpacity) {
             if(this.props.color =='rainbow') {
                 return (d, i) => this.fill(i);

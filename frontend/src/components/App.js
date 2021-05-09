@@ -25,6 +25,7 @@ const alertOptions = {
 class App extends Component {
   // componentDidMount() {
   //   store.dispatch(loadUser());
+  // //this.props.refreshToken();
   // }
 
   render() {
