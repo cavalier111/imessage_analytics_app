@@ -24,5 +24,5 @@ export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 export const CLEAR_LEADS = 'CLEAR_LEADS';
-export const REFRESH_SUCCESS = 'REFRESH_SUCCESS';
-export const REFRESH_FAIL = 'REFRESH_FAIL';
+export const PING_SUCCESS = 'PING_SUCCESS';
+export const PING_FAIL = 'PING_FAIL';

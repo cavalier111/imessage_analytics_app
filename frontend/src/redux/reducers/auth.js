@@ -7,16 +7,18 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
-  REFRESH_SUCCESS,
-  REFRESH_FAIL,
+  PING_SUCCESS,
+  PING_FAIL,
 } from '../constants/actionTypes';
+import axiosInstance from '../../axiosApi'
 
 const initialState = {
   access_token: localStorage.getItem('access_token'),
   refresh_token: localStorage.getItem('refresh_token'),
-  isAuthenticated: localStorage.getItem('access_token') && localStorage.getItem('refresh_token') ? true : false,
+  isAuthenticated: false,
   isLoading: false,
   user: null,
+  attemptedAuth: false,
 };
 
 export default function (state = initialState, action) {
@@ -37,25 +39,27 @@ export default function (state = initialState, action) {
     case REGISTER_SUCCESS:
       localStorage.setItem('access_token', action.payload.access);
       localStorage.setItem('refresh_token', action.payload.refresh);
+      axiosInstance.defaults.headers['Authorization'] = localStorage.getItem('access_token') ? "JWT " + localStorage.getItem('access_token') : null;
       return {
         ...state,
         ...action.payload,
         isAuthenticated: true,
         isLoading: false,
+        attemptedAuth: true,
       };
-    case REFRESH_SUCCESS:
-      localStorage.setItem('access_token', action.payload.access);
+    case PING_SUCCESS:
       return {
         ...state,
         ...action.payload,
         isAuthenticated: true,
         isLoading: false,
+        attemptedAuth: true,
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
-    case REFRESH_FAIL:
     case LOGOUT_SUCCESS:
     case REGISTER_FAIL:
+    case PING_FAIL:
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       return {
@@ -65,6 +69,7 @@ export default function (state = initialState, action) {
         user: null,
         isAuthenticated: false,
         isLoading: false,
+        attemptedAuth: true,
       };
     default:
       return state;

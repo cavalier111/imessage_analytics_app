@@ -8,10 +8,8 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT_SUCCESS,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-  REFRESH_SUCCESS,
-  REFRESH_FAIL,
+  PING_SUCCESS,
+  PING_FAIL,
 } from '../constants/actionTypes';
 
 
@@ -47,7 +45,6 @@ export const login = (username, password) => (dispatch) => {
 
   // Request Body
   const body = JSON.stringify({ username, password });
-
   axiosInstance
     .post('token/obtain/', body, config)
     .then((res) => {
@@ -64,6 +61,31 @@ export const login = (username, password) => (dispatch) => {
       });
     });
 };
+
+export const pingAuth = () => (dispatch) => {
+  // Headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  axiosInstance
+    .get('hello/', config)
+    .then((res) => {
+      dispatch({
+        type: PING_SUCCESS,
+        payload: res.data,
+      });
+      return 
+    })
+    .catch((err) => {
+      dispatch(returnErrors(err.response.data, err.response.status));
+      dispatch({
+        type: PING_FAIL,
+      });
+    });
+};
+
 
 
 export const refreshToken = ()  => (dispatch) => {
