@@ -11,7 +11,7 @@ from textblob import TextBlob
 from urllib.parse import urlparse
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-def getTextFrequencyDictForText(texts):
+def createFrequencyListsDict(texts):
     global analyzer
     analyzer = SentimentIntensityAnalyzer()
     # print(TextBlob("heart").sentiment, TextBlob("red").sentiment)
@@ -20,6 +20,7 @@ def getTextFrequencyDictForText(texts):
 
     listDict = dict({"wordsList": [], "emojiList": [], "linkList": []})
     for text in texts:
+        print(text)
         listDict["wordsList"] += extractWords(text)
         listDict["emojiList"] += extractEmojis(text)
         listDict["linkList"] += extractLinks(text)
@@ -27,7 +28,7 @@ def getTextFrequencyDictForText(texts):
         'wordList': getDataForTexts(listDict["wordsList"], 'word'),
         'emojiList': getDataForTexts(listDict["emojiList"], 'emoji'),
         'linkList': getDataForTexts(listDict["linkList"], 'link'),
-        }
+    }
 
 def getDataForTexts(wordsList, dataType):
     if dataType == 'word':

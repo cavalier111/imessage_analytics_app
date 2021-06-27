@@ -5,22 +5,16 @@ from django.contrib.staticfiles.finders import find
 from django.conf import settings
 import csv, io
 from django.contrib import messages
-from .models import Texts
-from .utils.wordCloud_utils import getTextFrequencyDictForText
+from .models import FrequencyList
+from .utils.wordCloud_utils import createFrequencyListsDict
 import json
-from .serializers import TextsSerializer, UploadSerializer
+from .serializers import UploadSerializer
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
-
-#get endpint, not sure If ill use
-class TextsListCreate(generics.ListCreateAPIView):
-    queryset = Texts.objects.all()
-    serializer_class = TextsSerializer
-
     
 @api_view(['POST'])
 def texts_upload(request):
@@ -29,17 +23,15 @@ def texts_upload(request):
 		decodedStream = stream.read().decode('UTF-8')
 		io_string = io.StringIO(decodedStream)
 		next(io_string)
-		count =0
-		for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-			count +=1
-			print(column)
-			if len(column) == 2:
-				_, created = Texts.objects.update_or_create(
-					ROWID=column[0],
-					text=column[1],
-					# is_from_me=column[2],
-					is_from_me='0',
-				)
+		next(io_string)
+		next(io_string)
+		fieldnames = ("ROWID", "attributedBody", "text", "date", "balloon_bundle_id", "associated_message_type", "cache_has_attachments", "is_from_me")
+		texts = list(csv.DictReader(io_string, fieldnames, delimiter=',', quotechar="|"))
+		texts = texts[1:len(texts)-1]
+		freqList = json.dumps(createFrequencyListsDict(texts))
+		print(freqList)
+		FrequencyList.objects.create(user = request.user, frequencyListsDict= freqList )
+		print('created!')
 		return Response(None, status=status.HTTP_201_CREATED)
 	except Exception as e:
 		print(str(e))
@@ -55,7 +47,9 @@ def success(request):
 
 @api_view(['GET'])
 def frequency_list(request):
-	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
+	#will have something in the UI where you can select your chats
+	# return Response(FrequencyList.objects.values('frequencyListsDict').filter(chat_id=request.chat_id && user==request.user))
+
 	# try:
 	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
 	# except Exception as e:
