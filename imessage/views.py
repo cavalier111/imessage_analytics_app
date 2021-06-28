@@ -19,22 +19,43 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 @api_view(['POST'])
 def texts_upload(request):
 	try:
+		#for time based stuff, oging to need to convert unix date time, use this for that:
+		#datetime.fromtimestamp(row[2]/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple())),)
 		stream = io.BytesIO(request.body)
 		decodedStream = stream.read().decode('UTF-8')
 		io_string = io.StringIO(decodedStream)
 		next(io_string)
 		next(io_string)
 		next(io_string)
-		fieldnames = ("ROWID", "attributedBody", "text", "date", "balloon_bundle_id", "associated_message_type", "cache_has_attachments", "is_from_me")
-		texts = list(csv.DictReader(io_string, fieldnames, delimiter=',', quotechar="|"))
-		texts = texts[1:len(texts)-1]
-		freqList = json.dumps(createFrequencyListsDict(texts))
-		print(freqList)
-		FrequencyList.objects.create(user = request.user, frequencyListsDict= freqList )
+		texts_csv_reader = csv.reader(io_string, delimiter=',', quotechar='|')
+		count = 0
+		#get meta data
+		for row in texts_csv_reader:
+			print(row,count)
+			if count == 1:
+				chat_id = row[0]
+			elif count == 2:
+				chat_name = row[0]
+			elif count == 3:
+				chat_type = row[0]
+			elif count == 4:
+				field_names = row
+			elif count>4:
+				break
+			count+=1
+		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quotechar="|"))
+		texts_data = texts[4:len(texts)-1]
+		print('hereeee 5')
+		print(texts_data)
+		freqList = json.dumps(createFrequencyListsDict(texts_data))
+		print('hereeee 6')
+		FrequencyList.objects.create(user = request.user, frequency_lists_dict = freqList, chat_id = chat_id, chat_name = chat_name, chat_type = chat_type)
 		print('created!')
 		return Response(None, status=status.HTTP_201_CREATED)
 	except Exception as e:
-		print(str(e))
+		print('hereeee')
+		print((e))
+		print('hereeee')
 		return Response({"message":'There was an error parsing the csv'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -48,7 +69,8 @@ def success(request):
 @api_view(['GET'])
 def frequency_list(request):
 	#will have something in the UI where you can select your chats
-	# return Response(FrequencyList.objects.values('frequencyListsDict').filter(chat_id=request.chat_id && user==request.user))
+	# return Response(FrequencyList.objects.values('frequency_lists_dict').filter(id=request.chatRowId, user=request.user))
+	return Response(FrequencyList.objects.values_list('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user))
 
 	# try:
 	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))

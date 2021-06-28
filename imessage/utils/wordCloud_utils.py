@@ -20,7 +20,6 @@ def createFrequencyListsDict(texts):
 
     listDict = dict({"wordsList": [], "emojiList": [], "linkList": []})
     for text in texts:
-        print(text)
         listDict["wordsList"] += extractWords(text)
         listDict["emojiList"] += extractEmojis(text)
         listDict["linkList"] += extractLinks(text)
