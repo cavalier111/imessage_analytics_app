@@ -6,7 +6,7 @@ from django.conf import settings
 import csv, io
 from django.contrib import messages
 from .models import FrequencyList
-from .utils.wordCloud_utils import createFrequencyListsDict
+from .utils.wordCloud_utils import createFrequencyListsDict, addDateFormatted
 import json
 from .serializers import UploadSerializer
 from rest_framework import generics,status
@@ -27,26 +27,33 @@ def texts_upload(request):
 		next(io_string)
 		next(io_string)
 		next(io_string)
+		io_string_b = io_string
 		texts_csv_reader = csv.reader(io_string, delimiter=',', quotechar='|')
 		count = 0
 		#get meta data
 		for row in texts_csv_reader:
 			print(row,count)
 			if count == 1:
-				chat_id = row[0]
+			       chat_id = row[0]
 			elif count == 2:
-				chat_name = row[0]
+			       chat_name = row[0]
 			elif count == 3:
-				chat_type = row[0]
+			       chat_type = row[0]
 			elif count == 4:
-				field_names = row
+			       field_names = row
 			elif count>4:
-				break
+			       break
 			count+=1
-		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quotechar="|"))
+		print(chat_id, chat_name, chat_type, field_names)
+		# if the chat name already 
+		users_chat_names = list(FrequencyList.objects.values_list('chat_name').filter(user=request.user))
+		if chat_name in users_chat_names:
+			chat_name += str(len(users_chat_names))
+		texts = list(csv.DictReader(io_string_b, fieldnames=field_names, delimiter=',', quotechar="|"))
 		texts_data = texts[4:len(texts)-1]
-		print('hereeee 5')
+		map(addDateFormatted, texts_data)
 		print(texts_data)
+		print('hereeee 5')
 		freqList = json.dumps(createFrequencyListsDict(texts_data))
 		print('hereeee 6')
 		FrequencyList.objects.create(user = request.user, frequency_lists_dict = freqList, chat_id = chat_id, chat_name = chat_name, chat_type = chat_type)
@@ -65,6 +72,12 @@ def index(request):
 
 def success(request):
 	return render(request, 'success.html')
+
+@api_view(['GET'])
+def user_chats(request):
+	#will have something in the UI where you can select your chats
+	# return Response(FrequencyList.objects.values('frequency_lists_dict').filter(id=request.chatRowId, user=request.user))
+	return Response(FrequencyList.objects.values_list('chat_name').filter(user=request.user))
 
 @api_view(['GET'])
 def frequency_list(request):

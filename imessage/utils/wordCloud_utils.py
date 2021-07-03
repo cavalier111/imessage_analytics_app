@@ -127,4 +127,5 @@ def removeEmoji(string):
                            u"\U000024C2-\U0001F251"
                            "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
-
+def addDateFormatted(text):
+    text['date_formatted']=datetime.fromtimestamp(text['date']/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple()))
