@@ -11,7 +11,6 @@ import {
 } from "../constants/actionTypes";
 import { defaultWordState } from "../constants/defaultWordState";
 
-
 export const word = (state = defaultWordState, action) => {
   if (action.type === UPDATE_FREQUENCY_LIST) {
     return {
@@ -23,37 +22,39 @@ export const word = (state = defaultWordState, action) => {
     }
   }
   if (action.type === INITIALIZE_FREQUENCY_LISTS) {
+    const frequencyListsDict = action.payload.frequency_lists_dict
+    console.log(frequencyListsDict)
     return {
       ...state,
       freuquencyLists: {
         ...state.freuquencyLists,
-        words: action.payload.wordList.filter(item => !item.isStopWord),
-        emojis: action.payload.emojiList,
-        links: action.payload.linkList,
+        words: frequencyListsDict.wordList.filter(item => !item.isStopWord),
+        emojis: frequencyListsDict.emojiList,
+        links: frequencyListsDict.linkList,
       },
       unfilteredFreuquencyLists: {
         ...state.unfilteredFreuquencyLists,
-        words: action.payload.wordList,
-        emojis: action.payload.emojiList,
-        links: action.payload.linkList,
+        words: frequencyListsDict.wordList,
+        emojis: frequencyListsDict.emojiList,
+        links: frequencyListsDict.linkList,
       },
       filters: {
         ...state.filters,
         words: {
             ...state.filters.words,
-            startEnd: [1, action.payload.wordList.length],
-            stopWordsDefault: action.payload.wordList.filter(item => item.isStopWord).map(item=>item.text),
-            maxEnd: action.payload.wordList.filter(item => !item.isStopWord).length,
+            startEnd: [1, frequencyListsDict.wordList.length],
+            stopWordsDefault: frequencyListsDict.wordList.filter(item => item.isStopWord).map(item=>item.text),
+            maxEnd: frequencyListsDict.wordList.filter(item => !item.isStopWord).length,
           },
         emojis: {
           ...state.filters.emojis,
-          startEnd: [1, action.payload.emojiList.length],
-          maxEnd: action.payload.emojiList.length,
+          startEnd: [1, frequencyListsDict.emojiList.length],
+          maxEnd: frequencyListsDict.emojiList.length,
         },
         links: {
           ...state.filters.links,
-          startEnd: [1, action.payload.linkList.length],
-          maxEnd: action.payload.linkList.length,
+          startEnd: [1, frequencyListsDict.linkList.length],
+          maxEnd: frequencyListsDict.linkList.length,
         },
       }
     }

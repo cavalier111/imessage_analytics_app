@@ -10,6 +10,8 @@ import emojis
 from textblob import TextBlob
 from urllib.parse import urlparse
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from datetime import datetime
+import time
 
 def createFrequencyListsDict(texts):
     global analyzer
@@ -128,4 +130,6 @@ def removeEmoji(string):
                            "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
 def addDateFormatted(text):
-    text['date_formatted']=datetime.fromtimestamp(text['date']/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple()))
+    if text['date']:
+        text['date_formatted']=(datetime.fromtimestamp(int(text['date'])/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple()))).strftime("%d-%b-%Y (%H:%M:%S.%f)")
+    return text

@@ -7,12 +7,15 @@ import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
+import ChatSelector from './chatSelector';
+import './home.css'
 import './loader.scss';
 import store from "../redux/store/store";
 import { Switch, Route } from "react-router-dom";
 import Login from "./login";
 import Register from "./register";
 import axiosInstance from '../axiosApi'
+import Button from '@material-ui/core/Button';
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -28,6 +31,7 @@ class Home extends Component {
       placeholder: "Loading",
       searchedWord: "",
       previousSearchWord: "",
+      chatId: null,
     };
   }
   componentDidMount() {
@@ -43,7 +47,7 @@ class Home extends Component {
 
   viewVizualizations = () => {
     this.setState({loading: true});
-    axiosInstance.get("texts/frequencyList")
+    axiosInstance.get("texts/frequencyList/"+this.state.chatId)
       .then(response => response.data)
       .catch(error => {
         this.setState({
@@ -94,13 +98,20 @@ class Home extends Component {
             <Route exact path={"/register/"} component={Register}/>
             {/*<Route path={"/"} render={() => <div>Home again</div>}/>*/}
         </Switch>
-        {(this.state.loading || this.state.loaded) ? false : <Upload viewVizualizations={this.viewVizualizations} />}
+        {(this.state.loading || this.state.loaded) ? false :
+          <div>
+            <h1>Use an existing chat</h1>
+            <ChatSelector handleChatChange={(chatId) => {console.log(chatId);this.setState({'chatId': chatId})}}/>
+            <Button type="submit" className="start-button" onClick={() => this.viewVizualizations()}>Start</Button>
+            <h1>Upload a new chat</h1>
+            <Upload viewVizualizations={this.viewVizualizations} />
+          </div>
+        }
         {this.state.loaded ? <Wordheader/> : false}
         {vizualization}
         <span> {this.state.error} </span>
         <button type="submit" onClick={() => this.mockData()}>mock</button>
         <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>
-        <button type="submit" onClick={() => this.viewVizualizations()}>Start Real</button>
       </div>
     );
   }

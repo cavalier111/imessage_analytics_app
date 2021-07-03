@@ -42,7 +42,7 @@ class Upload extends Component {
       axiosInstance.post('/texts/upload/', formData)
         .catch(error => {
           this.setState({
-            errorStatus: error.message,
+            errorStatus: error,
             uploadText: "Drag your files here or click in this area",
             uploadStatus: "",
             file: null,

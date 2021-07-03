@@ -19,42 +19,34 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 @api_view(['POST'])
 def texts_upload(request):
 	try:
-		#for time based stuff, oging to need to convert unix date time, use this for that:
-		#datetime.fromtimestamp(row[2]/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple())),)
+		if len(FrequencyList.objects.filter(user=request.user)) > 5:
+			#maybe use an exception here
+			return Response({"message":'Maximum chats allowed is 5, please delete chats to upload more'}, status=status.HTTP_400_BAD_REQUEST)
 		stream = io.BytesIO(request.body)
 		decodedStream = stream.read().decode('UTF-8')
 		io_string = io.StringIO(decodedStream)
 		next(io_string)
 		next(io_string)
 		next(io_string)
-		io_string_b = io_string
-		texts_csv_reader = csv.reader(io_string, delimiter=',', quotechar='|')
-		count = 0
+		texts_csv_reader = csv.reader(io_string, delimiter=',', quoting=csv.QUOTE_ALL)
 		#get meta data
-		for row in texts_csv_reader:
-			print(row,count)
-			if count == 1:
-			       chat_id = row[0]
-			elif count == 2:
-			       chat_name = row[0]
-			elif count == 3:
-			       chat_type = row[0]
-			elif count == 4:
-			       field_names = row
-			elif count>4:
-			       break
-			count+=1
+		next(texts_csv_reader)
+		chat_id = next(texts_csv_reader)[0]
+		chat_name = next(texts_csv_reader)[0]
+		chat_type = next(texts_csv_reader)[0]
+		field_names = next(texts_csv_reader)
 		print(chat_id, chat_name, chat_type, field_names)
 		# if the chat name already 
-		users_chat_names = list(FrequencyList.objects.values_list('chat_name').filter(user=request.user))
-		if chat_name in users_chat_names:
-			chat_name += str(len(users_chat_names))
-		texts = list(csv.DictReader(io_string_b, fieldnames=field_names, delimiter=',', quotechar="|"))
+		users_chat_names = list(FrequencyList.objects.values_list('chat_name', flat=True).filter(user=request.user, chat_name__startswith=chat_name))
+		print(chat_name, users_chat_names)
+		if len(users_chat_names):
+			chat_name += ' ' + str(len(users_chat_names))
+		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quoting=csv.QUOTE_ALL))
 		texts_data = texts[4:len(texts)-1]
-		map(addDateFormatted, texts_data)
-		print(texts_data)
+		texts_data = list(map(addDateFormatted, texts_data))
+		print(texts_data[0:5])
 		print('hereeee 5')
-		freqList = json.dumps(createFrequencyListsDict(texts_data))
+		freqList = createFrequencyListsDict(texts_data)
 		print('hereeee 6')
 		FrequencyList.objects.create(user = request.user, frequency_lists_dict = freqList, chat_id = chat_id, chat_name = chat_name, chat_type = chat_type)
 		print('created!')
@@ -77,13 +69,13 @@ def success(request):
 def user_chats(request):
 	#will have something in the UI where you can select your chats
 	# return Response(FrequencyList.objects.values('frequency_lists_dict').filter(id=request.chatRowId, user=request.user))
-	return Response(FrequencyList.objects.values_list('chat_name').filter(user=request.user))
+	return Response(FrequencyList.objects.values('chat_name','id').filter(user=request.user))
 
 @api_view(['GET'])
-def frequency_list(request):
+def frequency_list(request, chatId):
 	#will have something in the UI where you can select your chats
-	# return Response(FrequencyList.objects.values('frequency_lists_dict').filter(id=request.chatRowId, user=request.user))
-	return Response(FrequencyList.objects.values_list('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user))
+	# also add some error handling here
+	return Response(FrequencyList.objects.values('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user, id=chatId).first())
 
 	# try:
 	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
