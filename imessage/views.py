@@ -40,7 +40,9 @@ def texts_upload(request):
 		users_chat_names = list(FrequencyList.objects.values_list('chat_name', flat=True).filter(user=request.user, chat_name__startswith=chat_name))
 		print(chat_name, users_chat_names)
 		if len(users_chat_names):
-			chat_name += ' ' + str(len(users_chat_names))
+			return Response({"message":"This chat already exists, please delete the current chat if you'd like to reupload"}, status=status.HTTP_400_BAD_REQUEST)
+			# this will be logic for live chat
+			# chat_name += ' ' + str(len(users_chat_names))
 		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quoting=csv.QUOTE_ALL))
 		texts_data = texts[4:len(texts)-1]
 		texts_data = list(map(addDateFormatted, texts_data))
@@ -67,16 +69,16 @@ def success(request):
 
 @api_view(['GET'])
 def user_chats(request):
-	#will have something in the UI where you can select your chats
-	# return Response(FrequencyList.objects.values('frequency_lists_dict').filter(id=request.chatRowId, user=request.user))
 	return Response(FrequencyList.objects.values('chat_name','id').filter(user=request.user))
 
-@api_view(['GET'])
+@api_view(['GET', 'DELETE'])
 def frequency_list(request, chatId):
-	#will have something in the UI where you can select your chats
-	# also add some error handling here
-	return Response(FrequencyList.objects.values('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user, id=chatId).first())
-
+	if request.method == 'GET':
+		# also add some error handling here
+		return Response(FrequencyList.objects.values('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user, id=chatId).first())
+	elif request.method == 'DELETE':
+		FrequencyList.objects.filter(user=request.user, id=chatId).first().delete()
+		return Response(None, status=status.HTTP_204_NO_CONTENT)
 	# try:
 	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
 	# except Exception as e:
@@ -88,6 +90,10 @@ def downloadTextExtractor(request):
 	response = HttpResponse(zip_file, content_type='application/force-download')
 	response['Content-Disposition'] = 'attachment; filename="%s"' % 'foo.zip'
 	return response
+
+
+
+
 def emojicloud(request):
 	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'), True)
 	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": True })

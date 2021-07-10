@@ -34,9 +34,7 @@ class Home extends Component {
       chatId: null,
     };
   }
-  componentDidMount() {
-    // this.viewVizualizations();
-  }
+  
   randomlyGenerate = () => {
         // for (var i = 0; i <100; i++) { 
         //     this.frequencyList.push({"text":Math.random().toString(36).substring(3), frequency: Math.floor(Math.random() * 6)});
@@ -58,6 +56,15 @@ class Home extends Component {
         this.props.initalizeFrequencyLists(data);
         this.setState({loaded: true, loading: false});
       });
+  }
+
+  deleteChat = () => {
+    axiosInstance.delete("texts/frequencyList/"+this.state.chatId)
+      .catch(error => {
+        this.setState({
+          error: error.message
+        });
+      })
   }
 
   mockData = () => {
@@ -101,8 +108,9 @@ class Home extends Component {
         {(this.state.loading || this.state.loaded) ? false :
           <div>
             <h1>Use an existing chat</h1>
-            <ChatSelector handleChatChange={(chatId) => {console.log(chatId);this.setState({'chatId': chatId})}}/>
+            <ChatSelector handleChatChange={(chatId) => this.setState({'chatId': chatId})}/>
             <Button type="submit" className="start-button" onClick={() => this.viewVizualizations()}>Start</Button>
+            <Button type="submit" className="start-button" onClick={() => this.deleteChat()}>Delete</Button>
             <h1>Upload a new chat</h1>
             <Upload viewVizualizations={this.viewVizualizations} />
           </div>
