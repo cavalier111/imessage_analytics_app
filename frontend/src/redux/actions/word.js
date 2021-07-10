@@ -7,8 +7,11 @@ import {
 	UPDATE_STOPWORDS,
 	HANDLE_FILTER_APPLY,
 	UPDATE_WORDCLOUD_LAYOUT,
-	UPDATE_STYLE
+	UPDATE_STYLE,
+	GET_CHATS_META_DATA_LIST_SUCCESS
 } from '../constants/actionTypes';
+import { returnErrors } from './messages';
+import axiosInstance from '../../axiosApi'
 
 export const updateFrequencyList = payload => ({
 	type: UPDATE_FREQUENCY_LIST,
@@ -53,3 +56,18 @@ export const updateStyle = payload => ({
 	type: UPDATE_STYLE,
 	payload
 });
+
+// LOGIN USER
+export const reloadChatsMetaData = () => (dispatch) => {
+  axiosInstance
+    .get("texts/chats/metaData")
+    .then((res) => {
+      dispatch({
+        type: GET_CHATS_META_DATA_LIST_SUCCESS,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch(returnErrors(err.response.data, err.response.status));
+    });
+};

@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 import { connect } from "react-redux";
 import { getVizType } from "../redux/selectors/word";
-import { initalizeFrequencyLists } from "../redux/actions/word";
+import { initalizeFrequencyLists, reloadChatsMetaData } from "../redux/actions/word";
 import Upload from './upload';
 import Wordheader from './wordheader';
 import Wordcloud from './wordcloud';
 import Bargraph from './bargraph';
 import ChatSelector from './chatSelector';
+import './App.css'
 import './home.css'
 import './loader.scss';
 import store from "../redux/store/store";
@@ -20,6 +21,7 @@ import Button from '@material-ui/core/Button';
 const mapDispatchToProps = (dispatch) => {
   return {
     initalizeFrequencyLists: frequencyLists => dispatch(initalizeFrequencyLists(frequencyLists)),
+    reloadChatsMetaData: () => dispatch(reloadChatsMetaData()),
   };
 }
 
@@ -65,6 +67,7 @@ class Home extends Component {
           error: error.message
         });
       })
+      .then(() => this.props.reloadChatsMetaData())
   }
 
   mockData = () => {
@@ -109,8 +112,8 @@ class Home extends Component {
           <div>
             <h1>Use an existing chat</h1>
             <ChatSelector handleChatChange={(chatId) => this.setState({'chatId': chatId})}/>
-            <Button type="submit" className="start-button" onClick={() => this.viewVizualizations()}>Start</Button>
-            <Button type="submit" className="start-button" onClick={() => this.deleteChat()}>Delete</Button>
+            <Button type="submit" className="chat-stat-button button-margin-right" onClick={() => this.viewVizualizations()}>Start</Button>
+            <Button type="submit" className="chat-stat-button" onClick={() => this.deleteChat()}>Delete</Button>
             <h1>Upload a new chat</h1>
             <Upload viewVizualizations={this.viewVizualizations} />
           </div>

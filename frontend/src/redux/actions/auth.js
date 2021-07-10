@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { returnErrors } from './messages';
 import axiosInstance from '../../axiosApi'
 import {
@@ -86,8 +85,6 @@ export const pingAuth = () => (dispatch) => {
     });
 };
 
-
-
 export const refreshToken = ()  => (dispatch) => {
   axiosInstance
     .post('/token/refresh/', {refresh: localStorage.getItem('refresh_token')})
@@ -105,7 +102,6 @@ export const refreshToken = ()  => (dispatch) => {
       });
     });
 };
-
 
 // REGISTER USER
 export const register = ({ username, password, email }) => (dispatch) => {

@@ -1,7 +1,3 @@
-.start-button {
-	background-color: #007bff !important;
-}
-
-.start-button:hover {
-	background-color: white !important;
+.button-margin-right {
+  margin-right: 10px !important;
 }

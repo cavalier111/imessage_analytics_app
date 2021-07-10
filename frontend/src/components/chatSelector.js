@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from "react-redux";
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -6,6 +7,17 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../axiosApi'
 import {useDispatch } from "react-redux";
+import { getChatsMetaData } from "../redux/selectors/word";
+import { reloadChatsMetaData } from "../redux/actions/word";
+
+const mapStateToProps = (state) => ({
+  chats: getChatsMetaData(state),
+});
+const mapDispatchToProps = (dispatch) => {
+  return {
+    reloadChatsMetaData: () => dispatch(reloadChatsMetaData()),
+  };
+}
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -35,30 +47,21 @@ const MenuProps = {
   },
 };
 
-function getChats() {
-  return axiosInstance.get("texts/chats/metaData")
-    .then(response => response.data)
-    .catch(error => {
-      this.setState({
-        error: error.message
-      });
-    })
-}
-
-
-export default function ChatSelector(props) {
+function ChatSelector(props) {
   const classes = useStyles();
   const theme = useTheme();
-  const [chatId, setChatId] = React.useState('heyyy');
+  const [chatId, setChatId] = React.useState();
   const [chats, setChats] = React.useState([]);
   React.useEffect(() => {
-      getChats().then(response=> {setChats(response); setChatId(response[0].id)})
-  }, []);
+      setChats(props.chats);
+      if (props.chats.length==0) {
+        props.reloadChatsMetaData()
+      }
+  }, [props.chats]);
   const handleChatChange = (event) => {
     setChatId(event.target.value);
     props.handleChatChange(event.target.value);
   };
-
 
   return (
     <div>
@@ -84,3 +87,5 @@ export default function ChatSelector(props) {
     </div>
   );
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatSelector);

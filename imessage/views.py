@@ -40,9 +40,10 @@ def texts_upload(request):
 		users_chat_names = list(FrequencyList.objects.values_list('chat_name', flat=True).filter(user=request.user, chat_name__startswith=chat_name))
 		print(chat_name, users_chat_names)
 		if len(users_chat_names):
-			return Response({"message":"This chat already exists, please delete the current chat if you'd like to reupload"}, status=status.HTTP_400_BAD_REQUEST)
-			# this will be logic for live chat
-			# chat_name += ' ' + str(len(users_chat_names))
+			# this will be the upload 
+			# return Response({"message":"This chat already exists, please delete the current chat if you'd like to reupload"}, status=status.HTTP_400_BAD_REQUEST)
+			# this will be logic for live chat only, but using it for now for testing
+			chat_name += ' ' + str(len(users_chat_names))
 		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quoting=csv.QUOTE_ALL))
 		texts_data = texts[4:len(texts)-1]
 		texts_data = list(map(addDateFormatted, texts_data))

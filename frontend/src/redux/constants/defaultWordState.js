@@ -1,4 +1,5 @@
 export const defaultWordState = {
+  chatsMetaData: [],
   freuquencyLists: {
     words: [],
     emojis: [],

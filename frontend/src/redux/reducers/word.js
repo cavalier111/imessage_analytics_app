@@ -7,7 +7,8 @@ import {
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
   UPDATE_WORDCLOUD_LAYOUT,
-  UPDATE_STYLE
+  UPDATE_STYLE,
+  GET_CHATS_META_DATA_LIST_SUCCESS
 } from "../constants/actionTypes";
 import { defaultWordState } from "../constants/defaultWordState";
 
@@ -174,7 +175,12 @@ export const word = (state = defaultWordState, action) => {
       }
     }
   }
-
+  if (action.type === GET_CHATS_META_DATA_LIST_SUCCESS) {
+    return {
+      ...state,
+      chatsMetaData: action.payload,
+    }
+  }
   return state;
 }
 
