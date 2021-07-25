@@ -17,12 +17,14 @@ export const defaultWordState = {
   },
   dataType: 'words',
   vizType: 'wordcloud',
+  wordcloudOptimizationType: 'speed',
   filters: {
     words: {
       startEnd: [1,1],
       maxEnd: 1,
       polarity: [-1,1],
       subjectivity:[0,1],
+      speedOptimized: true,
       stopWordsEnabled: true,
       stopWordsUser:[],
       stopWordsDefault:[]

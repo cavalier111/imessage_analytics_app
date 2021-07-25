@@ -5,17 +5,19 @@ import Searchbar from './searchbar';
 import FilterSection from './filtersection';
 import StyleSection from './stylesection';
 import { connect } from "react-redux";
-import { updateDataType, updateVizType } from "../redux/actions/word";
-import { getFrequencyList, getDataType, getVizType } from "../redux/selectors/word";
+import { updateDataType, updateVizType, updateWordcloudOptimizationType } from "../redux/actions/word";
+import { getFrequencyList, getDataType, getVizType, getWordcloudOptimizationType } from "../redux/selectors/word";
 
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
-  vizType: getVizType(state)
+  vizType: getVizType(state),
+  optimizationType: getWordcloudOptimizationType(state),
 });
 const mapDispatchToProps = (dispatch) => ({
   updateDataType: dataType => dispatch(updateDataType(dataType)),
-  updateVizType: vizType => dispatch(updateVizType(vizType))
+  updateVizType: vizType => dispatch(updateVizType(vizType)),
+  updateOptimizationType: optimizationType => dispatch(updateWordcloudOptimizationType(optimizationType)),
 });
 
 
@@ -30,6 +32,10 @@ class Wordheader extends Component {
 
     handleDataTypeChange = changeEvent => {
       this.props.updateDataType(changeEvent.target.value);
+    }
+
+    handleOptimizationTypeChange = changeEvent => {
+      this.props.updateOptimizationType(changeEvent.target.value);
     }
 
     render() {
@@ -72,6 +78,21 @@ class Wordheader extends Component {
                   <input className="form-check-input" type="radio" name="dataType" id="typeRadios3" value="links" checked={this.props.dataType  === 'links'} onChange={this.handleDataTypeChange} />
                   <label className="form-check-label" htmlFor="typeRadios3">
                     Links
+                  </label>
+                </div>
+              </div>
+              <div>
+                <span>Optimization for wordcloud:</span>
+                <div className="form-check">
+                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios1" value="speed" checked={this.props.vizType === 'speed'} onChange={this.handleOptimizationTypeChange} />
+                  <label className="form-check-label" htmlFor="optimizationTypeRadios1">
+                    Speed (recommended)
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios2" value="accuracy" checked={this.props.vizType === 'accuracy'} onChange={this.handleOptimizationTypeChange} />
+                  <label className="form-check-label" htmlFor="optimizationTypeRadios1">
+                    Accuracy
                   </label>
                 </div>
               </div>

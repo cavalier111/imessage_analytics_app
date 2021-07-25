@@ -207,7 +207,11 @@ class Wordcloud extends Component {
 
     findMaxLayout = (max_font_size, incrementor) => {
         var maxSize = d3.max(this.frequencyList, d => d.frequency);
-        var fontSizeScale = d3.scaleLinear().domain([0,1]).range([ 0, max_font_size]);
+        //if it's speed optimitzed, we use the less accurate scale, doesn't require iterting to find correct scale
+        var fontSizeScale = this.props.wordcloudOptimizationType = 'speed'
+            ? d3.scalePow().exponent(5).domain([0,1]).range([ 10, 100])
+            : d3.scaleLinear().domain([0,1]).range([ 0, max_font_size])
+
         const layout = cloud();
         layout
             .size([this.width, this.height])
@@ -217,6 +221,10 @@ class Wordcloud extends Component {
             .font(this.props.font)
             .fontSize(d => Math.floor(fontSizeScale(d.frequency/maxSize)))
             .spiral("archimedean")
+        if(this.props.wordcloudOptimizationType = 'speed') {
+            this.maxLayout = layout;
+            return undefined;
+        }
         layout
             .on("end", (output) => {
                 //if all the words are in the wordcliud output, the font is less than 100
