@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from 'react-bootstrap/Button';
 import { connect } from "react-redux";
-import { getFrequencyList, getDataType, getWordcloudLayout, getStyle } from "../redux/selectors/word";
+import { getFrequencyList, getDataType, getWordcloudOptimizationType, getWordcloudLayout, getStyle } from "../redux/selectors/word";
 import { updateWordcloudLayout, updateStyle } from "../redux/actions/word";
 import equal from 'fast-deep-equal';
 import { gradientColors } from './constants/colors';
@@ -15,6 +15,7 @@ import { colorScales, colorArrays } from './constants/colorScales';
 const mapStateToProps = (state) => ({
   frequencyList: getFrequencyList(state),
   dataType: getDataType(state),
+  wordcloudOptimizationType: getWordcloudOptimizationType(state),
   wordcloudLayout: getWordcloudLayout(state),
   color: getStyle(state, 'color'),
   colorCodedBy: getStyle(state, 'colorCodedBy'),
@@ -208,7 +209,7 @@ class Wordcloud extends Component {
     findMaxLayout = (max_font_size, incrementor) => {
         var maxSize = d3.max(this.frequencyList, d => d.frequency);
         //if it's speed optimitzed, we use the less accurate scale, doesn't require iterting to find correct scale
-        var fontSizeScale = this.props.wordcloudOptimizationType = 'speed'
+        var fontSizeScale = this.props.wordcloudOptimizationType == 'speed'
             ? d3.scalePow().exponent(5).domain([0,1]).range([ 10, 100])
             : d3.scaleLinear().domain([0,1]).range([ 0, max_font_size])
 
@@ -221,7 +222,7 @@ class Wordcloud extends Component {
             .font(this.props.font)
             .fontSize(d => Math.floor(fontSizeScale(d.frequency/maxSize)))
             .spiral("archimedean")
-        if(this.props.wordcloudOptimizationType = 'speed') {
+        if(this.props.wordcloudOptimizationType == 'speed') {
             this.maxLayout = layout;
             return undefined;
         }

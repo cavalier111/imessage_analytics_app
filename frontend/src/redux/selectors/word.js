@@ -12,6 +12,9 @@ export const getDataType = store =>
 export const getVizType = store =>
   store.word.vizType ? store.word.vizType : []
 
+export const getWordcloudOptimizationType = store =>
+  store.word.wordcloudOptimizationType ? store.word.wordcloudOptimizationType : []
+
 export const getChatsMetaData = store =>
   store.word.chatsMetaData ? store.word.chatsMetaData : []
 

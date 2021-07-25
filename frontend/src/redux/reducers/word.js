@@ -3,6 +3,7 @@ import {
   INITIALIZE_FREQUENCY_LISTS,
   UPDATE_DATA_TYPE,
   UPDATE_VIZ_TYPE,
+  UPDATE_WORDCLOUD_OPTIMIZATION_TYPE,
   UPDATE_STOPWORDS,
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
@@ -70,6 +71,12 @@ export const word = (state = defaultWordState, action) => {
     return {
       ...state,
       vizType: action.payload
+    }
+  }
+  if (action.type === UPDATE_WORDCLOUD_OPTIMIZATION_TYPE) {
+    return {
+      ...state,
+      wordcloudOptimizationType: action.payload
     }
   }
   if (action.type === TOGGLE_STOPWORDS) {

@@ -3,6 +3,7 @@ import {
 	INITIALIZE_FREQUENCY_LISTS,
 	UPDATE_DATA_TYPE,
 	UPDATE_VIZ_TYPE,
+	UPDATE_WORDCLOUD_OPTIMIZATION_TYPE,
 	TOGGLE_STOPWORDS,
 	UPDATE_STOPWORDS,
 	HANDLE_FILTER_APPLY,
@@ -30,6 +31,11 @@ export const updateDataType = payload => ({
 
 export const updateVizType = payload => ({
 	type: UPDATE_VIZ_TYPE,
+	payload
+});
+
+export const updateWordcloudOptimizationType = payload => ({
+	type: UPDATE_WORDCLOUD_OPTIMIZATION_TYPE,
 	payload
 });
 

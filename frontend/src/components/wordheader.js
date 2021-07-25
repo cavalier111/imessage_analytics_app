@@ -84,13 +84,13 @@ class Wordheader extends Component {
               <div>
                 <span>Optimization for wordcloud:</span>
                 <div className="form-check">
-                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios1" value="speed" checked={this.props.vizType === 'speed'} onChange={this.handleOptimizationTypeChange} />
+                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios1" value="speed" checked={this.props.optimizationType === 'speed'} onChange={this.handleOptimizationTypeChange} />
                   <label className="form-check-label" htmlFor="optimizationTypeRadios1">
                     Speed (recommended)
                   </label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios2" value="accuracy" checked={this.props.vizType === 'accuracy'} onChange={this.handleOptimizationTypeChange} />
+                  <input className="form-check-input" type="radio" name="optimizationTypeOption" id="optimizationTypeRadios2" value="accuracy" checked={this.props.optimizationType === 'accuracy'} onChange={this.handleOptimizationTypeChange} />
                   <label className="form-check-label" htmlFor="optimizationTypeRadios1">
                     Accuracy
                   </label>
