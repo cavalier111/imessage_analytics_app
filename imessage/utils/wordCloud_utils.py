@@ -74,10 +74,12 @@ def getStopWords():
 def extractWords(text):
     wordList = []
     for word in text['text'].split():
-        alphaNumericWord = removeEmoji(alphaNumeric(word).lower())
-        parsed = urlparse(alphaNumericWord)
-        if not parsed.netloc:
-            wordList.append(alphaNumericWord)
+        # double check there's no other message types for word based texts
+        if text['associated_message_type'] == '0':
+            alphaNumericWord = removeEmoji(alphaNumeric(word).lower())
+            parsed = urlparse(alphaNumericWord)
+            if not parsed.netloc:
+                wordList.append(alphaNumericWord)
     return wordList
 
 #method to get emojis out of text, required due to ambiguity since some emojis are multiple chars

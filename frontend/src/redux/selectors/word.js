@@ -19,7 +19,7 @@ export const getChatsMetaData = store =>
   store.word.chatsMetaData ? store.word.chatsMetaData : []
 
 export const getWordcloudLayout = store =>
-  store.word.wordcloudLayout[store.word.dataType] ? store.word.wordcloudLayout[store.word.dataType] : null
+  store.word.wordcloudLayout[store.word.wordcloudOptimizationType][store.word.dataType] ? store.word.wordcloudLayout[store.word.wordcloudOptimizationType][store.word.dataType] : null
 
 export const getFilter = (store,type) => {
 	const defaultValues = {

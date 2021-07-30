@@ -11,9 +11,16 @@ export const defaultWordState = {
     links: [],
   },
   wordcloudLayout: {
-    words: null,
-    emojis: null,
-    links: null,
+    speed: {
+      words: null,
+      emojis: null,
+      links: null,
+    },
+    accuracy: {
+      words: null,
+      emojis: null,
+      links: null,
+    }
   },
   dataType: 'words',
   vizType: 'wordcloud',

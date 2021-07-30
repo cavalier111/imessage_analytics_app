@@ -135,7 +135,10 @@ export const word = (state = defaultWordState, action) => {
         },
         wordcloudLayout: {
           ...state.wordcloudLayout,
-          [state.dataType]: null,
+          [state.wordcloudOptimizationType]: {
+            ...state.wordcloudOptimizationType,
+            [state.dataType]: null,
+          }
         },
         filters: {
           ...state.filters,

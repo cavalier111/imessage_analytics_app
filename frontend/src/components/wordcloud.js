@@ -45,7 +45,7 @@ class Wordcloud extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.retrieveMaxLayout();
-        if(prevProps.dataType !== this.props.dataType){
+        if(prevProps.dataType !== this.props.dataType || prevProps.wordcloudOptimizationType !== this.props.wordcloudOptimizationType){
             d3.select("svg").remove();
             this.drawWordCloud();
         }
