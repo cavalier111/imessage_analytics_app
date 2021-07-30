@@ -1,9 +1,19 @@
 import React, {Component} from 'react';
+import { connect } from "react-redux";
+import './App.css'
 import './upload.css';
 import Dropzone from 'react-dropzone';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faUpload } from '@fortawesome/free-solid-svg-icons'
+import axiosInstance from '../axiosApi'
+import { reloadChatsMetaData } from "../redux/actions/word";
+import Button from '@material-ui/core/Button';
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    reloadChatsMetaData: () => dispatch(reloadChatsMetaData()),
+  };
+}
 class Upload extends Component {
     constructor(props) {
       super(props);
@@ -34,15 +44,14 @@ class Upload extends Component {
     uploadFile =  ()  => {
       let formData = new FormData();
       formData.append('file', this.state.file);
-      var req = new Request('/api/texts/upload/', {
+      var req = new Request('/texts/upload/', {
         method: "POST",
         body: formData
       });
-      fetch(req)
-        .then(response => response.json())
+      axiosInstance.post('/texts/upload/', formData)
         .catch(error => {
           this.setState({
-            errorStatus: error.message,
+            errorStatus: error,
             uploadText: "Drag your files here or click in this area",
             uploadStatus: "",
             file: null,
@@ -55,6 +64,7 @@ class Upload extends Component {
             uploadStatus: "Successfully Uploaded",
             uploaded: true,
           });
+          this.props.reloadChatsMetaData();
         });
     }
 
@@ -74,20 +84,20 @@ class Upload extends Component {
                       <div {...getRootProps()}>
                         <input {...getInputProps()}/>
                           <div className="dropContainer">
-                            <p className = "inputP">{this.state.errorStatus}</p>
-                            <p className = "inputP">{this.state.uploadStatus}</p>
+                            { this.state.errorStatus ? <p className = "inputP">{this.state.errorStatus}</p> : false}
+                            { this.state.uploadStatus ? <p className = "inputP">{this.state.uploadStatus}</p> : false}
                             <p className = "inputP">{this.state.uploadText}</p>
                           </div>
                       </div>
                     </section>
                 )}
               </Dropzone>
-              {/*<button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload <FontAwesomeIcon icon={faUpload} /></button>*/}
-              <button className="uploadButton" type="submit" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload</button>
-              <button className="uploadButton" type="submit" disabled={!this.state.uploaded} onClick={this.props.viewVizualizations}>Start</button>
+              <div>
+                <Button type="submit" className="chat-stat-button button-margin-right" disabled={!this.state.uploadEmpty} onClick={ () => this.uploadFile()}>Upload</Button>
+                <Button type="submit" className="chat-stat-button" disabled={!this.state.uploaded} onClick={this.props.viewVizualizations}>Start</Button>
+              </div>
             </div>
         );
     }
 }
-
-export default Upload;
+export default connect(null, mapDispatchToProps)(Upload);

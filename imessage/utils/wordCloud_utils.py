@@ -10,8 +10,10 @@ import emojis
 from textblob import TextBlob
 from urllib.parse import urlparse
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from datetime import datetime
+import time
 
-def getTextFrequencyDictForText(texts):
+def createFrequencyListsDict(texts):
     global analyzer
     analyzer = SentimentIntensityAnalyzer()
     # print(TextBlob("heart").sentiment, TextBlob("red").sentiment)
@@ -27,7 +29,7 @@ def getTextFrequencyDictForText(texts):
         'wordList': getDataForTexts(listDict["wordsList"], 'word'),
         'emojiList': getDataForTexts(listDict["emojiList"], 'emoji'),
         'linkList': getDataForTexts(listDict["linkList"], 'link'),
-        }
+    }
 
 def getDataForTexts(wordsList, dataType):
     if dataType == 'word':
@@ -72,10 +74,12 @@ def getStopWords():
 def extractWords(text):
     wordList = []
     for word in text['text'].split():
-        alphaNumericWord = removeEmoji(alphaNumeric(word).lower())
-        parsed = urlparse(alphaNumericWord)
-        if not parsed.netloc:
-            wordList.append(alphaNumericWord)
+        # double check there's no other message types for word based texts
+        if text['associated_message_type'] == '0':
+            alphaNumericWord = removeEmoji(alphaNumeric(word).lower())
+            parsed = urlparse(alphaNumericWord)
+            if not parsed.netloc:
+                wordList.append(alphaNumericWord)
     return wordList
 
 #method to get emojis out of text, required due to ambiguity since some emojis are multiple chars
@@ -127,4 +131,7 @@ def removeEmoji(string):
                            u"\U000024C2-\U0001F251"
                            "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
-
+def addDateFormatted(text):
+    if text['date']:
+        text['date_formatted']=(datetime.fromtimestamp(int(text['date'])/1000000000+time.mktime(datetime.strptime('01/01/2001', '%d/%m/%Y').timetuple()))).strftime("%d-%b-%Y (%H:%M:%S.%f)")
+    return text

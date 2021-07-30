@@ -1,11 +1,27 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
 class NavigationBar extends Component {
   constructor(props) {
     super(props);
   }
+
+  async handleLogout() {
+        try {
+            const response = await axiosInstance.post('/blacklist/', {
+                "refresh_token": localStorage.getItem("refresh_token")
+            });
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            axiosInstance.defaults.headers['Authorization'] = null;
+            return response;
+        }
+        catch (e) {
+            console.log(e);
+        }
+    };
 
 
   render() {
@@ -29,6 +45,18 @@ class NavigationBar extends Component {
             <Button variant="outline-success">Search</Button>
           </Form>*/}
         </Navbar.Collapse>
+        <Navbar.Brand>
+          <Link className={"nav-link"} to={"/login/"}>Login</Link>
+        </Navbar.Brand>
+        <Navbar.Brand>
+          <Link className={"nav-link"} to={"/register/"}>Register</Link>
+        </Navbar.Brand>
+        <Navbar.Brand>
+            <Link className={"nav-link"} to={"/home/"}>Home</Link>
+        </Navbar.Brand>
+        <Navbar.Brand>
+            <button onClick={this.handleLogout}>Logout</button>
+        </Navbar.Brand>
       </Navbar>
       </div>
     );

@@ -3,16 +3,17 @@ import {
   INITIALIZE_FREQUENCY_LISTS,
   UPDATE_DATA_TYPE,
   UPDATE_VIZ_TYPE,
+  UPDATE_WORDCLOUD_OPTIMIZATION_TYPE,
   UPDATE_STOPWORDS,
   TOGGLE_STOPWORDS,
   HANDLE_FILTER_APPLY,
   UPDATE_WORDCLOUD_LAYOUT,
-  UPDATE_STYLE
+  UPDATE_STYLE,
+  GET_CHATS_META_DATA_LIST_SUCCESS
 } from "../constants/actionTypes";
-import { defaultState } from "../constants/defaultState";
+import { defaultWordState } from "../constants/defaultWordState";
 
-
-export const rootReducer = (state = defaultState, action) => {
+export const word = (state = defaultWordState, action) => {
   if (action.type === UPDATE_FREQUENCY_LIST) {
     return {
       ...state,
@@ -23,37 +24,39 @@ export const rootReducer = (state = defaultState, action) => {
     }
   }
   if (action.type === INITIALIZE_FREQUENCY_LISTS) {
+    const frequencyListsDict = action.payload.frequency_lists_dict
+    console.log(frequencyListsDict)
     return {
       ...state,
       freuquencyLists: {
         ...state.freuquencyLists,
-        words: action.payload.wordList.filter(item => !item.isStopWord),
-        emojis: action.payload.emojiList,
-        links: action.payload.linkList,
+        words: frequencyListsDict.wordList.filter(item => !item.isStopWord),
+        emojis: frequencyListsDict.emojiList,
+        links: frequencyListsDict.linkList,
       },
       unfilteredFreuquencyLists: {
         ...state.unfilteredFreuquencyLists,
-        words: action.payload.wordList,
-        emojis: action.payload.emojiList,
-        links: action.payload.linkList,
+        words: frequencyListsDict.wordList,
+        emojis: frequencyListsDict.emojiList,
+        links: frequencyListsDict.linkList,
       },
       filters: {
         ...state.filters,
         words: {
             ...state.filters.words,
-            startEnd: [1, action.payload.wordList.length],
-            stopWordsDefault: action.payload.wordList.filter(item => item.isStopWord).map(item=>item.text),
-            maxEnd: action.payload.wordList.filter(item => !item.isStopWord).length,
+            startEnd: [1, frequencyListsDict.wordList.length],
+            stopWordsDefault: frequencyListsDict.wordList.filter(item => item.isStopWord).map(item=>item.text),
+            maxEnd: frequencyListsDict.wordList.filter(item => !item.isStopWord).length,
           },
         emojis: {
           ...state.filters.emojis,
-          startEnd: [1, action.payload.emojiList.length],
-          maxEnd: action.payload.emojiList.length,
+          startEnd: [1, frequencyListsDict.emojiList.length],
+          maxEnd: frequencyListsDict.emojiList.length,
         },
         links: {
           ...state.filters.links,
-          startEnd: [1, action.payload.linkList.length],
-          maxEnd: action.payload.linkList.length,
+          startEnd: [1, frequencyListsDict.linkList.length],
+          maxEnd: frequencyListsDict.linkList.length,
         },
       }
     }
@@ -68,6 +71,12 @@ export const rootReducer = (state = defaultState, action) => {
     return {
       ...state,
       vizType: action.payload
+    }
+  }
+  if (action.type === UPDATE_WORDCLOUD_OPTIMIZATION_TYPE) {
+    return {
+      ...state,
+      wordcloudOptimizationType: action.payload
     }
   }
   if (action.type === TOGGLE_STOPWORDS) {
@@ -126,7 +135,10 @@ export const rootReducer = (state = defaultState, action) => {
         },
         wordcloudLayout: {
           ...state.wordcloudLayout,
-          [state.dataType]: null,
+          [state.wordcloudOptimizationType]: {
+            ...state.wordcloudOptimizationType,
+            [state.dataType]: null,
+          }
         },
         filters: {
           ...state.filters,
@@ -173,8 +185,13 @@ export const rootReducer = (state = defaultState, action) => {
       }
     }
   }
-
+  if (action.type === GET_CHATS_META_DATA_LIST_SUCCESS) {
+    return {
+      ...state,
+      chatsMetaData: action.payload,
+    }
+  }
   return state;
 }
 
-export default rootReducer;
+export default word;

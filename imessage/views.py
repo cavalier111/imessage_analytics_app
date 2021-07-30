@@ -5,44 +5,59 @@ from django.contrib.staticfiles.finders import find
 from django.conf import settings
 import csv, io
 from django.contrib import messages
-from .models import Texts
-from .utils.wordCloud_utils import getTextFrequencyDictForText
+from .models import FrequencyList
+from .utils.wordCloud_utils import createFrequencyListsDict, addDateFormatted
 import json
-from .serializers import TextsSerializer, UploadSerializer
+from .serializers import UploadSerializer
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
-
-#get endpint, not sure If ill use
-class TextsListCreate(generics.ListCreateAPIView):
-    queryset = Texts.objects.all()
-    serializer_class = TextsSerializer
-
     
 @api_view(['POST'])
 def texts_upload(request):
 	try:
+		if len(FrequencyList.objects.filter(user=request.user)) > 5:
+			#maybe use an exception here
+			return Response({"message":'Maximum chats allowed is 5, please delete chats to upload more'}, status=status.HTTP_400_BAD_REQUEST)
 		stream = io.BytesIO(request.body)
 		decodedStream = stream.read().decode('UTF-8')
 		io_string = io.StringIO(decodedStream)
 		next(io_string)
-		count =0
-		for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-			count +=1
-			print(column)
-			if len(column) == 2:
-				_, created = Texts.objects.update_or_create(
-					ROWID=column[0],
-					text=column[1],
-					# is_from_me=column[2],
-					is_from_me='0',
-				)
+		next(io_string)
+		next(io_string)
+		texts_csv_reader = csv.reader(io_string, delimiter=',', quoting=csv.QUOTE_ALL)
+		#get meta data
+		next(texts_csv_reader)
+		chat_id = next(texts_csv_reader)[0]
+		chat_name = next(texts_csv_reader)[0]
+		chat_type = next(texts_csv_reader)[0]
+		field_names = next(texts_csv_reader)
+		print(chat_id, chat_name, chat_type, field_names)
+		# if the chat name already 
+		users_chat_names = list(FrequencyList.objects.values_list('chat_name', flat=True).filter(user=request.user, chat_name__startswith=chat_name))
+		print(chat_name, users_chat_names)
+		if len(users_chat_names):
+			# this will be the upload 
+			# return Response({"message":"This chat already exists, please delete the current chat if you'd like to reupload"}, status=status.HTTP_400_BAD_REQUEST)
+			# this will be logic for live chat only, but using it for now for testing
+			chat_name += ' ' + str(len(users_chat_names))
+		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quoting=csv.QUOTE_ALL))
+		texts_data = texts[4:len(texts)-1]
+		texts_data = list(map(addDateFormatted, texts_data))
+		print(texts_data[0:5])
+		print('hereeee 5')
+		freqList = createFrequencyListsDict(texts_data)
+		print('hereeee 6')
+		FrequencyList.objects.create(user = request.user, frequency_lists_dict = freqList, chat_id = chat_id, chat_name = chat_name, chat_type = chat_type)
+		print('created!')
 		return Response(None, status=status.HTTP_201_CREATED)
 	except Exception as e:
-		print(str(e))
+		print('hereeee')
+		print((e))
+		print('hereeee')
 		return Response({"message":'There was an error parsing the csv'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -54,8 +69,17 @@ def success(request):
 	return render(request, 'success.html')
 
 @api_view(['GET'])
-def frequency_list(request):
-	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
+def user_chats(request):
+	return Response(FrequencyList.objects.values('chat_name','id').filter(user=request.user))
+
+@api_view(['GET', 'DELETE'])
+def frequency_list(request, chatId):
+	if request.method == 'GET':
+		# also add some error handling here
+		return Response(FrequencyList.objects.values('frequency_lists_dict','id','chat_name','chat_type').filter(user=request.user, id=chatId).first())
+	elif request.method == 'DELETE':
+		FrequencyList.objects.filter(user=request.user, id=chatId).first().delete()
+		return Response(None, status=status.HTTP_204_NO_CONTENT)
 	# try:
 	# 	return Response(getTextFrequencyDictForText(Texts.objects.values('text')))
 	# except Exception as e:
@@ -67,6 +91,10 @@ def downloadTextExtractor(request):
 	response = HttpResponse(zip_file, content_type='application/force-download')
 	response['Content-Disposition'] = 'attachment; filename="%s"' % 'foo.zip'
 	return response
+
+
+
+
 def emojicloud(request):
 	js_freqeuncy_list = getTextFrequencyDictForText(Texts.objects.values('text'), True)
 	return render(request, 'wordcloud.html', {'freqeuncy_list': js_freqeuncy_list, "emoji": True })

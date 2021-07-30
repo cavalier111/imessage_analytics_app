@@ -9,10 +9,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/texts/', views.TextsListCreate.as_view() ),
     path('api/texts/upload/', views.texts_upload ),
     path('api/texts/downloadTextExtractor/', views.downloadTextExtractor ),
-    path('api/texts/frequencyList/', views.frequency_list ),
+    # add type to chat id
+    path('api/texts/frequencyList/<chatId>', views.frequency_list ),
+    path('api/texts/chats/metaData', views.user_chats ),
     url(r'^upload/$', views.texts_upload, name = 'texts_upload'),
     url(r'^home/$', views.texts_upload, name = 'texts_upload'),
     url(r'^success/$', views.success, name = 'success'),

@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
  	path('', include('frontend.urls')),
     url(r'^', include('imessage.urls')),
-
+    path('api/', include('authentication.urls')),
 ] 
