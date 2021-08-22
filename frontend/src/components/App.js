@@ -10,6 +10,7 @@ import Home from './home';
 import Alerts from './layout/Alerts';
 import Login from './Login';
 import Register from './Register';
+import VizWizard from './vizWizard';
 import PrivateRoute from './PrivateRoute';
 
 import { Provider } from 'react-redux';
@@ -39,6 +40,7 @@ class App extends Component {
               <div className="container">
                 <Switch>
                   <PrivateRoute exact path="/" component={Home} />
+                  <PrivateRoute exact path="/view-viz" component={VizWizard} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/login" component={Login} />
                 </Switch>

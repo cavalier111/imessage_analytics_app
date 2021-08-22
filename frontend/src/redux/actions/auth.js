@@ -61,7 +61,7 @@ export const login = (username, password) => (dispatch) => {
     });
 };
 
-export const pingAuth = () => (dispatch) => {
+export const pingAuth = () => async (dispatch) => {
   // Headers
   const config = {
     headers: {
