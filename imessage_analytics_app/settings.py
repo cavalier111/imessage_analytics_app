@@ -12,11 +12,20 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import django_heroku
+import dotenv
+import dj_database_url
 # Needed for SIMPLE_JWT
 from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
+DATABASES = {}
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,7 +37,7 @@ SECRET_KEY = 'myt0=3s-_cq5^&ta)ndxl$pp0n)d&i7tccvf$+=469vik0$-+='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['message-analytics-app.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
 # Custom user model
 AUTH_USER_MODEL = "authentication.CustomUser"
@@ -64,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'imessage_analytics_app.urls'
@@ -163,5 +173,16 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 SESSION_COOKIE_AGE = 20*60
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build/static')
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 APPEND_SLASH = True
+
+# MUST BE LAST LINE OF SETTINGS.PY
+options = DATABASES['default'].get('OPTIONS', {})
+options.pop('sslmode', None)
