@@ -37,9 +37,9 @@ SECRET_KEY = 'myt0=3s-_cq5^&ta)ndxl$pp0n)d&i7tccvf$+=469vik0$-+='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['message-analytics-app.herokuapp.com', '127.0.0.1:8000', 'localhost']
+ALLOWED_HOSTS = ['https://message-analytics-app.herokuapp.com', 'https://127.0.0.1:8000', 'https://localhost']
 
-CORS_ORIGIN_WHITELIST = ['message-analytics-app.herokuapp.com', '127.0.0.1:8000', 'localhost']
+CORS_ORIGIN_WHITELIST = ['https://message-analytics-app.herokuapp.com', 'https://127.0.0.1:8000', 'https://localhost']
 
 # Custom user model
 AUTH_USER_MODEL = "authentication.CustomUser"
