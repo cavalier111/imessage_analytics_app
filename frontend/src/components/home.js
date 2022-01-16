@@ -28,6 +28,10 @@ class Home extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.reloadChatsMetaData();
+  }
+
   viewVizualizations = () => {
     this.setState({loading: true});
     axiosInstance.get("texts/frequencyList/"+this.state.chatId)

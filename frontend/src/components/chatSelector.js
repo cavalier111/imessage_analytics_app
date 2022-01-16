@@ -56,7 +56,7 @@ function ChatSelector(props) {
       setChats(props.chats);
       // TODO: causes infinite loop, figure out why it was needed
       // if (props.chats.length==0) {
-      props.reloadChatsMetaData()
+      // props.reloadChatsMetaData()
       // }
   }, [props.chats]);
   const handleChatChange = (event) => {
