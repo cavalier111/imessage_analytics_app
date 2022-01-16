@@ -54,9 +54,10 @@ function ChatSelector(props) {
   const [chats, setChats] = React.useState([]);
   React.useEffect(() => {
       setChats(props.chats);
-      if (props.chats.length==0) {
-        props.reloadChatsMetaData()
-      }
+      // TODO: causes infinite loop, figure out why it was needed
+      // if (props.chats.length==0) {
+      props.reloadChatsMetaData()
+      // }
   }, [props.chats]);
   const handleChatChange = (event) => {
     setChatId(event.target.value);
