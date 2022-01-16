@@ -39,8 +39,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['message-analytics-app.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
+CORS_ORIGIN_WHITELIST = ['message-analytics-app.herokuapp.com', '127.0.0.1:8000', 'localhost']
+
 # Custom user model
 AUTH_USER_MODEL = "authentication.CustomUser"
+
 
 # Application definition
 
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
     'frontend',
     'authentication',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
 ]
 
 INSTALLED_APPS += (
@@ -66,6 +70,8 @@ INSTALLED_APPS += (
 # COMPRESS_ENABLED = True
 
 MIDDLEWARE = [
+    # corsheaders must be first on this list
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
