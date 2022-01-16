@@ -5,7 +5,7 @@ import axios from 'axios'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-const baseURL = 'http://localhost:8000/api/'
+const baseURL = process.env.CURRENT_ENV == 'local' ? 'http://localhost:8000/api/' : 'https://message-analytics-app.herokuapp.com/api/';
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
