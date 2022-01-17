@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -33,10 +34,14 @@ module.exports = {
             }
         ]
     },
-    // plugins: [
-    //     new HtmlWebpackPlugin({
-    //         template: "./public/index.html",
-    //         filename: "./index.html"
-    //      })
-    // ]
+    plugins: [
+        new webpack.EnvironmentPlugin({
+          NODE_ENV: 'local', // use 'development' unless process.env.NODE_ENV is defined
+          DEBUG: false,
+        }),
+        // new HtmlWebpackPlugin({
+        //     template: "./public/index.html",
+        //     filename: "./index.html"
+        //  })
+    ]
 }
