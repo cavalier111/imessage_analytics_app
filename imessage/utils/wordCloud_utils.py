@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 from collections import Counter
-import nltk
-from nltk.corpus import stopwords
 import os
 import re
 import emoji
@@ -54,10 +52,8 @@ def getDataForTexts(wordsList, dataType):
 def getStopWords():
     #get list stop words txt file
     module_dir = os.path.dirname(__file__)   #get current directory
-    stop_words_file_path = os.path.join(module_dir, 'terrier-stop.txt') 
-
-    #combine nltk stop wirds with extra stop words from text file
-    stop_words_punctuation=set(stopwords.words("english")) | set(open(stop_words_file_path, "r").read().split())
+    stop_words_file_path = os.path.join(module_dir, 'stop-words.txt') 
+    stop_words_punctuation= set(open(stop_words_file_path, "r").read().split())
 
     #replace stop words with alphanumeric version
     alphaNumeric = lambda ini_string: re.sub('[\W_]+', '', ini_string)
@@ -65,10 +61,6 @@ def getStopWords():
     for word in stop_words_punctuation:
         stop_words.add(alphaNumeric(word))
 
-    #join stop words with some more
-    extra_stop_words = {"a","the","an","the","to","in","for","of","or","by","with","is","on","that","be","was","this","it","said","from","have","get","yea",
-                       "gonna", "going", "ok"}
-    stop_words |= extra_stop_words
     return stop_words
 
 def extractWords(text):
