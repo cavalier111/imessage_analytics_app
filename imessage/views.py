@@ -45,8 +45,7 @@ def texts_upload(request):
 			# this will be logic for live chat only, but using it for now for testing
 			chat_name += ' ' + str(len(users_chat_names))
 		texts = list(csv.DictReader(io_string, fieldnames=field_names, delimiter=',', quoting=csv.QUOTE_ALL))
-		texts_data = texts[4:len(texts)-1]
-		texts_data = list(map(addDateFormatted, texts_data))
+		texts_data = list(map(addDateFormatted, texts))
 		print('texts_data', texts_data)
 		freqList = createFrequencyListsDict(texts_data)
 		FrequencyList.objects.create(user = request.user, frequency_lists_dict = freqList, chat_id = chat_id, chat_name = chat_name, chat_type = chat_type)
