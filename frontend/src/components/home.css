@@ -1,3 +1,17 @@
 .button-margin-right {
-  margin-right: 10px !important;
+ 	margin-right: 10px !important;
+}
+
+.welcome-container {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-text {
+	text-align: center;
+}
+
+.demo-button {
+	max-width: 25rem;
 }

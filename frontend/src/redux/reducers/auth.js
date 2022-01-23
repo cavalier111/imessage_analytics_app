@@ -16,7 +16,7 @@ const initialState = {
   access_token: localStorage.getItem('access_token'),
   refresh_token: localStorage.getItem('refresh_token'),
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
   user: null,
   attemptedAuth: false,
 };
