@@ -11,6 +11,7 @@ import './loader.scss';
 import axiosInstance from '../axiosApi'
 import Button from '@material-ui/core/Button';
 import { Route, Redirect } from 'react-router-dom';
+import { mockApiResponse } from './constants/mockApiResponse';
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -25,12 +26,15 @@ class Home extends Component {
     this.state = {
       loaded: false,
       chatId: null,
+      // repalce with feature flag
+      isUploadFeatureEnabled: false,
     };
   }
 
   componentDidMount() {
     this.props.reloadChatsMetaData();
   }
+
 
   viewVizualizations = () => {
     this.setState({loading: true});
@@ -46,6 +50,13 @@ class Home extends Component {
         this.setState({loaded: true, loading: false});
       });
   }
+  
+  mockData = () => {
+    console.log(mockApiResponse);
+    this.props.initalizeFrequencyLists(mockApiResponse);
+    this.setState({loaded: true, loading: false});
+  }
+
 
   deleteChat = () => {
     axiosInstance.delete("texts/frequencyList/"+this.state.chatId)
@@ -60,17 +71,33 @@ class Home extends Component {
   render() {
     return (
       <div>
-        {/* initial */}
-        {(this.state.loading || this.state.loaded) ? false :
+        {/*check if feature flag for uplaoding is turned on*/}
+        {!this.state.isUploadFeatureEnabled ? false :
           <div>
-            <h1>Use an existing chat</h1>
-            <ChatSelector handleChatChange={(chatId) => this.setState({'chatId': chatId})}/>
-            <Button type="submit" className="chat-stat-button button-margin-right" onClick={() => this.viewVizualizations()}>Start</Button>
-            <Button type="submit" className="chat-stat-button" onClick={() => this.deleteChat()}>Delete</Button>
-            <h1>Upload a new chat</h1>
-            <Upload viewVizualizations={this.viewVizualizations} />
-            {/*<button type="submit" onClick={() => this.mockData()}>mock</button>
-            <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>*/}
+          {/* initial */}
+          {(this.state.loading || this.state.loaded) ? false :
+            <div>
+              <h1>Use an existing chat</h1>
+              <ChatSelector handleChatChange={(chatId) => this.setState({'chatId': chatId})}/>
+              <Button type="submit" className="chat-stat-button button-margin-right" onClick={() => this.viewVizualizations()}>Start</Button>
+              <Button type="submit" className="chat-stat-button" onClick={() => this.deleteChat()}>Delete</Button>
+              <h1>Upload a new chat</h1>
+              <Upload viewVizualizations={this.viewVizualizations} />
+              {/*<button type="submit" onClick={() => this.mockData()}>mock</button>
+              <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>*/}
+            </div>
+          }
+          </div>
+        }
+        {this.state.isUploadFeatureEnabled ? false :
+          <div>
+            {(this.state.loading || this.state.loaded) ? false :
+              <div className="welcome-container">
+                <h1 className="welcome-text">Hello! Welcome to ChatStats, an app for seeing data vizualizations for your text messages</h1>
+                <h3 className="welcome-text">Uploading is currently in the works! But you can see an example demo in the mean time</h3>
+                <Button type="submit" className="chat-stat-button demo-button" onClick={() => this.mockData()}>View demo with mock data</Button>
+              </div>
+            }
           </div>
         }
         {/* loading */}
