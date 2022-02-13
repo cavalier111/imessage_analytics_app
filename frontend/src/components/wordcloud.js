@@ -39,7 +39,7 @@ class Wordcloud extends Component {
         this.maxLayout = cloud();
     }
 
-    componentDidMount() { 
+    componentDidMount() {
         this.startWordCloud();
     }
 

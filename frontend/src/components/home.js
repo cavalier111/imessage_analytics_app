@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import { connect } from "react-redux";
-import { initalizeFrequencyLists, reloadChatsMetaData } from "../redux/actions/word";
+import { reloadChatsMetaData, updateChatId } from "../redux/actions/word";
 import Upload from './upload';
 import VizWizard from './vizWizard';
 import ChatSelector from './chatSelector';
@@ -15,8 +15,8 @@ import { mockApiResponse } from './constants/mockApiResponse';
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    initalizeFrequencyLists: frequencyLists => dispatch(initalizeFrequencyLists(frequencyLists)),
     reloadChatsMetaData: () => dispatch(reloadChatsMetaData()),
+    updateChatId: (chatId) => dispatch(updateChatId(chatId)),
   };
 }
 
@@ -27,7 +27,7 @@ class Home extends Component {
       loaded: false,
       chatId: null,
       // repalce with feature flag
-      isUploadFeatureEnabled: false,
+      isUploadFeatureEnabled: process.env.NODE_ENV == 'production' ? false : true,
     };
   }
 
@@ -37,23 +37,13 @@ class Home extends Component {
 
 
   viewVizualizations = () => {
-    this.setState({loading: true});
-    axiosInstance.get("texts/frequencyList/"+this.state.chatId)
-      .then(response => response.data)
-      .catch(error => {
-        this.setState({
-          error: error.message
-        });
-      })
-      .then(data => {
-        this.props.initalizeFrequencyLists(data);
-        this.setState({loaded: true, loading: false});
-      });
+    this.props.updateChatId(this.state.chatId);
+    this.setState({loaded: true, loading: false});
   }
   
   mockData = () => {
-    console.log(mockApiResponse);
-    this.props.initalizeFrequencyLists(mockApiResponse);
+    // Todo refactor for mocks
+    // this.props.initalizeMockFrequencyLists();
     this.setState({loaded: true, loading: false});
   }
 
@@ -99,15 +89,6 @@ class Home extends Component {
               </div>
             }
           </div>
-        }
-        {/* loading */}
-        {this.state.loading
-          ? <div id="wordLoader" className="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          : false
         }
         {/* loaded */}
         {this.state.loaded ? <Redirect to="/view-viz" /> : false}

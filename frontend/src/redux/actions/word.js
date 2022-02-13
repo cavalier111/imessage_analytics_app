@@ -9,7 +9,8 @@ import {
 	HANDLE_FILTER_APPLY,
 	UPDATE_WORDCLOUD_LAYOUT,
 	UPDATE_STYLE,
-	GET_CHATS_META_DATA_LIST_SUCCESS
+	GET_CHATS_META_DATA_LIST_SUCCESS,
+	UPDATE_CHAT_ID
 } from '../constants/actionTypes';
 import { returnErrors } from './messages';
 import axiosInstance from '../../axiosApi'
@@ -19,10 +20,30 @@ export const updateFrequencyList = payload => ({
 	payload
 });
 
-export const initalizeFrequencyLists = payload => ({
-	type: INITIALIZE_FREQUENCY_LISTS,
-	payload
-});
+export const initalizeFrequencyLists = (chatId) => async (dispatch) => {
+	return axiosInstance
+		.get("texts/frequencyList/"+chatId)
+      	.then(res => {
+	        dispatch({
+		        type: INITIALIZE_FREQUENCY_LISTS,
+		        payload: res.data,
+	      	});
+      	})
+	    .catch(err => {
+	    	dispatch(returnErrors(err.response.data, err.response.status));
+	        dispatch({
+	        	type: API_CALL_FAILURE,
+	        	failure_type: INITIALIZE_FREQUENCY_LISTS,
+	      	});
+	    });
+};
+
+export const updateChatId = (payload) => async (dispatch) => {
+	return dispatch({
+		type: UPDATE_CHAT_ID,
+		payload
+	});
+};
 
 export const updateDataType = payload => ({
 	type: UPDATE_DATA_TYPE,
@@ -65,7 +86,7 @@ export const updateStyle = payload => ({
 
 // LOGIN USER
 export const reloadChatsMetaData = () => (dispatch) => {
-  axiosInstance
+  return axiosInstance
     .get("texts/chats/metaData")
     .then((res) => {
       dispatch({

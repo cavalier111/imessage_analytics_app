@@ -9,7 +9,8 @@ import {
   HANDLE_FILTER_APPLY,
   UPDATE_WORDCLOUD_LAYOUT,
   UPDATE_STYLE,
-  GET_CHATS_META_DATA_LIST_SUCCESS
+  GET_CHATS_META_DATA_LIST_SUCCESS,
+  UPDATE_CHAT_ID
 } from "../constants/actionTypes";
 import { defaultWordState } from "../constants/defaultWordState";
 
@@ -25,9 +26,10 @@ export const word = (state = defaultWordState, action) => {
   }
   if (action.type === INITIALIZE_FREQUENCY_LISTS) {
     const frequencyListsDict = action.payload.frequency_lists_dict
-    console.log(frequencyListsDict)
+    localStorage.setItem('chat_id', action.payload.id);
     return {
       ...state,
+      chatId: action.payload.id,
       freuquencyLists: {
         ...state.freuquencyLists,
         words: frequencyListsDict.wordList.filter(item => !item.isStopWord),
@@ -186,11 +188,22 @@ export const word = (state = defaultWordState, action) => {
     }
   }
   if (action.type === GET_CHATS_META_DATA_LIST_SUCCESS) {
+    localStorage.setItem('chat_id', action.payload[0].id);
     return {
       ...state,
+      chatId: action.payload[0].id,
       chatsMetaData: action.payload,
     }
   }
+  if (action.type === UPDATE_CHAT_ID) {
+    localStorage.setItem('chat_id', action.payload);
+    return {
+      ...state,
+      chatId: action.payload,
+    }
+  }
+
+  //Todo: API_CALL_FAILURE
   return state;
 }
 

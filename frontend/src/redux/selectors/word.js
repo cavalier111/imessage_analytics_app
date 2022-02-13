@@ -18,6 +18,9 @@ export const getWordcloudOptimizationType = store =>
 export const getChatsMetaData = store =>
   store.word.chatsMetaData ? store.word.chatsMetaData : []
 
+export const getChatId = store =>
+  store.word.chatId ? store.word.chatId : null
+
 export const getWordcloudLayout = store =>
   store.word.wordcloudLayout[store.word.wordcloudOptimizationType][store.word.dataType] ? store.word.wordcloudLayout[store.word.wordcloudOptimizationType][store.word.dataType] : null
 
