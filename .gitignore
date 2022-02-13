@@ -37,7 +37,7 @@ packages/react-devtools-inline/dist
 packages/react-devtools-shell/dist
 packages/react-devtools-scheduling-profiler/dist
 
-*.log
+*.lo
 *.pot
 *.pyc
 __pycache__
@@ -45,3 +45,4 @@ db.sqlite3
 media
 
 .env
+pushHeroku.sh
