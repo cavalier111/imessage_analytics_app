@@ -1,10 +1,9 @@
 const path = require('path');
-// const Dotenv = require('dotenv-webpack');
+const Dotenv = require('dotenv-webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 
 module.exports = {
-    mode: 'development',
     entry: path.resolve(__dirname, 'src/index.js'),
     output: {
         path: path.resolve(__dirname, 'output'),
@@ -37,11 +36,11 @@ module.exports = {
     },
     plugins: [
         // systemvars true will prevent local env var NODE_ENV from overriding heroku config var NODE_ENV
-        // new Dotenv({ systemvars: true })
+        new Dotenv({ systemvars: true })
         // new HtmlWebpackPlugin({
         //     template: "./public/index.html",
         //     filename: "./index.html"
         //  })
-        new webpack.EnvironmentPlugin(['NODE_ENV'])
+        // new webpack.EnvironmentPlugin(['NODE_ENV'])
     ]
 }
