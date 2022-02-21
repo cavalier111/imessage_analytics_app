@@ -55,11 +55,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'imessage.apps.ImessageConfig',
+    'channels_app.apps.ChannelsAppConfig',
     'rest_framework',
     'frontend',
     'authentication',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'channels',
 ]
 
 INSTALLED_APPS += (
@@ -189,6 +191,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 APPEND_SLASH = True
+
+ASGI_APPLICATION = "channels_app.routing.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ['redis://localhost:6379/4']
+        }
+    },
+}
 
 # MUST BE LAST LINE OF SETTINGS.PY
 options = DATABASES['default'].get('OPTIONS', {})

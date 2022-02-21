@@ -5,6 +5,7 @@ import { reloadChatsMetaData, updateChatId } from "../redux/actions/word";
 import Upload from './upload';
 import VizWizard from './vizWizard';
 import ChatSelector from './chatSelector';
+import LiveChat from './LiveChat/LiveChat/LiveChat'
 import './App.css'
 import './home.css'
 import './loader.scss';
@@ -73,6 +74,7 @@ class Home extends Component {
               <Button type="submit" className="chat-stat-button" onClick={() => this.deleteChat()}>Delete</Button>
               <h1>Upload a new chat</h1>
               <Upload viewVizualizations={this.viewVizualizations} />
+              <LiveChat> </LiveChat>
               {/*<button type="submit" onClick={() => this.mockData()}>mock</button>
               <button type="submit" onClick={() => this.setState({loaded: true, loading: false})}>Start Mock</button>*/}
             </div>
