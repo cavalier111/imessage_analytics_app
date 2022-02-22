@@ -11,7 +11,7 @@ from .models import Message
 class ChatConsumer(WebsocketConsumer):
 
     def init_chat(self, data):
-        User = apps.get_model('authentication', 'User')
+        User = apps.get_model('authentication', 'CustomUser')
         username = data['username']
         user, created = User.objects.get_or_create(username=username)
         content = {
@@ -32,7 +32,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
-        User = apps.get_model('authentication', 'User')
+        User = apps.get_model('authentication', 'CustomUser')
         author = data['from']
         text = data['text']
         author_user, created = User.objects.get_or_create(username=author)
