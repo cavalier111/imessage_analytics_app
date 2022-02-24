@@ -15,8 +15,13 @@ class WebSocketService {
     this.socketRef = null;
   }
 
-  connect() {
-    const path = config.API_PATH;
+  connect(chatId) {
+    const path =
+      'ws://'
+      + window.location.host
+      + '/ws/chat/'
+      + chatId
+      + '/';
     this.socketRef = new WebSocket(path);
     this.socketRef.onopen = () => {
       console.log('WebSocket open');
@@ -52,8 +57,8 @@ class WebSocketService {
     this.sendMessage({ command: 'init_chat', username: username });
   }
 
-  fetchMessages(username) {
-    this.sendMessage({ command: 'fetch_messages', username: username });
+  fetchMessages(chatId) {
+    this.sendMessage({ command: 'fetch_messages', chatId: chatId });
   }
 
   newChatMessage(message) {

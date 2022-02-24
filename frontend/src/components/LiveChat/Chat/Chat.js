@@ -10,7 +10,7 @@ export default class Chat extends Component {
     this.waitForSocketConnection(() => {
       WebSocketInstance.initChatUser(this.props.currentUser);
       WebSocketInstance.addCallbacks(this.setMessages.bind(this), this.addMessage.bind(this))
-      WebSocketInstance.fetchMessages(this.props.currentUser);
+      WebSocketInstance.fetchMessages(this.props.chatID);
     });
   }
 
