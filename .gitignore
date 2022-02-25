@@ -42,6 +42,7 @@ packages/react-devtools-scheduling-profiler/dist
 *.pyc
 __pycache__
 db.sqlite3
+dump.rdb
 media
 
 .env

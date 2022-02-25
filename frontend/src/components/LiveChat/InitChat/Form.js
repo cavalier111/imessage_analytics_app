@@ -7,14 +7,14 @@ export default class InitForm extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        username: '',
+        nickname: '',
         chatUUID: '',
       };
     }
 
-  usernameChangeHandler = (event) =>  {
+  nicknameChangeHandler = (event) =>  {
     this.setState({
-      username: event.target.value
+      nickname: event.target.value
     })
   }
 
@@ -29,11 +29,12 @@ export default class InitForm extends Component {
   }
 
   joinChat = () => {
-    this.startChat();
+    this.startChat(this.state.chatUUID);
   }
 
   startChat = (chatUUID) => {
-    this.props.onSubmit(this.state.username, chatUUID);
+    console.log("in initchat", chatUUID);
+    this.props.onSubmit(this.state.nickname, chatUUID);
   }
 
   render() {
@@ -45,7 +46,7 @@ export default class InitForm extends Component {
           <form onSubmit={this.createChat} className="form">
              <input
                 type="text"
-                onChange={this.usernameChangeHandler}
+                onChange={this.nicknameChangeHandler}
                 placeholder="Enter a display name for the chat"
                 required />
               <button className="submit" type="submit" value="Submit">
@@ -59,7 +60,7 @@ export default class InitForm extends Component {
           <form onSubmit={this.joinChat} className="form">
              <input
                 type="text"
-                onChange={this.usernameChangeHandler}
+                onChange={this.nicknameChangeHandler}
                 placeholder="Enter a display name for the chat"
                 required />
               <input

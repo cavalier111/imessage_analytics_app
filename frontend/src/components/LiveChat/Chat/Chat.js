@@ -8,7 +8,7 @@ export default class Chat extends Component {
     this.state = {}
 
     this.waitForSocketConnection(() => {
-      WebSocketInstance.initChatUser(this.props.currentUser);
+      WebSocketInstance.initChatUser();
       WebSocketInstance.addCallbacks(this.setMessages.bind(this), this.addMessage.bind(this))
       WebSocketInstance.fetchMessages(this.props.chatID);
     });
@@ -62,7 +62,6 @@ export default class Chat extends Component {
 
   sendMessageHandler = (e, message) => {
     const messageObject = {
-      from: this.props.currentUser,
       text: message
     };
     WebSocketInstance.newChatMessage(messageObject);
@@ -84,7 +83,7 @@ export default class Chat extends Component {
       <div className='chat'>
         <div className='container'>
           <h1>Chatting as {currentUser} </h1>
-          <h3>Displaying only the last 50 messages</h3>
+          <h3>Displaying only the last 10 minutes of messages</h3>
           <ul ref={(el) => { this.messagesEnd = el; }}>
            { 
               messages && 

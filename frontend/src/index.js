@@ -9,6 +9,8 @@ require("babel-core/register");
 require("babel-polyfill");
 import 'bootstrap/dist/css/bootstrap.css';
 import 'semantic-ui-css/semantic.min.css';
+import registerServiceWorker from './registerServiceWorker';
+
 
 const rootElement = document.getElementById('app')
 ReactDOM.render(

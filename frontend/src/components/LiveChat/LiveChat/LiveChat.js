@@ -8,19 +8,21 @@ export default class LiveChat extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      username: '',
       hasJoinedChat: false,
       chatUUID: '',
     };
   }
 
-  startChat = (username, chatUUID) => {
-    this.setState({ username: username, chatUUID: chatUUID, hasJoinedChat: true });
+  startChat = (nickname, chatUUID) => {
+    console.log("in livechat", chatUUID);
+    WebSocketInstance.connect(chatUUID);
+    this.setState({ nickname: nickname, chatUUID: chatUUID, hasJoinedChat: true });
   }
 
   render() {
-    const { 
-      username,
+    const {
+      chatUUID,
+      nickname,
       hasJoinedChat
     } = this.state;
 
@@ -29,13 +31,12 @@ export default class LiveChat extends Component {
           {
             hasJoinedChat ?
                <Chat
-                currentUser={username}
+                currentUser={nickname}
                 chatId={chatUUID}
               />
               :
               <InitChat
                 onSubmit={this.startChat}
-                usernameChangeHandler={this.usernameChangeHandler}
               />
           }
       </div>

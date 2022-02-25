@@ -16,6 +16,7 @@ class WebSocketService {
   }
 
   connect(chatId) {
+    console.log("in WebSocket", chatId);
     const path =
       'ws://'
       + window.location.host
@@ -35,7 +36,7 @@ class WebSocketService {
     };
     this.socketRef.onclose = () => {
       console.log("WebSocket closed let's reopen");
-      this.connect();
+      this.connect(chatId);
     };
   }
 
@@ -53,8 +54,8 @@ class WebSocketService {
     }
   }
 
-  initChatUser(username) {
-    this.sendMessage({ command: 'init_chat', username: username });
+  initChatUser() {
+    this.sendMessage({ command: 'init_chat' });
   }
 
   fetchMessages(chatId) {
@@ -62,7 +63,7 @@ class WebSocketService {
   }
 
   newChatMessage(message) {
-    this.sendMessage({ command: 'new_message', from: message.from, text: message.text }); 
+    this.sendMessage({ command: 'new_message', text: message.text }); 
   }
 
   addCallbacks(messagesCallback, newMessageCallback) {
