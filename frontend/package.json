@@ -24,7 +24,7 @@
     "dotenv-webpack": "^7.0.3",
     "file-loader": "^6.1.0",
     "install": "^0.13.0",
-    "npm": "^6.14.8",
+    "npm": "^9.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "url-loader": "^4.1.0",
